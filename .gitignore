@@ -27,6 +27,8 @@ coverage
 *.sln
 *.sw?
 
+.env.production
+
 # Themes
 public/themes/soho-light/
 public/themes/soho-dark/
