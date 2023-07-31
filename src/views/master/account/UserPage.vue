@@ -1,10 +1,10 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue';
+import { getCurrentInstance, onMounted, onUnmounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useCrudStore } from '@/services/crud.store';
 import { useOptionStore } from '@/services/option.store';
 import { useUserStore } from '@/services/user.store';
-
+const { proxy } = getCurrentInstance();
 const store = useCrudStore();
 const userStore = useUserStore();
 const option = useOptionStore();
@@ -158,6 +158,10 @@ const statuses = [
 function filterUserStatus() {
     getData();
 }
+
+proxy.$pusher.channel('user-channel').listen('.user-event', () => {
+    getData();
+});
 </script>
 
 <template>

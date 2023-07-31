@@ -18,25 +18,22 @@ const model = ref([
                 label: 'Authentication',
                 icon: 'pi pi-fw pi-bookmark',
                 items: [
-                    { label: 'Permission', to: '/app/master/main/permission' },
-                    { label: 'Role', to: '/app/master/main/role' }
+                    { label: 'Permission', to: '/master/main/permission' },
+                    { label: 'Role', to: '/master/main/role' }
                 ]
             },
             {
                 label: 'Account',
                 icon: 'pi pi-fw pi-bookmark',
-                items: [{ label: 'User', to: '/app/master/account/user' }]
+                items: [{ label: 'User', to: '/master/account/user' }]
             }
         ]
     },
     {
-        label: 'Modules',
+        label: 'Features',
         items: [
-            {
-                label: 'HR SDM',
-                icon: 'pi pi-fw pi-bookmark',
-                items: [{ label: 'Employee', to: '/app/master/user' }]
-            }
+            { label: 'Status Alarm', to: '/feature/status-alarm' },
+            { label: 'Flowrate', to: '/feature/flowrate' }
         ]
     },
     {

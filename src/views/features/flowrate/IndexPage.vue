@@ -10,39 +10,21 @@ const { hideDialog, getData, filterSearch, onChangePage, processData, destroyDat
 
 const { keyword, deleteDialog, detailDialog, restoreDialog, destroyDialog, formDialog, errors, form, data, meta, rowsPerPage, loading, selected, formLabel, tableBody, api, title } = storeToRefs(store);
 
-const statuses = [
-    {
-        id: 1,
-        name: 'Active'
-    },
-    {
-        id: 0,
-        name: 'Inactive'
-    }
-];
-
 // mounted
 onMounted(() => {
-    title.value = 'position';
-    api.value = '/master/position';
+    title.value = 'Flowrate';
+    api.value = '/feature/flowrate';
     tableBody.value = [
-        { label: 'name', value: 'name', type: 'text', sort: true },
-        {
-            label: 'Status',
-            value: 'status',
-            type: 'boolean-chip',
-            sort: false,
-            labels: [
-                {
-                    label: 'Active',
-                    color: 'success'
-                },
-                {
-                    label: 'Inactive',
-                    color: 'danger'
-                }
-            ]
-        }
+        { label: 'mag_date', value: 'mag_date', type: 'text' },
+        { label: 'flowrate', value: 'flowrate', type: 'text' },
+        { label: 'totalizer 1', value: 'totalizer_1', type: 'text' },
+        { label: 'totalizer 2', value: 'totalizer_2', type: 'text' },
+        { label: 'totalizer 3', value: 'totalizer_3', type: 'text' },
+        { label: 'analog 1', value: 'analog_1', type: 'text' },
+        { label: 'pressure', value: 'analog_2', type: 'text' },
+        { label: 'status battery', value: 'status_battery', type: 'text' },
+        { label: 'bin alarm', value: 'bin_alarm', type: 'text' },
+        { label: 'file name', value: 'file_name', type: 'text' }
     ];
     getData();
 });
@@ -54,15 +36,15 @@ onUnmounted(() => {
 
 const onEdit = (val) => {
     showEditDialog();
-    form.value = {
-        id: val.id,
-        name: val.name,
-        description: val.description,
-        status: val.status ? 1 : 0
-    };
+    store.$patch({
+        form: {
+            id: val.id,
+            name: val.name
+        }
+    });
 };
 
-proxy.$pusher.channel('department-channel').listen('.department-event', () => {
+proxy.$pusher.channel('flowrate-channel').listen('.flowrate-event', () => {
     getData();
 });
 </script>
@@ -78,6 +60,8 @@ proxy.$pusher.channel('department-channel').listen('.department-event', () => {
         :tableBody="tableBody"
         :canSelectMultiple="false"
         :canRestore="true"
+        :canEdit="false"
+        :canDestroy="false"
         @search="filterSearch($event)"
         @create="onCreate()"
         @show="showDetail($event)"
@@ -94,23 +78,9 @@ proxy.$pusher.channel('department-channel').listen('.department-event', () => {
                 <div class="mb-4 field col-12">
                     <span class="p-float-label">
                         <InputText required id="name" type="text" v-model="form.name" :class="{ 'p-invalid': errors.name }" placeholder="Name" />
-                        <InputLabel for="name" value="name" />
+                        <InputLabel value="name" />
                     </span>
                     <InputError :message="errors.name" />
-                </div>
-                <div class="mb-4 field col-12">
-                    <span class="p-float-label">
-                        <Textarea :rows="5" :autoResize="true" required id="description" v-model="form.description" :class="{ 'p-invalid': errors.description }" placeholder="description" />
-                        <InputLabel for="description" value="description" />
-                    </span>
-                    <InputError :message="errors.description" />
-                </div>
-                <div class="mb-4 field col-12">
-                    <span class="p-float-label">
-                        <Dropdown required v-model="form.status" :options="statuses" optionLabel="name" optionValue="id" placeholder="Select status" display="chip" :class="{ 'p-invalid': errors.status }" />
-                        <InputLabel for="status" value="status" />
-                    </span>
-                    <InputError :message="errors.status" />
                 </div>
             </div>
         </div>
@@ -124,26 +94,24 @@ proxy.$pusher.channel('department-channel').listen('.department-event', () => {
     </Dialog>
     <!-- end dialog form -->
     <!-- dialog detail -->
-    <Dialog v-model:visible="detailDialog" :style="{ width: '640px' }" header="Detail" :modal="true" :closable="false" class="p-fluid">
+    <Dialog v-model:visible="detailDialog" :style="{ width: '50vw' }" :breakpoints="{ '960px': '75vw', '641px': '100vw' }" header="Detail" :modal="true" :closable="false">
         <div class="card" v-if="selected">
             <ul class="list-none p-0 m-0">
-                <ListDetailBreak label="name" :value="selected.name" />
-                <ListDetailBreak label="description" :value="selected.description" />
-                <li class="mb-4">
-                    <div>
-                        <p class="text-gray-500 font-bold mr-2 mb-1 md:mb-0 capitalize">Status</p>
-                    </div>
-                    <div class="mt-2">
-                        <Tag :severity="selected.status ? 'success' : 'danger'" :value="selected.status ? 'Active' : 'Inactive'"></Tag>
-                    </div>
-                </li>
+                <ListDetailBreak label="mag_date" :value="selected.mag_date" />
+                <ListDetailBreak label="flowrate" :value="selected.flowrate" />
+                <ListDetailBreak label="totalizer 1" :value="selected.totalizer_1" />
+                <ListDetailBreak label="totalizer 2" :value="selected.totalizer_2" />
+                <ListDetailBreak label="totalizer 3" :value="selected.totalizer_3" />
+                <ListDetailBreak label="analog 1" :value="selected.analog_1" />
+                <ListDetailBreak label="pressure" :value="selected.analog_2" />
+                <ListDetailBreak label="status battery" :value="selected.status_battery" />
+                <ListDetailBreak label="bin alarm" :value="selected.bin_alarm" />
+                <ListDetailBreak label="file" :value="selected.file_name" />
             </ul>
         </div>
 
         <template #footer>
             <Button :label="$t('button.close')" icon="pi pi-times" class="p-button-rounded p-button-text" @click="hideDialog()" />
-            <Button :label="$t('button.edit-data')" icon="pi pi-pencil" class="p-button-rounded p-button-warning" @click="onEdit(selected)" />
-            <Button :label="$t('button.delete-data')" icon="pi pi-trash" class="p-button-rounded p-button-danger" @click="confirmDelete(selected)" />
         </template>
     </Dialog>
     <!-- end dialog detail -->

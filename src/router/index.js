@@ -30,7 +30,7 @@ const router = createRouter({
                 },
                 // master data auth
                 {
-                    path: '/app/master/main',
+                    path: '/master/main',
                     meta: {
                         requiresAuth: true
                     },
@@ -58,7 +58,7 @@ const router = createRouter({
 
                 // master account
                 {
-                    path: '/app/master/account',
+                    path: '/master/account',
                     meta: {
                         requiresAuth: true
                     },
@@ -69,6 +69,34 @@ const router = createRouter({
                             component: () => import('@/views/master/account/UserPage.vue'),
                             meta: {
                                 title: 'User Data',
+                                role: ['superadmin']
+                            }
+                        }
+                    ]
+                },
+
+                // feature
+                {
+                    path: '/feature',
+                    meta: {
+                        requiresAuth: true
+                    },
+                    children: [
+                        {
+                            path: 'flowrate',
+                            name: 'feature-flowrate',
+                            component: () => import('@/views/features/flowrate/IndexPage.vue'),
+                            meta: {
+                                title: 'Flowrate Data',
+                                role: ['superadmin']
+                            }
+                        },
+                        {
+                            path: 'status-alarm',
+                            name: 'feature-status-alarm',
+                            component: () => import('@/views/features/status-alarm/IndexPage.vue'),
+                            meta: {
+                                title: 'Status Alarm Data',
                                 role: ['superadmin']
                             }
                         }
