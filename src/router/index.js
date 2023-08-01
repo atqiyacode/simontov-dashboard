@@ -99,6 +99,24 @@ const router = createRouter({
                                 title: 'Status Alarm Data',
                                 role: ['superadmin']
                             }
+                        },
+                        {
+                            path: 'range-type',
+                            name: 'feature-range-type',
+                            component: () => import('@/views/features/range-type/IndexPage.vue'),
+                            meta: {
+                                title: 'Range Type',
+                                role: ['superadmin']
+                            }
+                        },
+                        {
+                            path: 'range-cost',
+                            name: 'feature-range-cost',
+                            component: () => import('@/views/features/range-cost/IndexPage.vue'),
+                            meta: {
+                                title: 'Range Cost',
+                                role: ['superadmin']
+                            }
                         }
                     ]
                 }

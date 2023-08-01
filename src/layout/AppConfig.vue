@@ -12,10 +12,10 @@ defineProps({
         default: false
     }
 });
-// const scales = ref([10, 11, 12, 13, 14, 15, 16, 17, 20]);
+const scales = ref([10, 11, 12, 13, 14, 15, 16, 17, 20]);
 const visible = ref(false);
 
-const { changeThemeSettings, layoutConfig } = useLayout();
+const { changeThemeSettings, layoutConfig, setScale } = useLayout();
 
 const onConfigButtonClick = () => {
     visible.value = !visible.value;
@@ -36,14 +36,14 @@ const onChangeTheme = (theme, mode) => {
     });
     linkElement.parentNode.insertBefore(cloneLinkElement, linkElement.nextSibling);
 };
-// const decrementScale = () => {
-//     setScale(layoutConfig.scale.value - 1);
-//     applyScale();
-// };
-// const incrementScale = () => {
-//     setScale(layoutConfig.scale.value + 1);
-//     applyScale();
-// };
+const decrementScale = () => {
+    setScale(layoutConfig.scale.value - 1);
+    applyScale();
+};
+const incrementScale = () => {
+    setScale(layoutConfig.scale.value + 1);
+    applyScale();
+};
 const applyScale = () => {
     localStorage.setItem('scale', layoutConfig.scale.value);
     document.documentElement.style.fontSize = layoutConfig.scale.value + 'px';
@@ -68,12 +68,9 @@ const setRipple = () => {
     <Sidebar v-model:visible="visible" position="right" :transitionOptions="'.3s cubic-bezier(0, 0, 0.2, 1)'" class="layout-config-sidebar w-20rem">
         <h5>Scale ({{ layoutConfig.scale }})</h5>
         <div class="flex align-items-center">
-            <!-- <Button icon="pi pi-minus" type="button" @click="decrementScale()" class="p-button-text p-button-rounded w-2rem h-2rem mr-2" :disabled="layoutConfig.scale.value === scales[0]"></Button>
-            <div class="flex gap-2 align-items-center">
-                <i class="pi pi-circle-fill text-300" v-for="s in scales" :key="s" :class="{ 'text-primary-500': s === layoutConfig.scale.value }"></i>
-            </div>
-            <Button icon="pi pi-plus" type="button" pButton @click="incrementScale()" class="p-button-text p-button-rounded w-2rem h-2rem ml-2" :disabled="layoutConfig.scale.value === scales[scales.length - 1]"></Button> -->
+            <Button icon="pi pi-minus" type="button" @click="decrementScale()" class="p-button-text p-button-rounded w-2rem h-2rem mr-2" :disabled="layoutConfig.scale.value === scales[0]"></Button>
             <Slider v-model="layoutConfig.scale.value" :step="1" :min="10" :max="20" class="w-14rem" @change="applyScale" />
+            <Button icon="pi pi-plus" type="button" pButton @click="incrementScale()" class="p-button-text p-button-rounded w-2rem h-2rem ml-2" :disabled="layoutConfig.scale.value === scales[scales.length - 1]"></Button>
         </div>
 
         <template v-if="!simple">

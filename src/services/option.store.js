@@ -16,6 +16,7 @@ export const useOptionStore = defineStore({
         buildTypes: ref([]),
         appStatuses: ref([]),
         statuses: ref([]),
+        rangeTypes: ref([]),
         loading: ref(false)
     }),
     actions: {
@@ -174,6 +175,20 @@ export const useOptionStore = defineStore({
                 })
                 .catch(() => {
                     this.statuses = [];
+                });
+        },
+        async loadRangeTypes() {
+            await axios
+                .get('feature/rangeType', {
+                    params: {
+                        all: true
+                    }
+                })
+                .then((res) => {
+                    this.rangeTypes = res.data;
+                })
+                .catch(() => {
+                    this.rangeTypes = [];
                 });
         }
     },

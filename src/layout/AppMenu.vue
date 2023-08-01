@@ -32,8 +32,20 @@ const model = ref([
     {
         label: 'Features',
         items: [
-            { label: 'Status Alarm', to: '/feature/status-alarm' },
-            { label: 'Flowrate', to: '/feature/flowrate' }
+            {
+                label: 'MAG 8000',
+                items: [
+                    { label: 'Status Alarm', to: '/feature/status-alarm' },
+                    { label: 'Flowrate', to: '/feature/flowrate' }
+                ]
+            },
+            {
+                label: 'Billing',
+                items: [
+                    { label: 'Range Type', to: '/feature/range-type' },
+                    { label: 'Range Cost', to: '/feature/range-cost' }
+                ]
+            }
         ]
     },
     {

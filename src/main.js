@@ -121,6 +121,7 @@ import '@/assets/styles.scss';
 import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import resetStore from '@/plugins/reset-store';
+import globalMixin from '@/plugins/global-mixin';
 // pusher js
 import PluginPusher from '@/plugins/pusher';
 import { useAuthStore } from './services/auth.store';
@@ -244,6 +245,8 @@ pinia.use(resetStore);
     app.component('ListHeaderDetail', ListHeaderDetail);
     app.component('DeleteDialog', DeleteDialog);
     app.component('RestoreDialog', RestoreDialog);
+
+    app.mixin(globalMixin);
 
     const authStore = useAuthStore();
     await authStore.session();

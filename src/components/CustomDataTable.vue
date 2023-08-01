@@ -127,6 +127,9 @@ const selectedData = ref(null);
                             <template v-if="body.type === 'text'">
                                 {{ slotProps.data[body.value] ? slotProps.data[body.value] : '-' }}
                             </template>
+                            <template v-if="body.type === 'currency'">
+                                {{ slotProps.data[body.value] ? formatCurrency(slotProps.data[body.value]) : '-' }}
+                            </template>
                             <!-- content -->
                         </template>
                     </Column>
