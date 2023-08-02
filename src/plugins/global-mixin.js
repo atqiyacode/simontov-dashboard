@@ -8,6 +8,10 @@ export default {
             const data = new Intl.NumberFormat().format(number);
             return data.replaceAll(',', '.');
         },
+        formatNumber(number) {
+            const data = new Intl.NumberFormat().format(number);
+            return data.replaceAll(',', '.');
+        },
         formatCurrency(value) {
             return `${new Intl.NumberFormat('id-ID', {
                 style: 'currency',

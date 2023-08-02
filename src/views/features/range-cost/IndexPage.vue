@@ -20,7 +20,9 @@ onMounted(() => {
     title.value = 'Range Cost';
     api.value = '/feature/rangeCost';
     tableBody.value = [
-        { label: 'Type', value: 'type', type: 'object', object: 'name' },
+        { label: 'Type', value: 'type', type: 'object', object: 'label' },
+        { label: 'Range Lower', value: 'type', type: 'object-volume', object: 'lower_limit' },
+        { label: 'Range Upper', value: 'type', type: 'object-volume', object: 'upper_limit' },
         { label: 'value', value: 'value', type: 'currency' }
     ];
     getData();
@@ -74,7 +76,20 @@ proxy.$pusher.channel('range-cost-channel').listen('.range-cost-event', () => {
             <div class="p-fluid formgrid grid">
                 <div class="mb-4 field col-12">
                     <span class="p-float-label">
-                        <Dropdown :options="rangeTypes" v-model="form.type" :class="{ 'p-invalid': errors.type }" placeholder="type" optionLabel="name" optionValue="id" />
+                        <Dropdown :options="rangeTypes" v-model="form.type" :class="{ 'p-invalid': errors.type }" placeholder="type" optionValue="id" optionLabel="label">
+                            <template #option="slotProps">
+                                <span class="font-bold">
+                                    {{ slotProps.option.label }}
+                                </span>
+                                (
+                                {{ formatNumber(slotProps.option.lower_limit) }}
+                                m<sup>3</sup>
+                                -
+                                {{ formatNumber(slotProps.option.lower_limit) }}
+                                m<sup>3</sup>
+                                )
+                            </template>
+                        </Dropdown>
                         <InputLabel value="type" />
                     </span>
                     <InputError :message="errors.type" />
@@ -101,7 +116,9 @@ proxy.$pusher.channel('range-cost-channel').listen('.range-cost-event', () => {
     <Dialog v-model:visible="detailDialog" :style="{ width: '50vw' }" :breakpoints="{ '960px': '75vw', '641px': '100vw' }" header="Detail" :modal="true" :closable="false">
         <div class="card" v-if="selected">
             <ul class="list-none p-0 m-0">
-                <ListDetailBreak label="range type" :value="selected.type.name" />
+                <ListDetailBreak label="range label" :value="selected.type.label" />
+                <ListDetailBreakVolume label="range lower" :value="formatNumber(selected.type.lower_limit)" />
+                <ListDetailBreakVolume label="range upper" :value="formatNumber(selected.type.upper_limit)" />
                 <ListDetailBreak label="value" :value="formatCurrency(selected.value)" />
             </ul>
         </div>

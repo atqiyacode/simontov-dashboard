@@ -127,6 +127,11 @@ const selectedData = ref(null);
                             <template v-if="body.type === 'text'">
                                 {{ slotProps.data[body.value] ? slotProps.data[body.value] : '-' }}
                             </template>
+                            <!-- volume -->
+                            <template v-if="body.type === 'volume'"> {{ slotProps.data[body.value] ? formatNumber(slotProps.data[body.value]) : '-' }} m<sup>3</sup> </template>
+                            <!-- object volume -->
+                            <template v-if="body.type === 'object-volume'"> {{ slotProps.data[body.value] ? formatNumber(slotProps.data[body.value][body.object]) : '-' }} m<sup>3</sup> </template>
+                            <!-- currency -->
                             <template v-if="body.type === 'currency'">
                                 {{ slotProps.data[body.value] ? formatCurrency(slotProps.data[body.value]) : '-' }}
                             </template>

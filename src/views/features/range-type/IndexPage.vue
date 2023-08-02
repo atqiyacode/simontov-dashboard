@@ -14,7 +14,11 @@ const { keyword, deleteDialog, detailDialog, restoreDialog, destroyDialog, formD
 onMounted(() => {
     title.value = 'Range Type';
     api.value = '/feature/rangeType';
-    tableBody.value = [{ label: 'name', value: 'name', type: 'text' }];
+    tableBody.value = [
+        { label: 'label', value: 'label', type: 'text' },
+        { label: 'lower_limit', value: 'lower_limit', type: 'volume' },
+        { label: 'upper_limit', value: 'upper_limit', type: 'volume' }
+    ];
     getData();
 });
 
@@ -28,7 +32,10 @@ const onEdit = (val) => {
     store.$patch({
         form: {
             id: val.id,
-            name: val.name
+            label: val.label,
+            lower_limit: val.lower_limit,
+            upper_limit: val.upper_limit,
+            description: val.description
         }
     });
 };
@@ -65,10 +72,31 @@ proxy.$pusher.channel('range-type-channel').listen('.range-type-event', (val) =>
             <div class="p-fluid formgrid grid">
                 <div class="mb-4 field col-12">
                     <span class="p-float-label">
-                        <InputText required id="name" type="text" v-model="form.name" :class="{ 'p-invalid': errors.name }" placeholder="Name" />
-                        <InputLabel value="name" />
+                        <InputText required id="label" type="text" v-model="form.label" :class="{ 'p-invalid': errors.label }" placeholder="label" />
+                        <InputLabel value="label" />
                     </span>
-                    <InputError :message="errors.name" />
+                    <InputError :message="errors.label" />
+                </div>
+                <div class="mb-4 field col-12">
+                    <span class="p-float-label">
+                        <InputNumber required id="lower_limit" type="text" v-model="form.lower_limit" :class="{ 'p-invalid': errors.lower_limit }" placeholder="lower_limit" />
+                        <InputLabel value="lower_limit" />
+                    </span>
+                    <InputError :message="errors.lower_limit" />
+                </div>
+                <div class="mb-4 field col-12">
+                    <span class="p-float-label">
+                        <InputNumber required id="upper_limit" type="text" v-model="form.upper_limit" :class="{ 'p-invalid': errors.upper_limit }" placeholder="upper_limit" />
+                        <InputLabel value="upper_limit" />
+                    </span>
+                    <InputError :message="errors.upper_limit" />
+                </div>
+                <div class="mb-4 field col-12">
+                    <span class="p-float-label">
+                        <Textarea required id="description" v-model="form.description" :class="{ 'p-invalid': errors.description }" placeholder="description" :rows="5" />
+                        <InputLabel value="description" />
+                    </span>
+                    <InputError :message="errors.description" />
                 </div>
             </div>
         </div>
@@ -85,8 +113,10 @@ proxy.$pusher.channel('range-type-channel').listen('.range-type-event', (val) =>
     <Dialog v-model:visible="detailDialog" :style="{ width: '50vw' }" :breakpoints="{ '960px': '75vw', '641px': '100vw' }" header="Detail" :modal="true" :closable="false">
         <div class="card" v-if="selected">
             <ul class="list-none p-0 m-0">
-                <ListDetailBreak label="slug" :value="selected.slug" />
-                <ListDetailBreak label="name" :value="selected.name" />
+                <ListDetailBreak label="label" :value="selected.label" />
+                <ListDetailBreak label="lower_limit" :value="selected.lower_limit" />
+                <ListDetailBreak label="upper_limit" :value="selected.upper_limit" />
+                <ListDetailBreak label="description" :value="selected.description" />
             </ul>
         </div>
 
