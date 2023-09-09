@@ -9,7 +9,10 @@ import AppMenuItem from './AppMenuItem.vue';
 const model = ref([
     {
         label: 'Home',
-        items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/dashboard' }]
+        items: [
+            { label: 'Ganti Lokasi', icon: 'pi pi-fw pi-map-marker', to: '/map-site' },
+            { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/dashboard' }
+        ]
     },
     {
         label: 'Master Data',
@@ -26,7 +29,9 @@ const model = ref([
                 label: 'Account',
                 icon: 'pi pi-fw pi-bookmark',
                 items: [{ label: 'User', to: '/master/account/user' }]
-            }
+            },
+            { label: 'Location', icon: 'pi pi-fw pi-map', to: '/feature/location' },
+            { label: 'Biaya Admin', icon: 'pi pi-fw pi-cog', to: '/feature/tax' }
         ]
     },
     {

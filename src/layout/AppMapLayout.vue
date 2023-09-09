@@ -1,14 +1,13 @@
 <script setup>
-import { computed, watch, ref, onMounted, onBeforeMount } from 'vue';
-import AppTopbar from './AppTopbar.vue';
+import { computed, watch, ref, onMounted, onUnmounted } from 'vue';
+import AppTopbarMap from './AppTopbarMap.vue';
 import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
 import AppConfig from './AppConfig.vue';
 import { useLayout } from '@/layout/composables/layout';
+import { useMainStore } from '../services/main.store';
 import { useUserStore } from '../services/user.store';
 import { useRouter } from 'vue-router';
-import { useMainStore } from '../services/main.store';
-import { storeToRefs } from 'pinia';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
@@ -16,30 +15,22 @@ const outsideClickListener = ref(null);
 const router = useRouter();
 const userStore = useUserStore();
 const mainStore = useMainStore();
-const { currentMap } = storeToRefs(mainStore);
 
 onMounted(() => {
-    onCheckVerifyEmail();
-    onCheckMap();
-});
-
-onBeforeMount(() => {});
-
-const onCheckVerifyEmail = () => {
+    mainStore.$patch({
+        currentMap: null
+    });
+    layoutConfig.menuMode.value = 'overlay';
     !userStore.isVerified
         ? router.push({
               name: 'email-verification'
           })
         : null;
-};
+});
 
-const onCheckMap = () => {
-    if (currentMap.value == null) {
-        router.push({
-            name: 'map-site'
-        });
-    }
-};
+onUnmounted(() => {
+    layoutConfig.menuMode.value = 'static';
+});
 
 watch(isSidebarActive, (newVal) => {
     if (newVal) {
@@ -92,7 +83,7 @@ const isOutsideClicked = (event) => {
     <ConfirmDialog :breakpoints="{ '960px': '75vw', '640px': '100vw' }" :style="{ width: '50vw' }" />
     <Toast />
     <div class="layout-wrapper" :class="containerClass">
-        <app-topbar></app-topbar>
+        <app-topbar-map></app-topbar-map>
         <div class="layout-sidebar">
             <app-sidebar></app-sidebar>
         </div>

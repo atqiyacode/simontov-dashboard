@@ -17,6 +17,7 @@ export const useOptionStore = defineStore({
         appStatuses: ref([]),
         statuses: ref([]),
         rangeTypes: ref([]),
+        sites: ref([]),
         loading: ref(false)
     }),
     actions: {
@@ -189,6 +190,20 @@ export const useOptionStore = defineStore({
                 })
                 .catch(() => {
                     this.rangeTypes = [];
+                });
+        },
+        async loadSites() {
+            await axios
+                .get('feature/site', {
+                    params: {
+                        all: true
+                    }
+                })
+                .then((res) => {
+                    this.sites = res.data;
+                })
+                .catch(() => {
+                    this.sites = [];
                 });
         }
     },

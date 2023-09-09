@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import AppLayout from '@/layout/AppLayout.vue';
-import AppGuestLayoutVue from '@/layout/AppGuestLayout.vue';
+import AppGuestLayout from '@/layout/AppGuestLayout.vue';
+import AppMapLayout from '@/layout/AppMapLayout.vue';
 import { useUserStore } from '../services/user.store';
 
 const router = createRouter({
@@ -83,6 +84,38 @@ const router = createRouter({
                     },
                     children: [
                         {
+                            path: 'location',
+                            children: [
+                                {
+                                    path: '',
+                                    name: 'feature-location',
+                                    component: () => import('@/views/features/location/IndexPage.vue'),
+                                    meta: {
+                                        title: 'Location Data',
+                                        role: ['superadmin']
+                                    }
+                                },
+                                {
+                                    path: 'new',
+                                    name: 'feature-location-new',
+                                    component: () => import('@/views/features/location/NewPage.vue'),
+                                    meta: {
+                                        title: 'Create - Location ',
+                                        role: ['superadmin']
+                                    }
+                                },
+                                {
+                                    path: 'edit/:id',
+                                    name: 'feature-location-edit',
+                                    component: () => import('@/views/features/location/EditPage.vue'),
+                                    meta: {
+                                        title: 'Edit - Location ',
+                                        role: ['superadmin']
+                                    }
+                                }
+                            ]
+                        },
+                        {
                             path: 'flowrate',
                             name: 'feature-flowrate',
                             component: () => import('@/views/features/flowrate/IndexPage.vue'),
@@ -117,8 +150,33 @@ const router = createRouter({
                                 title: 'Range Cost',
                                 role: ['superadmin']
                             }
+                        },
+                        {
+                            path: 'tax',
+                            name: 'feature-tax',
+                            component: () => import('@/views/features/tax/IndexPage.vue'),
+                            meta: {
+                                title: 'Tax',
+                                role: ['superadmin']
+                            }
                         }
                     ]
+                }
+            ]
+        },
+
+        {
+            path: '/map-site',
+            component: AppMapLayout,
+            children: [
+                {
+                    path: '',
+                    name: 'map-site',
+                    component: () => import('@/views/SelectSitePage.vue'),
+                    meta: {
+                        requiresAuth: true,
+                        title: 'Map Site'
+                    }
                 }
             ]
         },
@@ -126,7 +184,7 @@ const router = createRouter({
         // authentication
         {
             path: '/auth',
-            component: AppGuestLayoutVue,
+            component: AppGuestLayout,
             meta: {
                 requiresAuth: false
             },

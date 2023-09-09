@@ -4,15 +4,19 @@ import ProductService from '@/service/ProductService';
 import { useLayout } from '@/layout/composables/layout';
 import { GoogleMap, Marker, InfoWindow, MarkerCluster } from 'vue3-google-map';
 import { useMainStore } from '../services/main.store';
+import { useOptionStore } from '../services/option.store';
+import { storeToRefs } from 'pinia';
 const { isDarkTheme } = useLayout();
 
 const products = ref(null);
 const mainStore = useMainStore();
+const optionStore = useOptionStore();
 
 const lineOptions = ref(null);
 const productService = new ProductService();
-
+const { currentMap } = storeToRefs(mainStore);
 onMounted(() => {
+    optionStore.loadSites();
     productService.getProductsSmall().then((data) => (products.value = data));
 });
 
@@ -88,97 +92,112 @@ watch(
     { immediate: true }
 );
 const gmapApiKey = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
-
-const center = { lat: -6.177915895055959, lng: 106.8185290963413 };
-
-const locations = [
-    { lat: -6.177915895055959, lng: 106.8185290963413 },
-    { lat: -6.108207992963954, lng: 106.74207467873244 },
-    { lat: -6.222922395250962, lng: 107.0014495385344 },
-    { lat: -6.238810559661402, lng: 106.62829264026414 },
-    { lat: -6.363196561684572, lng: 107.1800666894639 },
-    { lat: -6.012011665026983, lng: 106.06053287198343 }
-];
-
-const goToPlace = (val) => {
-    mainStore.$patch({
-        message: `test location ${val}`
-    });
-    mainStore.successToast();
-};
 </script>
 
 <template>
+    <h5>
+        {{ currentMap?.name }}
+    </h5>
     <div class="grid">
-        <div class="col-12">
-            <GoogleMap :api-key="gmapApiKey" style="width: 100%; height: 500px" :center="center" :zoom="10">
-                <MarkerCluster>
-                    <Marker v-for="(location, i) in locations" :options="{ position: location }" :key="i" @click="goToPlace(i)">
-                        <InfoWindow :options="{ position: location }">
-                            <p class="text-black-alpha-90">Location {{ i }}</p>
-                        </InfoWindow>
-                    </Marker>
-                </MarkerCluster>
-            </GoogleMap>
-        </div>
-        <div class="col-12 lg:col-6 xl:col-3">
+        <div class="col-12 lg:col-6 xl:col-6">
             <div class="card mb-0">
-                <div class="flex justify-content-between mb-3">
-                    <div>
-                        <span class="block text-500 font-medium mb-3">Orders</span>
-                        <div class="text-900 font-medium text-xl">152</div>
-                    </div>
-                    <div class="flex align-items-center justify-content-center bg-blue-100 border-round" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-shopping-cart text-blue-500 text-xl"></i>
-                    </div>
-                </div>
-                <span class="text-green-500 font-medium">24 new </span>
-                <span class="text-500">since last visit</span>
+                <GoogleMap :api-key="gmapApiKey" style="width: 100%; height: 500px" :center="{ lat: currentMap.lat, lng: currentMap.lng }" :zoom="10">
+                    <MarkerCluster>
+                        <Marker :options="{ position: { lat: currentMap.lat, lng: currentMap.lng } }">
+                            <InfoWindow class="" :options="{ position: { lat: currentMap.lat, lng: currentMap.lng }, disableAutoPan: true }">
+                                <ul class="list-none p-0 m-0 my-2">
+                                    <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+                                        <div>
+                                            <span class="font-bold mr-2 mb-1 md:mb-0 capitalize text-gray-500"> Kode </span>
+                                        </div>
+                                        <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+                                            <span class="font-medium text-black-alpha-90">
+                                                {{ currentMap.code }}
+                                            </span>
+                                        </div>
+                                    </li>
+                                    <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+                                        <div>
+                                            <span class="font-bold mr-2 mb-1 md:mb-0 capitalize text-gray-500"> Name </span>
+                                        </div>
+                                        <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+                                            <span class="font-medium text-black-alpha-90">
+                                                {{ currentMap.name }}
+                                            </span>
+                                        </div>
+                                    </li>
+                                    <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4" v-if="currentMap.description">
+                                        {{ currentMap.description }}
+                                    </li>
+                                </ul>
+                            </InfoWindow>
+                        </Marker>
+                    </MarkerCluster>
+                </GoogleMap>
             </div>
         </div>
-        <div class="col-12 lg:col-6 xl:col-3">
-            <div class="card mb-0">
-                <div class="flex justify-content-between mb-3">
-                    <div>
-                        <span class="block text-500 font-medium mb-3">Revenue</span>
-                        <div class="text-900 font-medium text-xl">$2.100</div>
-                    </div>
-                    <div class="flex align-items-center justify-content-center bg-orange-100 border-round" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-map-marker text-orange-500 text-xl"></i>
-                    </div>
-                </div>
-                <span class="text-green-500 font-medium">%52+ </span>
-                <span class="text-500">since last week</span>
-            </div>
-        </div>
-        <div class="col-12 lg:col-6 xl:col-3">
-            <div class="card mb-0">
-                <div class="flex justify-content-between mb-3">
-                    <div>
-                        <span class="block text-500 font-medium mb-3">Customers</span>
-                        <div class="text-900 font-medium text-xl">28441</div>
-                    </div>
-                    <div class="flex align-items-center justify-content-center bg-cyan-100 border-round" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-inbox text-cyan-500 text-xl"></i>
+        <div class="col-12 lg:col-6 xl:col-6">
+            <div class="grid">
+                <div class="col-12 lg:col-6 xl:col-6">
+                    <div class="card mb-0">
+                        <div class="flex justify-content-between mb-3">
+                            <div>
+                                <span class="block text-500 font-medium mb-3">Orders</span>
+                                <div class="text-900 font-medium text-xl">152</div>
+                            </div>
+                            <div class="flex align-items-center justify-content-center bg-blue-100 border-round" style="width: 2.5rem; height: 2.5rem">
+                                <i class="pi pi-shopping-cart text-blue-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <span class="text-green-500 font-medium">24 new </span>
+                        <span class="text-500">since last visit</span>
                     </div>
                 </div>
-                <span class="text-green-500 font-medium">520 </span>
-                <span class="text-500">newly registered</span>
-            </div>
-        </div>
-        <div class="col-12 lg:col-6 xl:col-3">
-            <div class="card mb-0">
-                <div class="flex justify-content-between mb-3">
-                    <div>
-                        <span class="block text-500 font-medium mb-3">Comments</span>
-                        <div class="text-900 font-medium text-xl">152 Unread</div>
-                    </div>
-                    <div class="flex align-items-center justify-content-center bg-purple-100 border-round" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-comment text-purple-500 text-xl"></i>
+                <div class="col-12 lg:col-6 xl:col-6">
+                    <div class="card mb-0">
+                        <div class="flex justify-content-between mb-3">
+                            <div>
+                                <span class="block text-500 font-medium mb-3">Revenue</span>
+                                <div class="text-900 font-medium text-xl">$2.100</div>
+                            </div>
+                            <div class="flex align-items-center justify-content-center bg-orange-100 border-round" style="width: 2.5rem; height: 2.5rem">
+                                <i class="pi pi-map-marker text-orange-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <span class="text-green-500 font-medium">%52+ </span>
+                        <span class="text-500">since last week</span>
                     </div>
                 </div>
-                <span class="text-green-500 font-medium">85 </span>
-                <span class="text-500">responded</span>
+                <div class="col-12 lg:col-6 xl:col-6">
+                    <div class="card mb-0">
+                        <div class="flex justify-content-between mb-3">
+                            <div>
+                                <span class="block text-500 font-medium mb-3">Customers</span>
+                                <div class="text-900 font-medium text-xl">28441</div>
+                            </div>
+                            <div class="flex align-items-center justify-content-center bg-cyan-100 border-round" style="width: 2.5rem; height: 2.5rem">
+                                <i class="pi pi-inbox text-cyan-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <span class="text-green-500 font-medium">520 </span>
+                        <span class="text-500">newly registered</span>
+                    </div>
+                </div>
+                <div class="col-12 lg:col-6 xl:col-6">
+                    <div class="card mb-0">
+                        <div class="flex justify-content-between mb-3">
+                            <div>
+                                <span class="block text-500 font-medium mb-3">Comments</span>
+                                <div class="text-900 font-medium text-xl">152 Unread</div>
+                            </div>
+                            <div class="flex align-items-center justify-content-center bg-purple-100 border-round" style="width: 2.5rem; height: 2.5rem">
+                                <i class="pi pi-comment text-purple-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <span class="text-green-500 font-medium">85 </span>
+                        <span class="text-500">responded</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -26,6 +26,7 @@ export const useMainStore = defineStore(
         const language = ref('id');
         const socketId = ref('');
         const message = ref('');
+        const currentMap = ref(null);
 
         const sanctumCsrf = async () => {
             if (!document.cookie) {
@@ -122,6 +123,7 @@ export const useMainStore = defineStore(
             language,
             socketId,
             message,
+            currentMap,
             // function
             sanctumCsrf,
             handleErrors,
@@ -136,7 +138,7 @@ export const useMainStore = defineStore(
         // persist: true,
         persist: {
             key: 'global',
-            paths: ['language', 'socketId']
+            paths: ['language', 'socketId', 'currentMap']
         }
     }
 );
