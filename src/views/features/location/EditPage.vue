@@ -112,6 +112,18 @@ const getStreetAddressFrom = async (lat, long) => {
                         </span>
                     </div>
                     <div class="mb-4 field col-12">
+                        <span class="p-float-label">
+                            <InputText required id="Lattitude" type="text" v-model="form.lattitude" :class="{ 'p-invalid': errors.lattitude }" @input="mainStore.removeError" placeholder="Lattitude" readonly />
+                            <InputLabel value="Lattitude" />
+                        </span>
+                    </div>
+                    <div class="mb-4 field col-12">
+                        <span class="p-float-label">
+                            <InputText required id="Longitude" type="text" v-model="form.longitude" :class="{ 'p-invalid': errors.longitude }" @input="mainStore.removeError" placeholder="Longitude" readonly />
+                            <InputLabel value="Longitude" />
+                        </span>
+                    </div>
+                    <div class="mb-4 field col-12">
                         <GoogleMap :api-key="gmapApiKey" style="width: 100%; height: 300px" :center="center" @click="onSelectMap($event)" :zoom="15">
                             <Marker :options="{ position: center }"> </Marker>
                         </GoogleMap>

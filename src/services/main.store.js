@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import axios from '@/plugins/axios';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from './auth.store';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'vue-toastification';
 export const useMainStore = defineStore(
     'main',
     () => {
@@ -34,27 +34,56 @@ export const useMainStore = defineStore(
             }
         };
 
-        const errorToast = async (position = 'top', color = 'error', duration = 5000) => {
-            await toast.add({
+        const errorToast = (position = 'top-right', duration = 5000) => {
+            toast.error(message.value, {
                 position: position,
-                severity: color,
-                summary: 'Error',
-                detail: message.value,
-                life: duration,
-                closable: true
+                timeout: duration,
+                closeOnClick: true,
+                pauseOnFocusLoss: true,
+                pauseOnHover: true,
+                draggable: true,
+                draggablePercent: 0.6,
+                showCloseButtonOnHover: true,
+                hideProgressBar: true,
+                closeButton: false
             });
         };
 
-        const successToast = async (position = 'top', color = 'success', duration = 5000) => {
-            await toast.add({
+        const successToast = (position = 'top-right', duration = 5000) => {
+            toast.success(message.value, {
                 position: position,
-                severity: color,
-                summary: 'Success',
-                detail: message.value,
-                life: duration,
-                closable: true
+                timeout: duration,
+                closeOnClick: true,
+                pauseOnFocusLoss: true,
+                pauseOnHover: true,
+                draggable: true,
+                draggablePercent: 0.6,
+                showCloseButtonOnHover: true,
+                hideProgressBar: true,
+                closeButton: false
             });
         };
+        // const errorToast = async (position = 'top', color = 'error', duration = 5000) => {
+        //     await toast.add({
+        //         position: position,
+        //         severity: color,
+        //         summary: 'Error',
+        //         detail: message.value,
+        //         life: duration,
+        //         closable: true
+        //     });
+        // };
+
+        // const successToast = async (position = 'top', color = 'success', duration = 5000) => {
+        //     await toast.add({
+        //         position: position,
+        //         severity: color,
+        //         summary: 'Success',
+        //         detail: message.value,
+        //         life: duration,
+        //         closable: true
+        //     });
+        // };
 
         const handleErrors = async (err) => {
             const statusCode = err.status;

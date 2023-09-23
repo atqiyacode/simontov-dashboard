@@ -104,6 +104,10 @@ import VirtualScroller from 'primevue/virtualscroller';
 import CodeHighlight from '@/components/CodeHighlight.vue';
 import BlockViewer from '@/components/BlockViewer.vue';
 
+import VueToast from 'vue-toastification';
+// Import the CSS or use your own!
+import 'vue-toastification/dist/index.css';
+
 // custom component
 import InputLabel from '@/components/InputLabel.vue';
 import CustomDataTable from '@/components/CustomDataTable.vue';
@@ -138,6 +142,12 @@ pinia.use(resetStore);
     app.use(ToastService);
     app.use(DialogService);
     app.use(ConfirmationService);
+
+    app.use(VueToast, {
+        transition: 'Vue-Toastification__fade',
+        maxToasts: 20,
+        newestOnTop: true
+    });
 
     app.directive('tooltip', Tooltip);
     app.directive('badge', BadgeDirective);

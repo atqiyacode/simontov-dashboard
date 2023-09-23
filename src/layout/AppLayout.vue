@@ -90,7 +90,7 @@ const isOutsideClicked = (event) => {
 
 <template>
     <ConfirmDialog :breakpoints="{ '960px': '75vw', '640px': '100vw' }" :style="{ width: '50vw' }" />
-    <Toast />
+    <!-- <Toast /> -->
     <div class="layout-wrapper" :class="containerClass">
         <app-topbar></app-topbar>
         <div class="layout-sidebar">

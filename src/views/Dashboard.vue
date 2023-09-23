@@ -100,7 +100,7 @@ const gmapApiKey = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
     </h5>
     <div class="grid">
         <div class="col-12 lg:col-6 xl:col-6">
-            <div class="card mb-0">
+            <div class="card mb-0" v-if="currentMap">
                 <GoogleMap :api-key="gmapApiKey" style="width: 100%; height: 500px" :center="{ lat: currentMap.lat, lng: currentMap.lng }" :zoom="10">
                     <MarkerCluster>
                         <Marker :options="{ position: { lat: currentMap.lat, lng: currentMap.lng } }">

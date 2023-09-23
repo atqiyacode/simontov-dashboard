@@ -3,7 +3,7 @@ import { ref, watch } from 'vue';
 import _ from 'lodash';
 import axios from '@/plugins/axios';
 import { useMainStore } from './main.store';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'vue-toastification';
 import { i18n } from '@/plugins/i18n';
 
 export const useCrudStore = defineStore('crud', () => {
@@ -337,14 +337,19 @@ export const useCrudStore = defineStore('crud', () => {
         mainStore.removeError();
     };
 
-    const notify = (message, type = 'success') => {
+    const notify = (message) => {
         if (message) {
-            toast.add({
-                severity: type,
-                summary: i18n.t('message.notification'),
-                detail: message,
-                life: 5000,
-                closable: true
+            toast.success(message, {
+                position: 'top-right',
+                timeout: 3000,
+                closeOnClick: true,
+                pauseOnFocusLoss: true,
+                pauseOnHover: true,
+                draggable: true,
+                draggablePercent: 0.6,
+                showCloseButtonOnHover: true,
+                hideProgressBar: false,
+                closeButton: false
             });
         }
     };
