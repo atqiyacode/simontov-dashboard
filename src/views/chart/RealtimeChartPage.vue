@@ -1,5 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
+import VueApexCharts from 'vue3-apexcharts';
+
 const realTimeChart = ref(null);
 
 // Define initial data for the chart
@@ -126,7 +128,10 @@ onMounted(() => {
         // Update the chart
         // realTimeChart.value.updateSeries(chartSeries.value);
         lastTimestamp.value = timestamp;
-        console.log(chartSeries.value[1]);
+        console.log({
+            Flowrate: currentFlowrate.value.y,
+            Pressure: currentPressure.value.y
+        });
     }, 1000);
 });
 
@@ -138,7 +143,7 @@ watch(chartSeries, () => {
 <template>
     <div class="col-12 lg:col-12 xl:col-12">
         <div class="card shadow-5">
-            <apexchart ref="realTimeChart" :options="chartOptions" :series="chartSeries" height="450"></apexchart>
+            <VueApexCharts ref="realTimeChart" :options="chartOptions" :series="chartSeries" height="450"></VueApexCharts>
         </div>
     </div>
 
