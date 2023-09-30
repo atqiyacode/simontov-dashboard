@@ -187,6 +187,7 @@ proxy.$pusher.channel('user-channel').listen('.user-event', () => {
             </template>
         </Toolbar>
     </div>
+
     <CustomDataTable
         :label="title"
         :loading="loading"

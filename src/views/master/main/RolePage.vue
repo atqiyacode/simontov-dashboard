@@ -20,7 +20,7 @@ onMounted(() => {
     api.value = '/master/role';
     tableBody.value = [
         { label: 'name', value: 'name', type: 'text', sort: true },
-        { label: 'guard', value: 'guard_name', type: 'text', sort: true },
+        // { label: 'guard', value: 'guard_name', type: 'text', sort: true },
         { label: 'has permission', value: 'permission_count', type: 'text', sort: false }
     ];
     getData();

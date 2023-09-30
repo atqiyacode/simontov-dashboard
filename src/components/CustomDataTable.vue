@@ -154,7 +154,7 @@ const selectedData = ref(null);
                                 v-if="slotProps.data.trashed && canDestroy"
                                 class="p-button-sm p-button-rounded p-button-outlined mx-1 p-button-danger"
                                 icon="pi pi-trash"
-                                v-tooltip.top="$t('button.restore-data')"
+                                v-tooltip.top="$t('button.destroy-data')"
                                 @click="$emit('deletePermanent', slotProps.data), (selectedData = false)"
                             />
                             <Button

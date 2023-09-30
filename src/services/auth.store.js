@@ -43,7 +43,7 @@ export const useAuthStore = defineStore('auth', () => {
             .post(`forgot-password`, form.value)
             .then((res) => {
                 mainStore.$patch({
-                    message: res.data.status
+                    message: res.data.message
                 });
                 mainStore.successToast();
             })
@@ -59,7 +59,7 @@ export const useAuthStore = defineStore('auth', () => {
             .post(`reset-password`, form.value)
             .then((res) => {
                 mainStore.$patch({
-                    message: res.data.status
+                    message: res.data.message
                 });
                 mainStore.successToast();
             })
@@ -143,7 +143,6 @@ export const useAuthStore = defineStore('auth', () => {
             })
             .catch((err) => {
                 if (err.status == 400) {
-                    console.log(err.data.message);
                     mainStore.$patch({
                         message: err.data.message
                     });
@@ -157,7 +156,7 @@ export const useAuthStore = defineStore('auth', () => {
             .post(`email/verification-notification`)
             .then((res) => {
                 mainStore.$patch({
-                    message: res.data.status
+                    message: res.data.message
                 });
                 mainStore.successToast();
             })
@@ -171,7 +170,7 @@ export const useAuthStore = defineStore('auth', () => {
             .post(`auth/generateTokenCode`, form.value)
             .then((res) => {
                 mainStore.$patch({
-                    message: res.data.success
+                    message: res.data.message
                 });
             })
             .catch((err) => {
@@ -185,7 +184,7 @@ export const useAuthStore = defineStore('auth', () => {
                 .post(`auth/generateTokenCode`, form.value)
                 .then((res) => {
                     mainStore.$patch({
-                        message: res.data.success
+                        message: res.data.message
                     });
                     hasCode.value = true;
                     resolve(res);

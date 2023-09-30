@@ -33,7 +33,7 @@ const onSelectMap = (location) => {
             <GoogleMap :api-key="gmapApiKey" :center="center" :zoom="10" class="map">
                 <MarkerCluster>
                     <Marker v-for="(location, i) in optionStore.sites" :options="{ position: location }" :key="i">
-                        <InfoWindow class="" :options="{ position: location, disableAutoPan: true }">
+                        <InfoWindow class="max-w-20rem" :options="{ position: location, disableAutoPan: true }">
                             <ul class="list-none p-0 m-0 my-2">
                                 <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
                                     <div>

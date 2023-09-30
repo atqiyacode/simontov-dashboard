@@ -15,7 +15,7 @@ onMounted(() => {
     title.value = 'Flowrate';
     api.value = '/feature/flowrate';
     tableBody.value = [
-        { label: 'mag_date', value: 'mag_date', type: 'text' },
+        { label: 'mag date', value: 'mag_date', type: 'text' },
         { label: 'flowrate', value: 'flowrate', type: 'text' },
         { label: 'totalizer 1', value: 'totalizer_1', type: 'text' },
         { label: 'totalizer 2', value: 'totalizer_2', type: 'text' },
@@ -60,6 +60,7 @@ proxy.$pusher.channel('flowrate-channel').listen('.flowrate-event', () => {
         :tableBody="tableBody"
         :canSelectMultiple="false"
         :canRestore="true"
+        :canCreate="false"
         :canEdit="false"
         :canDestroy="false"
         @search="filterSearch($event)"

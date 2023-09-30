@@ -93,7 +93,7 @@ const isOutsideClicked = (event) => {
     <!-- <Toast /> -->
     <div class="layout-wrapper" :class="containerClass">
         <app-topbar></app-topbar>
-        <div class="layout-sidebar">
+        <div class="layout-sidebar shadow-5">
             <app-sidebar></app-sidebar>
         </div>
         <div class="layout-main-container">

@@ -12,9 +12,9 @@ const { keyword, formDialog, errors, form, data, meta, rowsPerPage, loading, for
 
 // mounted
 onMounted(() => {
-    title.value = 'Tax Setting';
+    title.value = 'Pengaturan Biaya Administrasi';
     api.value = '/feature/masterTax';
-    tableBody.value = [{ label: 'Value', value: 'value', type: 'currency' }];
+    tableBody.value = [{ label: 'Jumlah (Rp)', value: 'value', type: 'currency' }];
     getData();
 });
 

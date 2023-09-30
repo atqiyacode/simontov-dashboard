@@ -63,27 +63,6 @@ export const useMainStore = defineStore(
                 closeButton: false
             });
         };
-        // const errorToast = async (position = 'top', color = 'error', duration = 5000) => {
-        //     await toast.add({
-        //         position: position,
-        //         severity: color,
-        //         summary: 'Error',
-        //         detail: message.value,
-        //         life: duration,
-        //         closable: true
-        //     });
-        // };
-
-        // const successToast = async (position = 'top', color = 'success', duration = 5000) => {
-        //     await toast.add({
-        //         position: position,
-        //         severity: color,
-        //         summary: 'Success',
-        //         detail: message.value,
-        //         life: duration,
-        //         closable: true
-        //     });
-        // };
 
         const handleErrors = async (err) => {
             const statusCode = err.status;
@@ -124,7 +103,8 @@ export const useMainStore = defineStore(
                 isLoggedIn: false,
                 sessionId: null
             });
-            // router.push({ name: 'login' });
+            localStorage.removeItem('access');
+            localStorage.removeItem('user');
         };
 
         const clearGuestSession = () => {

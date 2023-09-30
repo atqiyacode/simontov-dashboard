@@ -34,7 +34,7 @@ onMounted(() => {
             <div class="text-900 text-3xl font-medium mb-3">Sign in to continue</div>
             <span class="text-600 font-medium">{{ appName }}</span>
         </div>
-        <div class="">
+        <form @submit.prevent="login">
             <div class="p-fluid mb-3">
                 <span class="p-float-label">
                     <InputText id="email" class="w-full md:w-30rem" type="text" v-model="form.email" :class="{ 'p-invalid': errors.email }" @input="mainStore.removeError" />
@@ -52,9 +52,8 @@ onMounted(() => {
             <div class="flex align-items-center justify-content-between mb-5 gap-5">
                 <router-link :to="{ name: 'forgot-password' }" class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Forgot password?</router-link>
             </div>
-            <form @submit.prevent="login">
-                <Button type="submit" :disabled="v$.$invalid" :loading="loading" :label="loading ? 'Processing' : 'Login'" class="w-full p-3 text-xl"></Button>
-            </form>
-        </div>
+
+            <Button type="submit" :disabled="v$.$invalid" :loading="loading" :label="loading ? 'Processing' : 'Login'" class="w-full p-3 text-xl"></Button>
+        </form>
     </div>
 </template>
