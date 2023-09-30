@@ -143,14 +143,13 @@ pinia.use(resetStore);
     app.use(ToastService);
     app.use(DialogService);
     app.use(ConfirmationService);
+    app.use(VueApexCharts);
 
     app.use(VueToast, {
         transition: 'Vue-Toastification__fade',
         maxToasts: 20,
         newestOnTop: true
     });
-
-    app.use(VueApexCharts);
 
     app.directive('tooltip', Tooltip);
     app.directive('badge', BadgeDirective);

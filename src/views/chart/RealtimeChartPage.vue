@@ -132,11 +132,10 @@ onMounted(() => {
 
 // Watch for changes in the chart data and update the chart
 watch(chartSeries, () => {
-    realTimeChart.value.updateSeries(chartSeries.value);
+    // realTimeChart.value.updateSeries(chartSeries.value);
 });
 </script>
 <template>
-    <!-- <apexchart type="line" :options="options"></apexchart> -->
     <div class="col-12 lg:col-12 xl:col-12">
         <div class="card shadow-5">
             <apexchart ref="realTimeChart" :options="chartOptions" :series="chartSeries" height="450"></apexchart>
