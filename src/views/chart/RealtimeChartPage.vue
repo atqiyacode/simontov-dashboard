@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import VueApexCharts from 'vue3-apexcharts';
+import RadialChartPage from './RadialChartPage.vue';
 
 const realTimeChart = ref(null);
 
@@ -128,10 +128,10 @@ onMounted(() => {
         // Update the chart
         // realTimeChart.value.updateSeries(chartSeries.value);
         lastTimestamp.value = timestamp;
-        console.log({
-            Flowrate: currentFlowrate.value.y,
-            Pressure: currentPressure.value.y
-        });
+        // console.log({
+        //     Flowrate: currentFlowrate.value.y,
+        //     Pressure: currentPressure.value.y
+        // });
     }, 1000);
 });
 
@@ -141,48 +141,19 @@ watch(chartSeries, () => {
 });
 </script>
 <template>
-    <div class="col-12 lg:col-12 xl:col-12">
+    <div class="col-12 lg:col-6 xl:col-9">
         <div class="card shadow-5">
-            <VueApexCharts ref="realTimeChart" :options="chartOptions" :series="chartSeries" height="450"></VueApexCharts>
+            <apexchart ref="realTimeChart" :options="chartOptions" :series="chartSeries" height="400"></apexchart>
         </div>
     </div>
 
-    <div class="col-12 lg:col-6 xl:col-6">
+    <div class="col-12 lg:col-6 xl:col-3">
         <div class="grid">
-            <div class="col-12 lg:col-6 xl:col-6">
-                <div class="parent">
-                    <div class="card shadow-5 mb-0">
-                        <div class="flex justify-content-between mb-3">
-                            <div>
-                                <h3 class="block text-500 font-medium mb-3">Flowrate</h3>
-                                <div class="text-900 font-medium text-xl">{{ currentFlowrate?.y }} <small>l/s</small></div>
-                            </div>
-                            <div class="flex align-items-center justify-content-center bg-blue-100 border-round" style="width: 2.5rem; height: 2.5rem">
-                                <i class="pi pi-chart-line text-blue-500 text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-12 lg:col-12 xl:col-12">
+                <RadialChartPage tag="l/s" colors="#247BA0" :name="['Flowrate']" :series="[currentFlowrate?.y]" />
             </div>
-            <div class="col-12 lg:col-6 xl:col-6">
-                <div class="parent">
-                    <div class="card shadow-5 mb-0">
-                        <div class="flex justify-content-between mb-3">
-                            <div>
-                                <h3 class="block text-500 font-medium mb-3">Pressure</h3>
-                                <div class="text-900 font-medium text-xl">
-                                    <span class="font-bold mx-2">
-                                        {{ currentPressure?.y }}
-                                    </span>
-                                    <small>l/s</small>
-                                </div>
-                            </div>
-                            <div class="flex align-items-center justify-content-center bg-yellow-100 border-round" style="width: 2.5rem; height: 2.5rem">
-                                <i class="pi pi-chart-line text-yellow-500 text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-12 lg:col-12 xl:col-12">
+                <RadialChartPage tag="BAR" colors="#FFBB5C" :name="['Pressure']" :series="[currentPressure?.y]" />
             </div>
         </div>
     </div>

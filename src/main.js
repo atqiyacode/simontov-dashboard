@@ -105,7 +105,7 @@ import CodeHighlight from '@/components/CodeHighlight.vue';
 import BlockViewer from '@/components/BlockViewer.vue';
 
 import VueToast from 'vue-toastification';
-// import VueApexCharts from 'vue3-apexcharts';
+import VueApexCharts from 'vue3-apexcharts';
 // Import the CSS or use your own!
 import 'vue-toastification/dist/index.css';
 
@@ -143,7 +143,7 @@ pinia.use(resetStore);
     app.use(ToastService);
     app.use(DialogService);
     app.use(ConfirmationService);
-    // app.use(VueApexCharts);
+    app.use(VueApexCharts);
 
     app.use(VueToast, {
         transition: 'Vue-Toastification__fade',
