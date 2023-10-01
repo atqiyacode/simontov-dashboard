@@ -51,29 +51,29 @@ const options = {
                 },
                 value: {
                     offsetY: -10,
-                    fontSize: '16px',
-                    color: undefined,
-                    formatter: function (val) {
-                        return `${val} ${props.tag}`;
-                    }
+                    fontSize: '20px',
+                    color: props.colors
+                    // formatter: function (val) {
+                    //     return `${val} ${props.tag}`;
+                    // }
                 }
             }
         }
     },
     colors: [props.colors],
-    // fill: {
-    //     type: 'gradient',
-    //     gradient: {
-    //         shade: 'gradient',
-    //         type: 'horizontal',
-    //         shadeIntensity: 0.5,
-    //         gradientToColors: ['#ff5d9e'],
-    //         inverseColors: !0,
-    //         opacityFrom: 1,
-    //         opacityTo: 1,
-    //         stops: [0, 100]
-    //     }
-    // },
+    fill: {
+        type: 'gradient',
+        gradient: {
+            shade: 'gradient',
+            type: 'horizontal',
+            shadeIntensity: 0.5,
+            gradientToColors: ['#ff5d9e'],
+            inverseColors: !0,
+            opacityFrom: 1,
+            opacityTo: 1,
+            stops: [0, 100]
+        }
+    },
     stroke: {
         dashArray: 4
     },
@@ -81,5 +81,7 @@ const options = {
 };
 </script>
 <template>
-    <apexchart :options="options" :series="series" height="300"></apexchart>
+    <div class="card shadow-3">
+        <apexchart :options="options" :series="series" height="300"></apexchart>
+    </div>
 </template>
