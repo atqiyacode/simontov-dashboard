@@ -3,9 +3,6 @@ import { ref } from 'vue';
 defineProps({
     chartSeries: {
         type: Array
-    },
-    lastTimestamp: {
-        type: String
     }
 });
 
@@ -34,9 +31,6 @@ const chartOptions = ref({
     },
     xaxis: {
         type: 'datetime',
-        // labels: {
-        //     format: 'HH:mm:ss'
-        // },
         labels: {
             // formatter: (value) => new Date(value).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
             formatter: function (e) {
@@ -119,7 +113,7 @@ const chartOptions = ref({
     },
     plotOptions: {
         bar: {
-            columnWidth: '20%'
+            columnWidth: '50%'
         }
     },
     legend: {
@@ -128,7 +122,7 @@ const chartOptions = ref({
 });
 </script>
 <template>
-    <div class="card shadow-3">
+    <div class="card shadow-3" v-if="chartSeries">
         <apexchart ref="realTimeChart" :options="chartOptions" :series="chartSeries" height="400"></apexchart>
     </div>
 </template>

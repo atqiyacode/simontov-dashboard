@@ -55,7 +55,7 @@ const onSelectMap = (location) => {
                                         </span>
                                     </div>
                                 </li>
-                                <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+                                <!-- <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
                                     <div>
                                         <span class="font-bold mr-2 mb-1 md:mb-0 capitalize text-gray-500"> Longitude </span>
                                     </div>
@@ -74,7 +74,7 @@ const onSelectMap = (location) => {
                                             {{ location.lat }}
                                         </span>
                                     </div>
-                                </li>
+                                </li> -->
                                 <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4" v-if="location.description">
                                     {{ location.description }}
                                 </li>

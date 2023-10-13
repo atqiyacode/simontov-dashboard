@@ -16,7 +16,10 @@ export const useMainStore = defineStore(
         const error = ref({});
         const loading = ref(false);
         const errors = ref([]);
-        const dashboard = ref({});
+        const dashboard = ref({
+            showMap: true,
+            timeoutChart: 1
+        });
         const registerVerification = ref(false);
         const authVerification = ref(false);
         const server = import.meta.env.VITE_APP_SERVER;
@@ -147,7 +150,7 @@ export const useMainStore = defineStore(
         // persist: true,
         persist: {
             key: 'global',
-            paths: ['language', 'socketId', 'currentMap']
+            paths: ['language', 'socketId', 'currentMap', 'dashboard']
         }
     }
 );

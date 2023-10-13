@@ -7,7 +7,7 @@ import { useMainStore } from '@/services/main.store';
 const mainStore = useMainStore();
 const { layoutConfig, contextPath } = useLayout();
 const logoUrl = computed(() => {
-    return `${contextPath}layout/images/${layoutConfig.darkTheme.value ? 'main-logo' : 'main-logo'}.png`;
+    return `${contextPath}layout/images/${layoutConfig.darkTheme.value ? 'vepro' : 'vepro'}.png`;
 });
 </script>
 

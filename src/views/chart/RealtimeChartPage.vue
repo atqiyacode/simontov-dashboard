@@ -1,8 +1,13 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { getCurrentInstance, onMounted, ref } from 'vue';
 import RadialChartPage from './RadialChartPage.vue';
 import RealtimeLineChartPage from './RealtimeLineChartPage.vue';
 import CurrentMapPage from './CurrentMapPage.vue';
+import { useMainStore } from '@/services/main.store';
+import { storeToRefs } from 'pinia';
+const mainStore = useMainStore();
+const { dashboard } = storeToRefs(mainStore);
+const { proxy } = getCurrentInstance();
 const indonesiaTimeZone = 'Asia/Jakarta';
 const chartSeries = ref([
     {
@@ -20,33 +25,40 @@ const currentFlowrate = ref(0);
 const currentPressure = ref(0);
 
 onMounted(() => {
-    setInterval(() => {
-        const timestamp = new Date().toLocaleString('en-US', { timeZone: indonesiaTimeZone });
-        const newDataPoint1 = {
-            x: timestamp,
-            y: (Math.random() * 100).toFixed(2)
-        };
-        const newDataPoint2 = {
-            x: timestamp,
-            y: (Math.random() * 100).toFixed(2)
-        };
-        chartSeries.value[0].data.push(newDataPoint1);
-        chartSeries.value[1].data.push(newDataPoint2);
-        currentFlowrate.value = newDataPoint1;
-        currentPressure.value = newDataPoint2;
-        // Remove older data points to limit the chart length
-        if (chartSeries.value[0].data.length > 20) {
-            chartSeries.value[0].data.shift();
-            chartSeries.value[1].data.shift();
-        }
+    // loadChart();
+});
 
-        // Update the chart
-        lastTimestamp.value = timestamp;
-    }, 5000);
+const loadChart = (data) => {
+    const timestamp = new Date().toLocaleString('en-US', { timeZone: indonesiaTimeZone });
+    const newDataPoint1 = {
+        x: timestamp,
+        y: data.flowrate
+    };
+    const newDataPoint2 = {
+        x: timestamp,
+        y: data.totalizer_3
+    };
+    chartSeries.value[0].data.push(newDataPoint1);
+    chartSeries.value[1].data.push(newDataPoint2);
+    currentFlowrate.value = newDataPoint1;
+    currentPressure.value = newDataPoint2;
+    // Remove older data points to limit the chart length
+    if (chartSeries.value[0].data.length > 20) {
+        chartSeries.value[0].data.shift();
+        chartSeries.value[1].data.shift();
+    }
+
+    // Update the chart
+    lastTimestamp.value = timestamp;
+};
+
+proxy.$pusher.channel('flowrate-channel').listen('.flowrate-event', (res) => {
+    const data = res.data.data;
+    loadChart(data);
 });
 </script>
 <template>
-    <div class="col-12 lg:col-6 xl:col-8">
+    <div :class="dashboard.showMap ? 'col-12 lg:col-6 xl:col-8' : 'col-12 '">
         <div class="grid">
             <div class="col-12 lg:col-12 xl:col-12">
                 <RealtimeLineChartPage :chartSeries="chartSeries" :lastTimestamp="lastTimestamp" />
@@ -61,6 +73,6 @@ onMounted(() => {
     </div>
 
     <div class="col-12 lg:col-6 xl:col-4">
-        <CurrentMapPage />
+        <CurrentMapPage v-if="dashboard.showMap" />
     </div>
 </template>

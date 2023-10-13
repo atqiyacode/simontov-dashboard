@@ -52,27 +52,27 @@ const options = {
                 value: {
                     offsetY: -10,
                     fontSize: '20px',
-                    color: props.colors
-                    // formatter: function (val) {
-                    //     return `${val} ${props.tag}`;
-                    // }
+                    color: props.colors,
+                    formatter: function (val) {
+                        return `${val} ${props.tag}`;
+                    }
                 }
             }
         }
     },
     colors: [props.colors],
     fill: {
-        type: 'gradient',
-        gradient: {
-            shade: 'gradient',
-            type: 'horizontal',
-            shadeIntensity: 0.5,
-            gradientToColors: ['#ff5d9e'],
-            inverseColors: !0,
-            opacityFrom: 1,
-            opacityTo: 1,
-            stops: [0, 100]
-        }
+        // type: 'gradient',
+        // gradient: {
+        //     shade: 'gradient',
+        //     type: 'horizontal',
+        //     shadeIntensity: 0.5,
+        //     gradientToColors: ['#ff5d9e'],
+        //     inverseColors: !0,
+        //     opacityFrom: 1,
+        //     opacityTo: 1,
+        //     stops: [0, 100]
+        // }
     },
     stroke: {
         dashArray: 4

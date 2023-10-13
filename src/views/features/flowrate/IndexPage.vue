@@ -98,16 +98,16 @@ proxy.$pusher.channel('flowrate-channel').listen('.flowrate-event', () => {
     <Dialog v-model:visible="detailDialog" :style="{ width: '50vw' }" :breakpoints="{ '960px': '75vw', '641px': '100vw' }" header="Detail" :modal="true" :closable="false">
         <div class="card" v-if="selected">
             <ul class="list-none p-0 m-0">
-                <ListDetailBreak label="mag_date" :value="selected.mag_date" />
-                <ListDetailBreak label="flowrate" :value="selected.flowrate" />
-                <ListDetailBreak label="totalizer 1" :value="selected.totalizer_1" />
-                <ListDetailBreak label="totalizer 2" :value="selected.totalizer_2" />
-                <ListDetailBreak label="totalizer 3" :value="selected.totalizer_3" />
-                <ListDetailBreak label="analog 1" :value="selected.analog_1" />
-                <ListDetailBreak label="pressure" :value="selected.analog_2" />
-                <ListDetailBreak label="status battery" :value="selected.status_battery" />
-                <ListDetailBreak label="bin alarm" :value="selected.bin_alarm" />
-                <ListDetailBreak label="file" :value="selected.file_name" />
+                <ListDetail label="mag_date" :value="selected.mag_date" />
+                <ListDetail label="flowrate" :value="selected.flowrate" />
+                <ListDetail label="totalizer 1" :value="selected.totalizer_1" />
+                <ListDetail label="totalizer 2" :value="selected.totalizer_2" />
+                <ListDetail label="totalizer 3" :value="selected.totalizer_3" />
+                <ListDetail label="analog 1" :value="selected.analog_1" />
+                <ListDetail label="pressure" :value="selected.analog_2" />
+                <ListDetail label="status battery" :value="selected.status_battery" />
+                <ListDetail label="bin alarm" :value="selected.bin_alarm" />
+                <ListDetail label="file" :value="selected.file_name" />
             </ul>
         </div>
 

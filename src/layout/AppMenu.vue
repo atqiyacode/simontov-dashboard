@@ -11,8 +11,8 @@ const model = ref([
         label: 'Home',
         items: [
             { label: 'Ganti Lokasi', icon: 'pi pi-fw pi-map-marker', to: '/map-site' },
-            { label: 'Realtime', icon: 'pi pi-fw pi-chart-line', to: '/dashboard' }
-            // { label: 'Static', icon: 'pi pi-fw pi-chart-bar', to: '/dashboard' }
+            { label: 'Realtime', icon: 'pi pi-fw pi-chart-line', to: '/dashboard' },
+            { label: 'Static', icon: 'pi pi-fw pi-chart-bar', to: '/dashboard-static' }
         ]
     },
     {

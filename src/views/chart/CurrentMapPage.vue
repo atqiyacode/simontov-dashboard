@@ -2,24 +2,22 @@
 import { onMounted } from 'vue';
 import { GoogleMap, Marker, InfoWindow, MarkerCluster } from 'vue3-google-map';
 import { useMainStore } from '@/services/main.store';
-import { useOptionStore } from '@/services/option.store';
 import { storeToRefs } from 'pinia';
 
 const mainStore = useMainStore();
-const optionStore = useOptionStore();
 
 const { currentMap } = storeToRefs(mainStore);
 
 onMounted(() => {
-    optionStore.loadSites();
+    //
 });
 
 const gmapApiKey = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 </script>
 
 <template>
-    <div class="card shadow-3 mb-0" v-if="currentMap">
-        <GoogleMap :api-key="gmapApiKey" style="width: 100%; height: 500px" :center="{ lat: currentMap.lat, lng: currentMap.lng }" :zoom="10">
+    <div class="card shadow-3 mb-3" v-if="currentMap">
+        <GoogleMap :api-key="gmapApiKey" style="width: 100%; height: 500px" :center="{ lat: currentMap.lat, lng: currentMap.lng }" :zoom="13">
             <MarkerCluster>
                 <Marker :options="{ position: { lat: currentMap.lat, lng: currentMap.lng } }">
                     <InfoWindow class="" :options="{ position: { lat: currentMap.lat, lng: currentMap.lng }, disableAutoPan: true }">
@@ -52,14 +50,15 @@ const gmapApiKey = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
                 </Marker>
             </MarkerCluster>
         </GoogleMap>
-        <div class="card mt-3">
-            <ul class="list-none p-0 m-0">
-                <ListDetail label="Kode" :value="currentMap.code" />
-                <ListDetail label="Lokasi" :value="currentMap.name" />
-                <ListDetail label="Longitude" :value="currentMap.lng" />
-                <ListDetail label="Latitude" :value="currentMap.lat" />
-                <ListDetailBreak label="description" :value="currentMap.description" />
-            </ul>
-        </div>
+    </div>
+
+    <div class="card shadow-3 mb-3" v-if="currentMap">
+        <ul class="list-none p-0 m-0">
+            <ListDetail label="Kode" :value="currentMap.code" />
+            <ListDetail label="Lokasi" :value="currentMap.name" />
+            <ListDetail label="Longitude" :value="currentMap.lng" />
+            <ListDetail label="Latitude" :value="currentMap.lat" />
+            <ListDetailBreak label="description" :value="currentMap.description" />
+        </ul>
     </div>
 </template>

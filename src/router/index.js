@@ -29,6 +29,15 @@ const router = createRouter({
                         title: 'Dashboard'
                     }
                 },
+                {
+                    path: '/dashboard-static',
+                    name: 'dashboard-static',
+                    component: () => import('@/views/DashboardStatic.vue'),
+                    meta: {
+                        requiresAuth: true,
+                        title: 'Dashboard Static'
+                    }
+                },
                 // master data auth
                 {
                     path: '/master/main',
