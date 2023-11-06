@@ -22,7 +22,7 @@ const chartOptions = ref({
             }
         }
     },
-    colors: ['#FFBB5C', '#247BA0'],
+    colors: ['#D0A2F7'],
     markers: {
         size: 0,
         hover: {
@@ -48,43 +48,43 @@ const chartOptions = ref({
     },
     yaxis: [
         {
+            opposite: true,
             axisTicks: {
                 show: false
             },
             axisBorder: {
                 show: true,
-                color: '#FFBB5C'
+                color: '#D0A2F7'
             },
             labels: {
                 style: {
-                    colors: '#FFBB5C'
+                    colors: '#D0A2F7'
                 }
             },
             title: {
-                text: 'l/s',
+                text: 'COD',
                 style: {
-                    color: '#FFBB5C'
+                    color: '#D0A2F7'
                 }
             }
         },
         {
-            opposite: true,
             axisTicks: {
                 show: true
             },
             axisBorder: {
                 show: true,
-                color: '#247BA0'
+                color: '#D0A2F7'
             },
             labels: {
                 style: {
-                    colors: '#247BA0'
+                    colors: '#D0A2F7'
                 }
             },
             title: {
-                text: 'BAR',
+                text: 'COD',
                 style: {
-                    color: '#247BA0'
+                    color: '#D0A2F7'
                 }
             }
         }
@@ -117,13 +117,14 @@ const chartOptions = ref({
         }
     },
     legend: {
-        show: false
+        horizontalAlign: 'left',
+        offsetX: 40
     }
 });
 </script>
 <template>
     <div class="card shadow-3" v-if="chartSeries">
-        <p>Flowrate and Pressure</p>
+        <p>COD Realtime Chart</p>
         <apexchart ref="realTimeChart" :options="chartOptions" :series="chartSeries" height="400"></apexchart>
     </div>
 </template>

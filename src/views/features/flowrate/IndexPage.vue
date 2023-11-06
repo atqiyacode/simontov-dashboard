@@ -1,9 +1,11 @@
 <script setup>
 import { getCurrentInstance, onMounted, onUnmounted } from 'vue';
 import { storeToRefs } from 'pinia';
+import { useMainStore } from '@/services/main.store';
 import { useCrudStore } from '@/services/crud.store';
 const { proxy } = getCurrentInstance();
 
+const mainStore = useMainStore();
 const store = useCrudStore();
 
 const { hideDialog, getData, filterSearch, onChangePage, processData, destroyData, onCreate, showEditDialog, showDetail, confirmDelete, onRestore, onDestroy, restoreData, deleteData } = store;
@@ -16,6 +18,8 @@ onMounted(() => {
     api.value = '/feature/flowrate';
     tableBody.value = [
         { label: 'mag date', value: 'mag_date', type: 'text' },
+        { label: 'ph', value: 'ph', type: 'text' },
+        { label: 'cod', value: 'cod', type: 'text' },
         { label: 'flowrate', value: 'flowrate', type: 'text' },
         { label: 'totalizer 1', value: 'totalizer_1', type: 'text' },
         { label: 'totalizer 2', value: 'totalizer_2', type: 'text' },
@@ -46,13 +50,17 @@ const onEdit = (val) => {
 
 proxy.$pusher.channel('flowrate-channel').listen('.flowrate-event', () => {
     getData();
+    mainStore.$patch({
+        message: 'New Data'
+    });
+    mainStore.successToast('top-right', 3000);
 });
 </script>
 
 <template>
     <CustomDataTable
         :label="title"
-        :loading="loading"
+        :loading="false"
         :data="data"
         :meta="meta"
         :rowsPerPage="rowsPerPage"
@@ -108,6 +116,8 @@ proxy.$pusher.channel('flowrate-channel').listen('.flowrate-event', () => {
                 <ListDetail label="status battery" :value="selected.status_battery" />
                 <ListDetail label="bin alarm" :value="selected.bin_alarm" />
                 <ListDetail label="file" :value="selected.file_name" />
+                <ListDetail label="PH" :value="selected.ph" />
+                <ListDetail label="COD" :value="selected.cod" />
             </ul>
         </div>
 
