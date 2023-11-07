@@ -79,7 +79,6 @@ const loadPHChart = (data) => {
     // Remove older data points to limit the chart length
     if (chartPHSeries.value[0].data.length > 20) {
         chartPHSeries.value[0].data.shift();
-        chartPHSeries.value[1].data.shift();
     }
 };
 
@@ -94,7 +93,6 @@ const loadCODChart = (data) => {
     // Remove older data points to limit the chart length
     if (chartCODSeries.value[0].data.length > 20) {
         chartCODSeries.value[0].data.shift();
-        chartCODSeries.value[1].data.shift();
     }
 };
 
