@@ -3,12 +3,12 @@ import axios from '@/plugins/axios';
 import { ref } from 'vue';
 import { useUserStore } from './user.store';
 import { useMainStore } from './main.store';
-// import { useRouter } from 'vue-router';
+import router from '@/router';
+
 export const useAuthStore = defineStore('auth', () => {
     // store
     const mainStore = useMainStore();
     const userStore = useUserStore();
-    // const router = useRouter();
 
     // state
     const form = ref({
@@ -19,88 +19,31 @@ export const useAuthStore = defineStore('auth', () => {
     const hasPhone = ref(false);
     const hasEmail = ref(false);
     // function
-    const login = async () => {
-        await axios
-            .post(`login`, form.value)
-            .then((res) => {
-                mainStore.$patch({
-                    authVerification: true
-                });
+    const login = () => {
+        return new Promise((resolve, reject) => {
+            axios
+                .post(`auth/login`, form.value)
+                .then((res) => {
+                    mainStore.$patch({
+                        authVerification: true
+                    });
 
-                hasEmail.value = res.data.hasEmail;
-                hasPhone.value = res.data.hasPhone;
-                directLogin(res.data);
-            })
-            .catch(() => {
-                mainStore.$patch({
-                    authVerification: false
-                });
-            });
-    };
-
-    const forgotPassword = async () => {
-        await axios
-            .post(`forgot-password`, form.value)
-            .then((res) => {
-                mainStore.$patch({
-                    message: res.data.message
-                });
-                mainStore.successToast();
-            })
-            .catch(() => {
-                mainStore.$patch({
-                    authVerification: false
-                });
-            });
-    };
-
-    const resetPassword = async () => {
-        await axios
-            .post(`reset-password`, form.value)
-            .then((res) => {
-                mainStore.$patch({
-                    message: res.data.message
-                });
-                mainStore.successToast();
-            })
-            .catch(() => {
-                mainStore.$patch({
-                    authVerification: false
-                });
-            });
-    };
-
-    const getCookie = (name) => {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) {
-            return parts.pop().split(';').shift();
-        }
-    };
-
-    const session = async () => {
-        await axios
-            .get(`session`)
-            .then((res) => {
-                userStore.$patch({
-                    isLoggedIn: true,
-                    isVerified: res.data.verified,
-                    user: res.data,
-                    sessionId: res.data.id,
-                    form: {
-                        whatsapp: res.data.phone,
-                        email: res.data.email,
-                        old_password: '',
-                        password: '',
-                        password_confirmation: ''
+                    hasEmail.value = res.data.hasEmail;
+                    hasPhone.value = res.data.hasPhone;
+                    if (res.data.token) {
+                        directLogin(res.data);
+                    } else {
+                        router.push({ name: 'auth-verification' })
                     }
+                    resolve(res);
+                })
+                .catch((err) => {
+                    mainStore.$patch({
+                        authVerification: false
+                    });
+                    reject(err);
                 });
-            })
-            .catch(() => {
-                userStore.$patch({
-                    isLoggedIn: false
-                });
-            });
+        });
     };
     const verifyLogin = () => {
         return new Promise((resolve, reject) => {
@@ -110,10 +53,52 @@ export const useAuthStore = defineStore('auth', () => {
                     userStore.$patch({
                         user: res.data.user,
                         accessToken: res.data.token,
-                        isLoggedIn: true,
-                        isVerified: res.data.user.verified
+                        isLoggedIn: true
                     });
+                    directLogin(res.data);
                     mainStore.clearGuestSession();
+                    resolve(res);
+                })
+                .catch((err) => {
+                    console.log(err);
+                    reject(err);
+                });
+        });
+    };
+
+    const directLogin = (data) => {
+        if (data.user.is_verified) {
+            userStore.$patch({
+                user: data.user,
+                accessToken: data.token,
+                isLoggedIn: true
+            });
+            mainStore.clearGuestSession();
+            router.push({
+                name: 'dashboard'
+            });
+        } else {
+            userStore.$patch({
+                user: data.user,
+                accessToken: data.token,
+                isLoggedIn: true
+            });
+            mainStore.clearGuestSession();
+            router.push({
+                name: 'verify-email'
+            });
+        }
+    };
+
+    const sendLinkEmailVerification = () => {
+        return new Promise((resolve, reject) => {
+            axios
+                .post(`auth/email/verification-notification`)
+                .then((res) => {
+                    mainStore.$patch({
+                        message: res.data.message
+                    });
+                    mainStore.notify(res.data.message);
                     resolve(res);
                 })
                 .catch((err) => {
@@ -122,47 +107,61 @@ export const useAuthStore = defineStore('auth', () => {
         });
     };
 
-    const directLogin = (data) => {
-        userStore.$patch({
-            user: data.user,
-            accessToken: data.token,
-            isLoggedIn: true,
-            isVerified: data.user.verified
+    const sendLinkForgotPassword = () => {
+        return new Promise((resolve, reject) => {
+            axios
+                .post(`auth/forgot-password`, form.value)
+                .then((res) => {
+                    mainStore.$patch({
+                        message: res.data.message
+                    });
+                    mainStore.notify(res.data.message);
+
+                    resolve(res);
+                })
+                .catch((err) => {
+                    reject(err);
+                });
         });
-        mainStore.clearGuestSession();
-        window.location.reload();
     };
 
-    const verifyEmailAddress = async (url) => {
-        await axios
-            .get(url)
-            .then((res) => {
-                mainStore.$patch({
-                    message: res.data.message
+    const resetPassword = () => {
+        return new Promise((resolve, reject) => {
+            axios
+                .post(`auth/reset-password`, form.value)
+                .then((res) => {
+                    mainStore.$patch({
+                        message: res.data.message
+                    });
+                    mainStore.notify(res.data.message);
+
+                    resolve(res);
+                })
+                .catch((err) => {
+                    reject(err);
                 });
-            })
-            .catch((err) => {
-                if (err.status == 400) {
+        });
+    };
+
+    const verifyEmail = (url) => {
+        return new Promise((resolve, reject) => {
+            axios
+                .get(url)
+                .then((res) => {
+                    mainStore.$patch({
+                        message: res.data.message
+                    });
+                    mainStore.notify(res.data.message);
+                    resolve(res);
+                })
+                .catch((err) => {
                     mainStore.$patch({
                         message: err.data.message
                     });
-                }
-                return err;
-            });
-    };
-
-    const sendEmailVerification = async () => {
-        await axios
-            .post(`email/verification-notification`)
-            .then((res) => {
-                mainStore.$patch({
-                    message: res.data.message
+                    mainStore.errorToast();
+                    reject(err);
                 });
-                mainStore.successToast();
-            })
-            .catch((err) => {
-                return err;
-            });
+        });
     };
 
     const resend = async () => {
@@ -170,7 +169,7 @@ export const useAuthStore = defineStore('auth', () => {
             .post(`auth/generateTokenCode`, form.value)
             .then((res) => {
                 mainStore.$patch({
-                    message: res.data.message
+                    message: res.data.success
                 });
             })
             .catch((err) => {
@@ -199,8 +198,10 @@ export const useAuthStore = defineStore('auth', () => {
     const logout = () => {
         return new Promise((resolve, reject) => {
             axios
-                .post(`logout`)
+                .post(`auth/logout`)
                 .then((res) => {
+                    localStorage.removeItem('sessionToken');
+                    localStorage.removeItem('option');
                     mainStore.clearCurrentSession();
                     resolve(res);
                 })
@@ -216,16 +217,14 @@ export const useAuthStore = defineStore('auth', () => {
         hasEmail,
         // function
         login,
-        forgotPassword,
-        resetPassword,
         verifyLogin,
         directLogin,
+        sendLinkEmailVerification,
+        sendLinkForgotPassword,
+        resetPassword,
+        verifyEmail,
         resend,
         getTokenCode,
-        logout,
-        session,
-        getCookie,
-        sendEmailVerification,
-        verifyEmailAddress
+        logout
     };
 });

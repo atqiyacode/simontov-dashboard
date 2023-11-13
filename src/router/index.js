@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import AppLayout from '@/layout/AppLayout.vue';
-import AppGuestLayout from '@/layout/AppGuestLayout.vue';
+import AppGuestLayoutVue from '@/layout/AppGuestLayout.vue';
 import AppMapLayout from '@/layout/AppMapLayout.vue';
-import { useUserStore } from '../services/user.store';
+import { useUserStore } from '@/services/user.store';
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,155 +18,131 @@ const router = createRouter({
         {
             path: '/',
             component: AppLayout,
-            redirect: '/dashboard',
+            meta: {
+                requiresAuth: true
+            },
             children: [
                 {
-                    path: '/dashboard',
-                    name: 'dashboard',
-                    component: () => import('@/views/Dashboard.vue'),
-                    meta: {
-                        requiresAuth: true,
-                        title: 'Dashboard'
-                    }
+                    path: '/',
+                    redirect: '/app/dashboard/realtime'
                 },
                 {
-                    path: '/dashboard-static',
-                    name: 'dashboard-static',
-                    component: () => import('@/views/DashboardStatic.vue'),
-                    meta: {
-                        requiresAuth: true,
-                        title: 'Dashboard Static'
-                    }
+                    path: '/app/dashboard',
+                    children: [
+                        {
+                            path: 'realtime',
+                            name: 'dashboard',
+                            component: () => import('@/views/Dashboard.vue'),
+                            meta: {
+                                title: 'Dashbaord realtime',
+                                role: ['superman', 'superadmin']
+                            }
+                        },
+                        {
+                            path: 'static',
+                            name: 'dashboard-static',
+                            component: () => import('@/views/Dashboard.vue'),
+                            meta: {
+                                title: 'Dashbaord Static',
+                                role: ['superman', 'superadmin']
+                            }
+                        }
+                    ]
                 },
                 // master data auth
                 {
-                    path: '/master/main',
-                    meta: {
-                        requiresAuth: true
-                    },
+                    path: '/app/master',
                     children: [
                         {
                             path: 'role',
                             name: 'master-role',
-                            component: () => import('@/views/master/main/RolePage.vue'),
+                            component: () => import('@/views/master/RolePage.vue'),
                             meta: {
                                 title: 'Role Data',
-                                role: ['superadmin']
+                                role: ['superman', 'superadmin']
                             }
                         },
                         {
                             path: 'permission',
                             name: 'master-permission',
-                            component: () => import('@/views/master/main/PermissionPage.vue'),
+                            component: () => import('@/views/master/PermissionPage.vue'),
                             meta: {
                                 title: 'Permission Data',
-                                role: ['superadmin']
+                                role: ['superman', 'superadmin']
                             }
-                        }
-                    ]
-                },
-
-                // master account
-                {
-                    path: '/master/account',
-                    meta: {
-                        requiresAuth: true
-                    },
-                    children: [
+                        },
                         {
                             path: 'user',
                             name: 'master-user',
-                            component: () => import('@/views/master/account/UserPage.vue'),
+                            component: () => import('@/views/master/UserPage.vue'),
                             meta: {
                                 title: 'User Data',
-                                role: ['superadmin']
+                                role: ['superman', 'superadmin']
+                            }
+                        },
+                        {
+                            path: 'location',
+                            name: 'master-location',
+                            component: () => import('@/views/master/LocationPage.vue'),
+                            meta: {
+                                title: 'Lokasi Data',
+                                role: ['superman', 'superadmin']
+                            }
+                        },
+
+                        {
+                            path: 'tax',
+                            name: 'master-tax',
+                            component: () => import('@/views/master/TaxPage.vue'),
+                            meta: {
+                                title: 'Pajak Data',
+                                role: ['superman', 'superadmin']
                             }
                         }
                     ]
                 },
-
-                // feature
                 {
-                    path: '/feature',
-                    meta: {
-                        requiresAuth: true
-                    },
+                    path: '/app/billing',
                     children: [
                         {
-                            path: 'location',
-                            children: [
-                                {
-                                    path: '',
-                                    name: 'feature-location',
-                                    component: () => import('@/views/features/location/IndexPage.vue'),
-                                    meta: {
-                                        title: 'Location Data',
-                                        role: ['superadmin']
-                                    }
-                                },
-                                {
-                                    path: 'new',
-                                    name: 'feature-location-new',
-                                    component: () => import('@/views/features/location/NewPage.vue'),
-                                    meta: {
-                                        title: 'Create - Location ',
-                                        role: ['superadmin']
-                                    }
-                                },
-                                {
-                                    path: 'edit/:id',
-                                    name: 'feature-location-edit',
-                                    component: () => import('@/views/features/location/EditPage.vue'),
-                                    meta: {
-                                        title: 'Edit - Location ',
-                                        role: ['superadmin']
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            path: 'flowrate',
-                            name: 'feature-flowrate',
-                            component: () => import('@/views/features/flowrate/IndexPage.vue'),
-                            meta: {
-                                title: 'Flowrate Data',
-                                role: ['superadmin']
-                            }
-                        },
-                        {
-                            path: 'status-alarm',
-                            name: 'feature-status-alarm',
-                            component: () => import('@/views/features/status-alarm/IndexPage.vue'),
-                            meta: {
-                                title: 'Status Alarm Data',
-                                role: ['superadmin']
-                            }
-                        },
-                        {
                             path: 'range-type',
-                            name: 'feature-range-type',
-                            component: () => import('@/views/features/range-type/IndexPage.vue'),
+                            name: 'billing-range-type',
+                            component: () => import('@/views/billing/RangeTypePage.vue'),
                             meta: {
-                                title: 'Range Type',
-                                role: ['superadmin']
+                                title: 'Range Type Data',
+                                role: ['superman', 'superadmin']
                             }
                         },
                         {
                             path: 'range-cost',
-                            name: 'feature-range-cost',
-                            component: () => import('@/views/features/range-cost/IndexPage.vue'),
+                            name: 'billing-range-cost',
+                            component: () => import('@/views/billing/RangeCostPage.vue'),
                             meta: {
-                                title: 'Range Cost',
-                                role: ['superadmin']
+                                title: 'Range Cost Data',
+                                role: ['superman', 'superadmin']
+                            }
+                        }
+                    ]
+                },
+                {
+                    path: '/app/feature',
+                    children: [
+                        {
+                            path: 'status-alarm',
+                            name: 'feature-status-alarm',
+                            component: () => import('@/views/features/StatusAlarmPage.vue'),
+                            meta: {
+                                title: 'Lokasi Data',
+                                role: ['superman', 'superadmin']
                             }
                         },
                         {
-                            path: 'tax',
-                            name: 'feature-tax',
-                            component: () => import('@/views/features/tax/IndexPage.vue'),
+                            path: 'flowrate',
+                            name: 'feature-flowrate',
+                            component: () => import('@/views/features/FlowratePage.vue'),
                             meta: {
-                                title: 'Tax',
-                                role: ['superadmin']
+                                title: 'Flowrate Data',
+                                role: ['superman', 'superadmin']
                             }
                         }
                     ]
@@ -175,16 +151,16 @@ const router = createRouter({
         },
 
         {
-            path: '/map-site',
+            path: '/select-location',
             component: AppMapLayout,
             children: [
                 {
                     path: '',
-                    name: 'map-site',
-                    component: () => import('@/views/SelectSitePage.vue'),
+                    name: 'select-location',
+                    component: () => import('@/views/SelectLocationPage.vue'),
                     meta: {
                         requiresAuth: true,
-                        title: 'Map Site'
+                        title: 'Location'
                     }
                 }
             ]
@@ -193,10 +169,7 @@ const router = createRouter({
         // authentication
         {
             path: '/auth',
-            component: AppGuestLayout,
-            meta: {
-                requiresAuth: false
-            },
+            component: AppGuestLayoutVue,
             children: [
                 {
                     path: 'login',
@@ -208,6 +181,15 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: 'verify',
+                    name: 'auth-verification',
+                    component: () => import('@/views/auth/AuthVerificationPage.vue'),
+                    meta: {
+                        requiresAuth: false,
+                        title: 'Verification'
+                    }
+                },
+                {
                     path: 'forgot-password',
                     name: 'forgot-password',
                     component: () => import('@/views/auth/ForgotPasswordPage.vue'),
@@ -215,37 +197,34 @@ const router = createRouter({
                         requiresAuth: false,
                         title: 'Forgot Password'
                     }
+                },
+                {
+                    path: 'verify-email',
+                    name: 'verify-email',
+                    component: () => import('@/views/auth/EmailVerificationPage.vue'),
+                    meta: {
+                        requiresAuth: true,
+                        title: 'Verification'
+                    }
                 }
             ]
         },
-
-        {
-            path: '/email-verification',
-            name: 'email-verification',
-            component: () => import('@/views/auth/EmailVerificationPage.vue'),
-            meta: {
-                requiresAuth: true,
-                title: 'Email Verification'
-            }
-        },
-
         {
             path: '/verify-email',
-            name: 'verify-email',
-            component: () => import('@/views/auth/CheckEmailVerificationPage.vue'),
+            name: 'verify-email-authentication',
+            component: () => import('@/views/auth/EmailVerificationUserPage.vue'),
             meta: {
                 requiresAuth: true,
-                title: 'Email Verification'
+                title: 'Verification'
             }
         },
-
         {
             path: '/password-reset/:token',
             name: 'password-reset',
-            component: () => import('@/views/auth/PasswordResetPage.vue'),
+            component: () => import('@/views/auth/ResetPasswordPage.vue'),
             meta: {
                 requiresAuth: false,
-                title: 'Password Reset'
+                title: 'Reset Password'
             }
         },
 
@@ -253,7 +232,7 @@ const router = createRouter({
         {
             path: '/no-access-permission',
             name: 'no-access-permission',
-            component: () => import('@/views/error-pages/NoAccessPermissionPage.vue'),
+            component: () => import('@/views/_errors/NoAccessPermissionPage.vue'),
             meta: {
                 title: 'No Access Permission'
             }
@@ -261,7 +240,7 @@ const router = createRouter({
         {
             path: '/data-not-found',
             name: 'data-not-found',
-            component: () => import('@/views/error-pages/NotFoundData.vue'),
+            component: () => import('@/views/_errors/NotFoundData.vue'),
             meta: {
                 title: 'Data Not Found'
             }
@@ -270,7 +249,7 @@ const router = createRouter({
         {
             path: '/:pathMatch(.*)*',
             name: 'page-not-found',
-            component: () => import('@/views/error-pages/NotFoundPage.vue'),
+            component: () => import('@/views/_errors/NotFoundPage.vue'),
             meta: {
                 title: 'Page Not Found'
             }
@@ -285,7 +264,7 @@ function multipleInArray(arr, values) {
 }
 
 router.beforeEach((to, from, next) => {
-    const userStore = useUserStore();
+    const { isLoggedIn, user } = useUserStore();
     const nearestWithTitle = to.matched
         .slice()
         .reverse()
@@ -293,29 +272,25 @@ router.beforeEach((to, from, next) => {
 
     if (nearestWithTitle) document.title = nearestWithTitle.meta.title;
 
-    if (to.name === 'login' && userStore.isLoggedIn) {
-        if (!userStore.isVerified) {
-            next({ name: 'email-verification' });
-        } else {
-            next({ name: 'dashboard' });
-        }
-    } else if (to.matched.some((record) => record.meta.requiresAuth)) {
-        if (!userStore.isLoggedIn) {
-            next({ name: 'login' });
-        } else {
-            if (to.matched.some((record) => record.meta.role)) {
-                if (multipleInArray(userStore.user.roles, to.meta.role)) {
-                    next();
-                } else {
-                    next({ name: 'no-access-permission' });
-                }
-            } else {
-                next();
-            }
-        }
-    } else {
-        next();
+    if (to.name === 'login' && isLoggedIn) {
+        next({ name: 'dashboard' });
+        return;
     }
+
+    if (!to.matched.some((record) => record.meta.requiresAuth) || isLoggedIn) {
+        if (to.matched.some((record) => record.meta.role)) {
+            if (multipleInArray(user.roles, to.meta.role)) {
+                next();
+            } else {
+                next({ name: 'no-access-permission' });
+            }
+        } else {
+            next();
+        }
+        return;
+    }
+
+    next({ name: 'login' });
 });
 
 export default router;

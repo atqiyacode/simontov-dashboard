@@ -5,6 +5,7 @@ const { proxy } = getCurrentInstance();
 const mainStore = useMainStore();
 
 onMounted(() => {
+    mainStore.sanctumCsrf();
     mainStore.$patch({
         socketId: proxy.$pusher.socketId()
     });

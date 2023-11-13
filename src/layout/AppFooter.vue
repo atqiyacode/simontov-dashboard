@@ -1,13 +1,17 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
+import { computed } from 'vue';
 
-const { developerTeam } = useLayout();
+const { layoutConfig, contextPath } = useLayout();
+
+const logoUrl = computed(() => {
+    return `${contextPath}logo/${layoutConfig.darkTheme.value === 'true' ? 'vepro' : 'vepro'}.png`;
+});
 </script>
 
 <template>
     <div class="layout-footer">
-        Created by
-        <span class="font-small ml-2">{{ developerTeam }}</span>
+        <img :src="logoUrl" alt="Logo" height="30" />
     </div>
 </template>
 <style lang="scss" scoped></style>

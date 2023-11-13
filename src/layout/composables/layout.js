@@ -5,10 +5,10 @@ const developerTeam = import.meta.env.VITE_APP_DEVELOPER;
 
 const inputStyleSetup = localStorage.getItem('inputStyle') || 'outlined';
 const menuModeSetup = localStorage.getItem('menuMode') || 'static';
-const themeSetup = localStorage.getItem('theme') || 'mdc-dark-indigo';
+const themeSetup = localStorage.getItem('theme') || 'mdc-light-indigo';
 const scaleSetup = localStorage.getItem('scale') || 14;
 const rippleSetup = localStorage.getItem('ripple') || false;
-const darkThemeSetup = localStorage.getItem('darkTheme') || 'dark';
+const darkThemeSetup = localStorage.getItem('darkTheme') || false;
 
 // setup style on load
 const elementId = 'theme-css';
@@ -46,6 +46,9 @@ export function useLayout() {
     const changeThemeSettings = (theme, darkTheme) => {
         layoutConfig.darkTheme = darkTheme;
         layoutConfig.theme = theme;
+
+        localStorage.setItem('theme', theme);
+        localStorage.setItem('darkTheme', darkTheme);
     };
 
     const setScale = (scale) => {

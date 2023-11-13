@@ -1,9 +1,10 @@
 <script setup>
 import { ref } from 'vue';
 // emits
-defineEmits(['change', 'search', 'create', 'show', 'edit', 'destroy', 'restore', 'deletePermanent', 'deleteSelected', 'restoreSelected', 'changePage', 'upload', 'sort']);
+defineEmits(['import, change', 'search', 'create', 'show', 'edit', 'destroy', 'restore', 'deletePermanent', 'deleteSelected', 'restoreSelected', 'changePage', 'upload', 'sort']);
 // props
 defineProps({
+    title: String,
     label: String,
     keyword: String,
     data: Object,
@@ -59,7 +60,7 @@ const selectedData = ref(null);
 <template>
     <div class="grid">
         <div class="col-12">
-            <div class="card">
+            <div class="card shadow-5">
                 <Toolbar class="mb-3" v-if="canCreate || canUpload || canBack">
                     <template v-slot:start>
                         <div class="my-0">
@@ -85,21 +86,24 @@ const selectedData = ref(null);
                         </div>
                     </template>
                 </Toolbar>
-                <DataTable :value="data" :rowHover="true" v-model:selection="selectedData" :loading="loading" @sort="$emit('sort', $event)" dataKey="id" responsiveLayout="scroll" removableSort>
+                <DataTable :value="data" :rowHover="true" v-model:selection="selectedData" :loading="loading" @sort="$emit('sort', $event)" dataKey="id" responsiveLayout="scroll" scrollable removableSort>
                     <template #empty>
                         <div class="flex flex-column md:flex-row md:justify-content-center md:align-items-center mb-3">
-                            <h5 class="m-0 text-red-600">Data Not Found</h5>
+                            <h5 class="m-0 text-red-600">Data Tidak Ditemukan</h5>
                         </div>
                     </template>
+                    <h5 v-if="title === 'Employee'" class="mb-4 capitalize">{{ label }}</h5>
                     <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center mb-3">
-                        <h5 class="m-0 capitalize">{{ label }}</h5>
+                        <h5 v-if="title !== 'Employee'" class="mb-4 capitalize">{{ label }}</h5>
 
+                        <Button v-if="title === 'Employee'" @click="$emit('import')" label="Import Employee" icon="pi pi-upload" />
                         <span class="block mt-2 md:mt-0 p-input-icon-left" v-if="canSearch">
                             <i class="pi pi-search" />
                             <InputText @input="$emit('search', $event.target.value), (selectedData = false)" :value="keyword" :placeholder="$t('header.search')" />
                         </span>
                     </div>
                     <Column selectionMode="multiple" headerStyle="width: 3rem" v-if="canSelectMultiple"></Column>
+
                     <Column v-for="body in tableBody" :key="body.id" class="text-center" :sortable="body.sort || false" :field="body.value">
                         <template #header>
                             <div class="flex-1 text-center capitalize">{{ body.label }}</div>
@@ -127,13 +131,8 @@ const selectedData = ref(null);
                             <template v-if="body.type === 'text'">
                                 {{ slotProps.data[body.value] ? slotProps.data[body.value] : '-' }}
                             </template>
-                            <!-- volume -->
-                            <template v-if="body.type === 'volume'"> {{ slotProps.data[body.value] ? formatNumber(slotProps.data[body.value]) : '-' }} m<sup>3</sup> </template>
-                            <!-- object volume -->
-                            <template v-if="body.type === 'object-volume'"> {{ slotProps.data[body.value] ? formatNumber(slotProps.data[body.value][body.object]) : '-' }} m<sup>3</sup> </template>
-                            <!-- currency -->
-                            <template v-if="body.type === 'currency'">
-                                {{ slotProps.data[body.value] ? formatCurrency(slotProps.data[body.value]) : '-' }}
+                            <template v-if="body.type === 'number'">
+                                {{ parseInt(slotProps.data[body.value]) }}
                             </template>
                             <!-- content -->
                         </template>

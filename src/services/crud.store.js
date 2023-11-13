@@ -3,7 +3,7 @@ import { ref, watch } from 'vue';
 import _ from 'lodash';
 import axios from '@/plugins/axios';
 import { useMainStore } from './main.store';
-import { useToast } from 'vue-toastification';
+import { useToast } from 'primevue/usetoast';
 import { i18n } from '@/plugins/i18n';
 
 export const useCrudStore = defineStore('crud', () => {
@@ -39,6 +39,17 @@ export const useCrudStore = defineStore('crud', () => {
     const successMessage = ref(null);
     const errorMessage = ref(null);
     const tableBody = ref(null);
+
+    // format datetime
+    const formatDatetime = (val) => {
+        const date = new Date(val);
+        const year = date.getFullYear().toString();
+        const month = ('0' + (date.getMonth() + 1)).slice(-2);
+        const day = ('0' + date.getDate()).slice(-2);
+
+        const formattedDate = `${year}-${month}-${day}`;
+        return formattedDate;
+    };
 
     // load data
     const load = (params) => {
@@ -100,6 +111,42 @@ export const useCrudStore = defineStore('crud', () => {
     const save = () => {
         loading.value = true;
         errors.value = {};
+
+        if (title.value == 'Employee Contract') {
+            let setDataBeforeApi = {
+                employee_id: form.value.employee_id,
+                nama_paket: form.value.nama_paket,
+                kode_sirup: form.value.kode_sirup,
+                nomor_permohonan_pengadaan: form.value.nomor_permohonan_pengadaan,
+                tanggal_permohonan_pengadaan: formatDatetime(form.value.tanggal_permohonan_pengadaan),
+                no_und_dpl: form.value.no_und_dpl,
+                tanggal_und_dpl: formatDatetime(form.value.tanggal_und_dpl),
+                no_ba_hpl: form.value.no_ba_hpl,
+                tanggal_ba_hpl: formatDatetime(form.value.tanggal_ba_hpl),
+                no_sppbj: form.value.no_sppbj,
+                tanggal_sppbj: formatDatetime(form.value.tanggal_sppbj),
+                no_spk: form.value.no_spk,
+                tanggal_spk: formatDatetime(form.value.tanggal_spk),
+                no_spmk: form.value.no_spmk,
+                tanggal_spmk: formatDatetime(form.value.tanggal_spmk),
+                no_adendum_spk: form.value.no_adendum_spk,
+                tanggal_adendum_spk: formatDatetime(form.value.tanggal_adendum_spk)
+            };
+            form.value = setDataBeforeApi;
+        }
+        if (title.value === 'Project') {
+            let setDataProject = {
+                id: form.value.id,
+                name: form.value.name,
+                description: form.value.description,
+                start_date: formatDatetime(form.value.start_date),
+                end_date: formatDatetime(form.value.end_date),
+                max_apply: form.value.max_apply,
+                status: form.value.status
+            };
+            form.value = setDataProject;
+        }
+
         return new Promise((resolve, reject) => {
             axios
                 .post(`${api.value}`, form.value)
@@ -127,6 +174,43 @@ export const useCrudStore = defineStore('crud', () => {
     const update = () => {
         loading.value = true;
         errors.value = {};
+
+        if (title.value == 'Employee Contract') {
+            let setDataBeforeApi = {
+                id: form.value.id,
+                employee_id: form.value.employee_id,
+                nama_paket: form.value.nama_paket,
+                kode_sirup: form.value.kode_sirup,
+                nomor_permohonan_pengadaan: form.value.nomor_permohonan_pengadaan,
+                tanggal_permohonan_pengadaan: formatDatetime(form.value.tanggal_permohonan_pengadaan),
+                no_und_dpl: form.value.no_und_dpl,
+                tanggal_und_dpl: formatDatetime(form.value.tanggal_und_dpl),
+                no_ba_hpl: form.value.no_ba_hpl,
+                tanggal_ba_hpl: formatDatetime(form.value.tanggal_ba_hpl),
+                no_sppbj: form.value.no_sppbj,
+                tanggal_sppbj: formatDatetime(form.value.tanggal_sppbj),
+                no_spk: form.value.no_spk,
+                tanggal_spk: formatDatetime(form.value.tanggal_spk),
+                no_spmk: form.value.no_spmk,
+                tanggal_spmk: formatDatetime(form.value.tanggal_spmk),
+                no_adendum_spk: form.value.no_adendum_spk,
+                tanggal_adendum_spk: formatDatetime(form.value.tanggal_adendum_spk)
+            };
+            form.value = setDataBeforeApi;
+        }
+        if (title.value === 'Project') {
+            let setDataProject = {
+                id: form.value.id,
+                name: form.value.name,
+                description: form.value.description,
+                start_date: formatDatetime(form.value.start_date),
+                end_date: formatDatetime(form.value.end_date),
+                max_apply: form.value.max_apply,
+                status: form.value.status
+            };
+            form.value = setDataProject;
+        }
+
         return new Promise((resolve, reject) => {
             axios
                 .put(`${api.value}/${form.value.id}`, form.value)
@@ -257,8 +341,18 @@ export const useCrudStore = defineStore('crud', () => {
     const onChangePage = (val) => {
         load({
             page: val.page + 1,
-            rows: val.rows
+            per_page: val.rows
         });
+    };
+
+    const onSortData = (val) => {
+        if (val.sortField) {
+            const params = {};
+            val.sortOrder > 0 ? (params.sorts = val.sortField) : (params.sorts = `-${val.sortField}`);
+            load(params);
+        } else {
+            load();
+        }
     };
 
     // axios
@@ -337,19 +431,14 @@ export const useCrudStore = defineStore('crud', () => {
         mainStore.removeError();
     };
 
-    const notify = (message) => {
+    const notify = (message, type = 'success') => {
         if (message) {
-            toast.success(message, {
-                position: 'top-right',
-                timeout: 3000,
-                closeOnClick: true,
-                pauseOnFocusLoss: true,
-                pauseOnHover: true,
-                draggable: true,
-                draggablePercent: 0.6,
-                showCloseButtonOnHover: true,
-                hideProgressBar: false,
-                closeButton: false
+            toast.add({
+                severity: type,
+                summary: i18n.t('message.notification'),
+                detail: message,
+                life: 5000,
+                closable: true
             });
         }
     };
@@ -398,6 +487,7 @@ export const useCrudStore = defineStore('crud', () => {
         getData,
         filterSearch,
         onChangePage,
+        onSortData,
         processData,
         destroyData,
         onCreate,

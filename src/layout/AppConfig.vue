@@ -1,5 +1,6 @@
 <script setup>
 import RadioButton from 'primevue/radiobutton';
+import Button from 'primevue/button';
 import InputSwitch from 'primevue/inputswitch';
 import Sidebar from 'primevue/sidebar';
 
@@ -15,14 +16,12 @@ defineProps({
 const scales = ref([10, 11, 12, 13, 14, 15, 16, 17, 20]);
 const visible = ref(false);
 
-const { changeThemeSettings, layoutConfig, setScale } = useLayout();
+const { changeThemeSettings, setScale, layoutConfig } = useLayout();
 
 const onConfigButtonClick = () => {
     visible.value = !visible.value;
 };
 const onChangeTheme = (theme, mode) => {
-    localStorage.setItem('theme', theme);
-    localStorage.setItem('darkTheme', mode);
     const elementId = 'theme-css';
     const linkElement = document.getElementById(elementId);
     const cloneLinkElement = linkElement.cloneNode(true);
@@ -65,24 +64,61 @@ const setRipple = () => {
         <i class="pi pi-cog"></i>
     </button>
 
-    <Sidebar v-model:visible="visible" position="right" :transitionOptions="'.3s cubic-bezier(0, 0, 0.2, 1)'" class="layout-config-sidebar w-20rem">
+    <Sidebar
+        v-model:visible="visible"
+        position="right"
+        :transitionOptions="'.3s cubic-bezier(0, 0, 0.2, 1)'"
+        class="layout-config-sidebar w-20rem"
+    >
         <h5>Scale ({{ layoutConfig.scale }})</h5>
         <div class="flex align-items-center">
-            <Button icon="pi pi-minus" type="button" @click="decrementScale()" class="p-button-text p-button-rounded w-2rem h-2rem mr-2" :disabled="layoutConfig.scale.value === scales[0]"></Button>
-            <Slider v-model="layoutConfig.scale.value" :step="1" :min="10" :max="20" class="w-14rem" @change="applyScale" />
-            <Button icon="pi pi-plus" type="button" pButton @click="incrementScale()" class="p-button-text p-button-rounded w-2rem h-2rem ml-2" :disabled="layoutConfig.scale.value === scales[scales.length - 1]"></Button>
+            <Button
+                icon="pi pi-minus"
+                type="button"
+                @click="decrementScale()"
+                class="p-button-text p-button-rounded w-2rem h-2rem mr-2"
+                :disabled="layoutConfig.scale.value === scales[0]"
+            ></Button>
+            <Slider
+                v-model="layoutConfig.scale.value"
+                :step="1"
+                :min="10"
+                :max="20"
+                class="w-14rem"
+                @change="applyScale"
+            />
+            <Button
+                icon="pi pi-plus"
+                type="button"
+                pButton
+                @click="incrementScale()"
+                class="p-button-text p-button-rounded w-2rem h-2rem ml-2"
+                :disabled="layoutConfig.scale.value === scales[scales.length - 1]"
+            ></Button>
         </div>
 
         <template v-if="!simple">
             <h5>Menu Type</h5>
             <div class="flex">
                 <div class="field-radiobutton flex-1">
-                    <RadioButton name="menuMode" value="static" v-model="layoutConfig.menuMode.value" inputId="mode1" @change="setMenuMode"></RadioButton>
+                    <RadioButton
+                        name="menuMode"
+                        value="static"
+                        v-model="layoutConfig.menuMode.value"
+                        inputId="mode1"
+                        @change="setMenuMode"
+                    ></RadioButton>
                     <label for="mode1">Static</label>
                 </div>
 
                 <div class="field-radiobutton flex-1">
-                    <RadioButton name="menuMode" value="overlay" v-model="layoutConfig.menuMode.value" inputId="mode2" @change="setMenuMode"></RadioButton>
+                    <RadioButton
+                        name="menuMode"
+                        value="overlay"
+                        v-model="layoutConfig.menuMode.value"
+                        inputId="mode2"
+                        @change="setMenuMode"
+                    ></RadioButton>
                     <label for="mode2">Overlay</label>
                 </div>
             </div>
@@ -92,11 +128,23 @@ const setRipple = () => {
             <h5>Input Style</h5>
             <div class="flex">
                 <div class="field-radiobutton flex-1">
-                    <RadioButton name="inputStyle" value="outlined" v-model="layoutConfig.inputStyle.value" inputId="outlined_input" @change="setInputStyle"></RadioButton>
+                    <RadioButton
+                        name="inputStyle"
+                        value="outlined"
+                        v-model="layoutConfig.inputStyle.value"
+                        inputId="outlined_input"
+                        @change="setInputStyle"
+                    ></RadioButton>
                     <label for="outlined_input">Outlined</label>
                 </div>
                 <div class="field-radiobutton flex-1">
-                    <RadioButton name="inputStyle" value="filled" v-model="layoutConfig.inputStyle.value" inputId="filled_input" @change="setInputStyle"></RadioButton>
+                    <RadioButton
+                        name="inputStyle"
+                        value="filled"
+                        v-model="layoutConfig.inputStyle.value"
+                        inputId="filled_input"
+                        @change="setInputStyle"
+                    ></RadioButton>
                     <label for="filled_input">Filled</label>
                 </div>
             </div>
@@ -108,23 +156,51 @@ const setRipple = () => {
         <h5>Themes</h5>
         <div class="grid">
             <div class="col-3">
-                <button class="p-link w-2rem h-2rem" @click="onChangeTheme('mdc-light-indigo', 'light')">
-                    <img src="/layout/images/themes/md-light-indigo.svg" class="w-2rem h-2rem" alt="Material Light Indigo" />
+                <button
+                    class="p-link w-2rem h-2rem"
+                    @click="onChangeTheme('mdc-light-indigo', 'light')"
+                >
+                    <img
+                        src="/layout/images/themes/md-light-indigo.svg"
+                        class="w-2rem h-2rem"
+                        alt="Material Light Indigo"
+                    />
                 </button>
             </div>
             <div class="col-3">
-                <button class="p-link w-2rem h-2rem" @click="onChangeTheme('mdc-light-deeppurple', 'light')">
-                    <img src="/layout/images/themes/md-light-deeppurple.svg" class="w-2rem h-2rem" alt="Material Light Deep Purple" />
+                <button
+                    class="p-link w-2rem h-2rem"
+                    @click="onChangeTheme('mdc-light-deeppurple', 'light')"
+                >
+                    <img
+                        src="/layout/images/themes/md-light-deeppurple.svg"
+                        class="w-2rem h-2rem"
+                        alt="Material Light Deep Purple"
+                    />
                 </button>
             </div>
             <div class="col-3">
-                <button class="p-link w-2rem h-2rem" @click="onChangeTheme('mdc-dark-indigo', 'dark')">
-                    <img src="/layout/images/themes/md-dark-indigo.svg" class="w-2rem h-2rem" alt="Material Dark Indigo" />
+                <button
+                    class="p-link w-2rem h-2rem"
+                    @click="onChangeTheme('mdc-dark-indigo', 'dark')"
+                >
+                    <img
+                        src="/layout/images/themes/md-dark-indigo.svg"
+                        class="w-2rem h-2rem"
+                        alt="Material Dark Indigo"
+                    />
                 </button>
             </div>
             <div class="col-3">
-                <button class="p-link w-2rem h-2rem" @click="onChangeTheme('mdc-dark-deeppurple', 'dark')">
-                    <img src="/layout/images/themes/md-dark-deeppurple.svg" class="w-2rem h-2rem" alt="Material Dark Deep Purple" />
+                <button
+                    class="p-link w-2rem h-2rem"
+                    @click="onChangeTheme('mdc-dark-deeppurple', 'dark')"
+                >
+                    <img
+                        src="/layout/images/themes/md-dark-deeppurple.svg"
+                        class="w-2rem h-2rem"
+                        alt="Material Dark Deep Purple"
+                    />
                 </button>
             </div>
         </div>

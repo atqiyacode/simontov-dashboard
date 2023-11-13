@@ -1,16 +1,15 @@
 import { defineStore } from 'pinia';
 import axios from '@/plugins/axios';
 import { ref } from 'vue';
-import { useMainStore } from './main.store';
+import { useMainStore } from '@/services/main.store';
 export const useUserStore = defineStore(
     'user',
     () => {
         const mainStore = useMainStore();
+
         const user = ref({});
-        const sessionId = ref('');
         const firebaseToken = ref('');
         const isLoggedIn = ref(false);
-        const isVerified = ref(false);
         const accessToken = ref(null);
         const form = ref({});
         const isLoading = ref(false);
@@ -31,12 +30,12 @@ export const useUserStore = defineStore(
             });
         };
         const session = async () => {
+            await mainStore.sanctumCsrf();
             await axios
-                .get(`user`)
+                .get(`auth/session`)
                 .then((res) => {
                     isLoggedIn.value = true;
                     user.value = res.data;
-                    sessionId.value = res.data.id;
                     form.value = {
                         whatsapp: res.data.phone,
                         email: res.data.email,
@@ -49,39 +48,6 @@ export const useUserStore = defineStore(
                     isLoggedIn.value = false;
                 });
         };
-        const cancelNewEmailUser = (val) => {
-            return new Promise((resolve, reject) => {
-                axios
-                    .put(`master/user/clearPendingEmail/${val.id}`)
-                    .then((res) => {
-                        mainStore.$patch({
-                            message: res.data.message
-                        });
-                        mainStore.successToast();
-                        resolve(res);
-                    })
-                    .catch((err) => {
-                        reject(err);
-                    });
-            });
-        };
-        const resendPendingEmailVerificationMail = (val) => {
-            return new Promise((resolve, reject) => {
-                axios
-                    .post(`master/user/resendPendingEmailVerificationMail/${val.id}`)
-                    .then((res) => {
-                        mainStore.$patch({
-                            message: res.data.message
-                        });
-                        mainStore.successToast();
-                        resolve(res);
-                    })
-                    .catch((err) => {
-                        reject(err);
-                    });
-            });
-        };
-
         const updateEmail = () => {
             return new Promise((resolve, reject) => {
                 axios
@@ -146,8 +112,6 @@ export const useUserStore = defineStore(
         return {
             setFirebaseToken,
             session,
-            cancelNewEmailUser,
-            resendPendingEmailVerificationMail,
             updateEmail,
             updatePassword,
             updateWhatsapp,
@@ -155,17 +119,16 @@ export const useUserStore = defineStore(
             user,
             firebaseToken,
             isLoggedIn,
-            isVerified,
             accessToken,
             form,
             isLoading
         };
     },
     {
-        // persist: true,
-        persist: {
-            key: 'user',
-            paths: ['accessToken', 'isLoggedIn', 'sessionId']
-        }
+        persist: false
+        // persist: {
+        //     key: 'user',
+        //     paths: ['accessToken', 'isLoggedIn', 'user']
+        // }
     }
 );

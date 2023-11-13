@@ -39,6 +39,7 @@ import Divider from 'primevue/divider';
 import Dock from 'primevue/dock';
 import Dropdown from 'primevue/dropdown';
 import DynamicDialog from 'primevue/dynamicdialog';
+import Editor from 'primevue/editor';
 import Fieldset from 'primevue/fieldset';
 import FileUpload from 'primevue/fileupload';
 import Galleria from 'primevue/galleria';
@@ -85,7 +86,6 @@ import StyleClass from 'primevue/styleclass';
 import TabMenu from 'primevue/tabmenu';
 import TieredMenu from 'primevue/tieredmenu';
 import Textarea from 'primevue/textarea';
-import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
 import Toolbar from 'primevue/toolbar';
 import TabView from 'primevue/tabview';
@@ -101,14 +101,6 @@ import TreeTable from 'primevue/treetable';
 import TriStateCheckbox from 'primevue/tristatecheckbox';
 import VirtualScroller from 'primevue/virtualscroller';
 
-import CodeHighlight from '@/components/CodeHighlight.vue';
-import BlockViewer from '@/components/BlockViewer.vue';
-
-import VueToast from 'vue-toastification';
-import VueApexCharts from 'vue3-apexcharts';
-// Import the CSS or use your own!
-import 'vue-toastification/dist/index.css';
-
 // custom component
 import InputLabel from '@/components/InputLabel.vue';
 import CustomDataTable from '@/components/CustomDataTable.vue';
@@ -116,48 +108,51 @@ import InputError from '@/components/InputError.vue';
 import ListDetail from '@/components/ListDetail.vue';
 import ListDetailInline from '@/components/ListDetailInline.vue';
 import ListDetailBreak from '@/components/ListDetailBreak.vue';
-import ListDetailBreakVolume from '@/components/ListDetailBreakVolume.vue';
 import ListHeaderDetail from '@/components/ListHeaderDetail.vue';
 import DeleteDialog from '@/components/DeleteDialog.vue';
 import RestoreDialog from '@/components/RestoreDialog.vue';
+// chart-types
+import RealtimeLineChartPage from '@/components/chart-types/RealtimeLineChartPage.vue';
+import RealtimeDualLineChartPage from '@/components/chart-types/RealtimeDualLineChartPage.vue';
+import RadialChartPage from '@/components/chart-types/RadialChartPage.vue';
+import OtpInput from 'vue3-otp-input';
+
+import VueApexCharts from 'vue3-apexcharts';
+
+import Toast from 'vue-toastification';
 
 import '@/assets/styles.scss';
+import 'vue-toastification/dist/index.css';
 
 // pinia
 import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import resetStore from '@/plugins/reset-store';
-import globalMixin from '@/plugins/global-mixin';
 // pusher js
 import PluginPusher from '@/plugins/pusher';
-import { useAuthStore } from './services/auth.store';
+import globalMixin from './plugins/global-mixin';
+import { useUserStore } from './services/user.store';
+
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 pinia.use(resetStore);
+
 (async () => {
     const app = createApp(App);
-    app.use(i18n);
     app.use(PluginPusher);
     app.use(pinia);
+    app.use(i18n);
     app.use(PrimeVue, { ripple: true });
     app.use(ToastService);
     app.use(DialogService);
     app.use(ConfirmationService);
+    app.use(Toast);
     app.use(VueApexCharts);
-
-    app.use(VueToast, {
-        transition: 'Vue-Toastification__fade',
-        maxToasts: 20,
-        newestOnTop: true
-    });
 
     app.directive('tooltip', Tooltip);
     app.directive('badge', BadgeDirective);
     app.directive('ripple', Ripple);
     app.directive('styleclass', StyleClass);
-
-    app.component('CodeHighlight', CodeHighlight);
-    app.component('BlockViewer', BlockViewer);
 
     app.component('Accordion', Accordion);
     app.component('AccordionTab', AccordionTab);
@@ -191,6 +186,7 @@ pinia.use(resetStore);
     app.component('Dock', Dock);
     app.component('Dropdown', Dropdown);
     app.component('DynamicDialog', DynamicDialog);
+    app.component('Editor', Editor);
     app.component('Fieldset', Fieldset);
     app.component('FileUpload', FileUpload);
     app.component('Galleria', Galleria);
@@ -240,7 +236,6 @@ pinia.use(resetStore);
     app.component('Terminal', Terminal);
     app.component('TieredMenu', TieredMenu);
     app.component('Timeline', Timeline);
-    app.component('Toast', Toast);
     app.component('Toolbar', Toolbar);
     app.component('ToggleButton', ToggleButton);
     app.component('Tree', Tree);
@@ -255,17 +250,22 @@ pinia.use(resetStore);
     app.component('ListDetail', ListDetail);
     app.component('ListDetailInline', ListDetailInline);
     app.component('ListDetailBreak', ListDetailBreak);
-    app.component('ListDetailBreakVolume', ListDetailBreakVolume);
     app.component('ListHeaderDetail', ListHeaderDetail);
     app.component('DeleteDialog', DeleteDialog);
     app.component('RestoreDialog', RestoreDialog);
 
-    app.mixin(globalMixin);
+    app.component('RealtimeLineChartPage', RealtimeLineChartPage);
+    app.component('RealtimeDualLineChartPage', RealtimeDualLineChartPage);
+    app.component('RadialChartPage', RadialChartPage);
 
-    const authStore = useAuthStore();
-    await authStore.session();
+    app.component('OtpInput', OtpInput);
+
+    const userStore = useUserStore();
+    await userStore.session();
 
     app.use(router);
-
-    app.mount('#app');
+    app.mixin(globalMixin);
+    router.isReady().then(() => {
+        app.mount('#app');
+    });
 })();

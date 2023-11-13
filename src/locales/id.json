@@ -54,6 +54,7 @@
     "thr": "Tunjangan hari raya"
   },
   "button": {
+    "back": "Kembali",
     "login": "Masuk",
     "register": "Daftar",
     "process": "Proses",
@@ -85,8 +86,7 @@
     "yes-delete": "Ya, Hapus",
     "yes-restore": "Ya, Pulihkan",
     "yes-destroy": "Ya, Hapus Permanen",
-    "cancel-new-email": "Batalkan Update Email",
-    "resend-new-email": "Kirim Ulang Link Update Email"
+    "send-link-reset-password": "Kirim link reset password"
   },
   "profile": {
     "security": "Keamanan",
@@ -134,6 +134,8 @@
     "register-text": "Silahkan daftarkan akun anda",
     "register-form": "Pastikan data karyawan sudah benar",
     "forgot-password": "Lupa Kata Sandi?",
+    "remember-password": "Ingat Kata sandi?",
+    "remember-me": "Ingat saya",
     "no-have-account": "Belum punya akun?",
     "have-account": "Sudah punya akun?",
     "input-verification-code": "Silahkan masukkan kode verifikasi",

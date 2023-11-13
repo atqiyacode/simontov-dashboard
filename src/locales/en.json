@@ -54,6 +54,7 @@
     "thr": "Holiday allowance"
   },
   "button": {
+    "back": "Back",
     "login": "Login",
     "register": "Register",
     "process": "Process",
@@ -85,8 +86,7 @@
     "yes-delete": "Yes, Delete",
     "yes-restore": "Yes, Restore",
     "yes-destroy": "Yes, Delete Permanent",
-    "cancel-new-email": "Cancel Update Email",
-    "resend-new-email": "Resend New Link Update Email"
+    "send-link-reset-password": "Send link reset password"
   },
   "profile": {
     "information": "Information",
@@ -131,6 +131,8 @@
     "register-text": "Create Your Account",
     "register-form": "Make sure the employee data is correct",
     "forgot-password": "Forgot password?",
+    "remember-password": "Remember your password?",
+    "remember-me": "Remember me",
     "no-have-account": "Don't have account?",
     "have-account": "Have account?",
     "input-verification-code": "Please fill verification code",

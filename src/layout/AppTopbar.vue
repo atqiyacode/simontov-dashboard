@@ -28,7 +28,7 @@ const onLogout = () => {
 };
 
 const logoUrl = computed(() => {
-    return `${contextPath}layout/images/${layoutConfig.darkTheme.value ? 'vepro' : 'vepro'}.png`;
+    return `${contextPath}logo/${layoutConfig.darkTheme.value === 'true' ? 'vepro' : 'vepro'}.png`;
 });
 
 const onTopBarMenuButton = () => {
@@ -63,7 +63,12 @@ const isOutsideClicked = (event) => {
     const sidebarEl = document.querySelector('.layout-topbar-menu');
     const topbarEl = document.querySelector('.layout-topbar-menu-button');
 
-    return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target));
+    return !(
+        sidebarEl.isSameNode(event.target) ||
+        sidebarEl.contains(event.target) ||
+        topbarEl.isSameNode(event.target) ||
+        topbarEl.contains(event.target)
+    );
 };
 </script>
 
@@ -71,13 +76,17 @@ const isOutsideClicked = (event) => {
     <div class="layout-topbar">
         <router-link to="/" class="layout-topbar-logo flex justify-content-center">
             <img :src="logoUrl" alt="logo" />
+            <!-- <span>{{ appName }}</span> -->
         </router-link>
 
         <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">
             <i class="pi pi-bars"></i>
         </button>
 
-        <button class="p-link layout-topbar-menu-button layout-topbar-button" @click="onTopBarMenuButton()">
+        <button
+            class="p-link layout-topbar-menu-button layout-topbar-button"
+            @click="onTopBarMenuButton()"
+        >
             <i class="pi pi-ellipsis-v"></i>
         </button>
 
@@ -85,10 +94,6 @@ const isOutsideClicked = (event) => {
             <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
                 <i class="pi pi-bell"></i>
                 <span>Notification</span>
-            </button>
-            <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
-                <i class="pi pi-user"></i>
-                <span>Profile</span>
             </button>
 
             <button @click="logoutDialog = true" class="p-link layout-topbar-button text-red-500">
@@ -99,7 +104,13 @@ const isOutsideClicked = (event) => {
     </div>
 
     <!-- logout dialog -->
-    <Dialog v-model:visible="logoutDialog" :style="{ width: '450px' }" :header="$t('alert.confirmation')" :modal="true" :closable="false">
+    <Dialog
+        v-model:visible="logoutDialog"
+        :style="{ width: '450px' }"
+        :header="$t('alert.confirmation')"
+        :modal="true"
+        :closable="false"
+    >
         <div class="text-center">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
             <h6 class="font-bold text-red-500">{{ $t('alert.logout') }}</h6>
@@ -107,8 +118,19 @@ const isOutsideClicked = (event) => {
 
         <template #footer>
             <form @submit.prevent="onLogout()">
-                <Button :label="$t('button.cancel')" icon="pi pi-times" class="p-button-rounded p-button-text" @click="logoutDialog = false" />
-                <Button :loading="isLoading" type="submit" :label="$t('button.logout-confirm')" icon="pi pi-check" class="p-button-rounded p-button-danger" />
+                <Button
+                    :label="$t('button.cancel')"
+                    icon="pi pi-times"
+                    class="p-button-rounded p-button-text"
+                    @click="logoutDialog = false"
+                />
+                <Button
+                    :loading="isLoading"
+                    type="submit"
+                    :label="$t('button.logout-confirm')"
+                    icon="pi pi-check"
+                    class="p-button-rounded p-button-danger"
+                />
             </form>
         </template>
     </Dialog>

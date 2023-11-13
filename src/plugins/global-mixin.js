@@ -8,10 +8,6 @@ export default {
             const data = new Intl.NumberFormat().format(number);
             return data.replaceAll(',', '.');
         },
-        formatNumber(number) {
-            const data = new Intl.NumberFormat().format(number);
-            return data.replaceAll(',', '.');
-        },
         formatCurrency(value) {
             return `${new Intl.NumberFormat('id-ID', {
                 style: 'currency',
@@ -21,6 +17,15 @@ export default {
         },
         formatPercent(value) {
             return `${new Intl.NumberFormat('id-ID', { maximumSignificantDigits: 3, style: 'percent' }).format(value)}`;
+        },
+        formatDatetime (val) {        
+            const date = new Date(val);
+            const year = date.getFullYear().toString(); 
+            const month = ('0' + (date.getMonth() + 1)).slice(-2); 
+            const day = ('0' + date.getDate()).slice(-2);
+    
+            const formattedDate = `${year}-${month}-${day}`;
+            return formattedDate
         }
     }
 };

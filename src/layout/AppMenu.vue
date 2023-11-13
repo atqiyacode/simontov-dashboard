@@ -1,81 +1,59 @@
 <script setup>
 import { ref } from 'vue';
 
-const url = import.meta.env.VITE_APP_API;
-const mainUrl = url.split(['/']);
-
 import AppMenuItem from './AppMenuItem.vue';
 
 const model = ref([
     {
         label: 'Home',
         items: [
-            { label: 'Ganti Lokasi', icon: 'pi pi-fw pi-map-marker', to: '/map-site' },
-            { label: 'Realtime', icon: 'pi pi-fw pi-chart-line', to: '/dashboard' },
-            { label: 'Static', icon: 'pi pi-fw pi-chart-bar', to: '/dashboard-static' }
+            { label: 'Ganti Lokasi', icon: 'pi pi-fw pi-map-marker', to: '/select-location' },
+            { label: 'Realtime', icon: 'pi pi-fw pi-chart-line', to: '/app/dashboard/realtime' },
+            { label: 'Static', icon: 'pi pi-fw pi-chart-bar', to: '/app/dashboard/static' }
         ]
     },
-    {
-        label: 'Master Data',
-        items: [
-            {
-                label: 'Authentication',
-                icon: 'pi pi-fw pi-bookmark',
-                items: [
-                    { label: 'Permission', to: '/master/main/permission' },
-                    { label: 'Role', to: '/master/main/role' }
-                ]
-            },
-            {
-                label: 'Account',
-                icon: 'pi pi-fw pi-bookmark',
-                items: [{ label: 'User', to: '/master/account/user' }]
-            },
-            { label: 'Location', icon: 'pi pi-fw pi-map', to: '/feature/location' },
-            { label: 'Biaya Admin', icon: 'pi pi-fw pi-cog', to: '/feature/tax' }
-        ]
-    },
+
     {
         label: 'Features',
         items: [
             {
                 label: 'MAG 8000',
                 items: [
-                    { label: 'Status Alarm', to: '/feature/status-alarm' },
-                    { label: 'Flowrate', to: '/feature/flowrate' }
+                    {
+                        label: 'Status Alarm',
+                        to: '/app/feature/status-alarm'
+                    },
+                    { label: 'Flowrate', to: '/app/feature/flowrate' }
                 ]
             },
             {
                 label: 'Billing',
                 items: [
-                    { label: 'Range Type', to: '/feature/range-type' },
-                    { label: 'Range Cost', to: '/feature/range-cost' }
+                    { label: 'Range Type', to: '/app/billing/range-type' },
+                    { label: 'Range Cost', to: '/app/billing/range-cost' }
                 ]
             }
         ]
     },
     {
-        label: 'Developer',
+        label: 'Master Data',
         items: [
             {
-                label: 'Tools',
+                label: 'Permission',
                 icon: 'pi pi-fw pi-bookmark',
-                items: [
-                    { label: 'Laravel ERD', icon: 'pi pi-fw pi-book', url: `${mainUrl[0]}//${mainUrl[2]}/erd`, target: '_blank' },
-                    { label: 'Prequel DB', icon: 'pi pi-fw pi-database', url: `${mainUrl[0]}//${mainUrl[2]}/prequel`, target: '_blank' },
-                    { label: 'Route List', icon: 'pi pi-fw pi-link', url: `${mainUrl[0]}//${mainUrl[2]}/routes`, target: '_blank' },
-                    { label: 'Logs Viewer', icon: 'pi pi-fw pi-server', url: `${mainUrl[0]}//${mainUrl[2]}/log-viewer`, target: '_blank' },
-                    { label: 'User Activity', icon: 'pi pi-fw pi-history', url: `${mainUrl[0]}//${mainUrl[2]}/admin/user-activity`, target: '_blank' },
-                    { label: 'Telescope', icon: 'pi pi-fw pi-history', url: `${mainUrl[0]}//${mainUrl[2]}/telescope`, target: '_blank' }
-                ]
-            }
+                to: '/app/master/permission'
+            },
+            { label: 'Role', icon: 'pi pi-fw pi-bookmark', to: '/app/master/role' },
+            { label: 'User', icon: 'pi pi-fw pi-users', to: '/app/master/user' },
+            { label: 'Location', icon: 'pi pi-fw pi-map', to: '/app/master/location' },
+            { label: 'Biaya Admin', icon: 'pi pi-fw pi-cog', to: '/app/master/tax' }
         ]
     }
 ]);
 </script>
 
 <template>
-    <ul class="layout-menu">
+    <ul class="layout-menu" style="padding: 0.5rem 1.5rem">
         <template v-for="(item, i) in model" :key="item">
             <app-menu-item v-if="!item.separator" :item="item" :index="i"></app-menu-item>
             <li v-if="item.separator" class="menu-separator"></li>

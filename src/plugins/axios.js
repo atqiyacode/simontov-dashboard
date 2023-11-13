@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useMainStore } from '@/services/main.store';
-import { useUserStore } from '@/services/user.store';
+// import { useUserStore } from '@/services/user.store';
 
 const instance = axios.create({
     withCredentials: true,
@@ -32,7 +32,7 @@ instance.interceptors.response.use(
 instance.interceptors.request.use(
     (config) => {
         const mainStore = useMainStore();
-        const userStore = useUserStore();
+        // const userStore = useUserStore();
 
         // remove error
         mainStore.removeError();
@@ -40,9 +40,9 @@ instance.interceptors.request.use(
             loading: true
         });
 
-        if (userStore.isLoggedIn) {
-            config.headers.Authorization = `Bearer ${userStore.accessToken}`;
-        }
+        // if (userStore.isLoggedIn) {
+        //     config.headers.Authorization = `Bearer ${userStore.accessToken}`;
+        // }
         config.headers.Language = `${mainStore.language}`;
         config.headers['X-Socket-Id'] = `${mainStore.socketId}`;
         return config;

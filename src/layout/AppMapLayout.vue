@@ -5,27 +5,16 @@ import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
 import AppConfig from './AppConfig.vue';
 import { useLayout } from '@/layout/composables/layout';
-import { useMainStore } from '../services/main.store';
-import { useUserStore } from '../services/user.store';
-import { useRouter } from 'vue-router';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
 const outsideClickListener = ref(null);
-const router = useRouter();
-const userStore = useUserStore();
-const mainStore = useMainStore();
 
 onMounted(() => {
-    mainStore.$patch({
-        currentMap: null
-    });
+    // mainStore.$patch({
+    //     currentMap: null
+    // });
     layoutConfig.menuMode.value = 'overlay';
-    !userStore.isVerified
-        ? router.push({
-              name: 'email-verification'
-          })
-        : null;
 });
 
 onUnmounted(() => {
@@ -46,7 +35,8 @@ const containerClass = computed(() => {
         'layout-theme-dark': layoutConfig.darkTheme.value === 'dark',
         'layout-overlay': layoutConfig.menuMode.value === 'overlay',
         'layout-static': layoutConfig.menuMode.value === 'static',
-        'layout-static-inactive': layoutState.staticMenuDesktopInactive.value && layoutConfig.menuMode.value === 'static',
+        'layout-static-inactive':
+            layoutState.staticMenuDesktopInactive.value && layoutConfig.menuMode.value === 'static',
         'layout-overlay-active': layoutState.overlayMenuActive.value,
         'layout-mobile-active': layoutState.staticMenuMobileActive.value,
         'p-input-filled': layoutConfig.inputStyle.value === 'filled',
@@ -75,12 +65,20 @@ const isOutsideClicked = (event) => {
     const sidebarEl = document.querySelector('.layout-sidebar');
     const topbarEl = document.querySelector('.layout-menu-button');
 
-    return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target));
+    return !(
+        sidebarEl.isSameNode(event.target) ||
+        sidebarEl.contains(event.target) ||
+        topbarEl.isSameNode(event.target) ||
+        topbarEl.contains(event.target)
+    );
 };
 </script>
 
 <template>
-    <ConfirmDialog :breakpoints="{ '960px': '75vw', '640px': '100vw' }" :style="{ width: '50vw' }" />
+    <ConfirmDialog
+        :breakpoints="{ '960px': '75vw', '640px': '100vw' }"
+        :style="{ width: '50vw' }"
+    />
     <Toast />
     <div class="layout-wrapper" :class="containerClass">
         <app-topbar-map></app-topbar-map>
@@ -88,7 +86,7 @@ const isOutsideClicked = (event) => {
             <app-sidebar></app-sidebar>
         </div>
         <div class="layout-main-container">
-            <Message severity="warn" class="mt-0" :closable="false" v-if="!userStore.isVerified"> Please Verified Your Email Address </Message>
+            <!-- <Message severity="warn" class="mt-0" :closable="false" v-if="!userStore.isVerified"> Please Verified Your Email Address </Message> -->
             <div class="layout-main">
                 <router-view></router-view>
             </div>

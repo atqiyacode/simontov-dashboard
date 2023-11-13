@@ -1,136 +1,230 @@
 <script setup>
-import { getCurrentInstance, onMounted, ref } from 'vue';
-import RadialChartPage from './RadialChartPage.vue';
-import RealtimeLineChartPage from './RealtimeLineChartPage.vue';
-import RealtimePHLineChartPage from './RealtimePHLineChartPage.vue';
-import RealtimeCODLineChartPage from './RealtimeCODLineChartPage.vue';
+import { onMounted } from 'vue';
 import CurrentMapPage from './CurrentMapPage.vue';
 import { useMainStore } from '@/services/main.store';
+import { useChartStore } from '@/services/chart.store';
 import { storeToRefs } from 'pinia';
 const mainStore = useMainStore();
+const chartStore = useChartStore();
 const { dashboard } = storeToRefs(mainStore);
-const { proxy } = getCurrentInstance();
-const indonesiaTimeZone = 'Asia/Jakarta';
-const chartSeries = ref([
-    {
-        name: 'Flowrate',
-        data: []
-    },
-    {
-        name: 'Pressure',
-        data: [],
-        yAxis: 1 // Assign this series to the second Y-axis
-    }
-]);
-const chartPHSeries = ref([
-    {
-        name: 'PH',
-        data: []
-    }
-]);
-const chartCODSeries = ref([
-    {
-        name: 'COD',
-        data: []
-    }
-]);
-const lastTimestamp = ref(new Date().toLocaleString('en-US', { timeZone: indonesiaTimeZone }));
-const currentFlowrate = ref(0);
-const currentPressure = ref(0);
-const currentPH = ref(0);
-const currentCOD = ref(0);
+const {
+    chartSeries,
+    chartPHSeries,
+    chartCODSeries,
+    lastTimestamp,
+    currentFlowrate,
+    currentPressure,
+    currentPH,
+    currentCOD,
+    currentCond,
+    currentLevel
+} = storeToRefs(chartStore);
 
 onMounted(() => {
     // loadChart();
-});
-
-const loadChart = (data) => {
-    const timestamp = new Date().toLocaleString('en-US', { timeZone: indonesiaTimeZone });
-    const newDataPoint1 = {
-        x: timestamp,
-        y: parseFloat(data.flowrate).toFixed(2)
-    };
-    const newDataPoint2 = {
-        x: timestamp,
-        y: parseFloat(data.totalizer_3).toFixed(2)
-    };
-    chartSeries.value[0].data.push(newDataPoint1);
-    chartSeries.value[1].data.push(newDataPoint2);
-    currentFlowrate.value = newDataPoint1;
-    currentPressure.value = newDataPoint2;
-    // Remove older data points to limit the chart length
-    if (chartSeries.value[0].data.length > 20) {
-        chartSeries.value[0].data.shift();
-        chartSeries.value[1].data.shift();
-    }
-
-    // Update the chart
-    lastTimestamp.value = timestamp;
-};
-
-const loadPHChart = (data) => {
-    const timestamp = new Date().toLocaleString('en-US', { timeZone: indonesiaTimeZone });
-    const newDataPoint1 = {
-        x: timestamp,
-        y: parseFloat(data.ph).toFixed(2)
-    };
-    chartPHSeries.value[0].data.push(newDataPoint1);
-    currentPH.value = newDataPoint1;
-    // Remove older data points to limit the chart length
-    if (chartPHSeries.value[0].data.length > 20) {
-        chartPHSeries.value[0].data.shift();
-    }
-};
-
-const loadCODChart = (data) => {
-    const timestamp = new Date().toLocaleString('en-US', { timeZone: indonesiaTimeZone });
-    const newDataPoint1 = {
-        x: timestamp,
-        y: parseFloat(data.cod).toFixed(2)
-    };
-    chartCODSeries.value[0].data.push(newDataPoint1);
-    currentCOD.value = newDataPoint1;
-    // Remove older data points to limit the chart length
-    if (chartCODSeries.value[0].data.length > 20) {
-        chartCODSeries.value[0].data.shift();
-    }
-};
-
-proxy.$pusher.channel('flowrate-channel').listen('.flowrate-event', (res) => {
-    const data = res.data.data;
-    loadChart(data);
-    loadPHChart(data);
-    loadCODChart(data);
 });
 </script>
 <template>
     <div :class="dashboard.showMap ? 'col-12 lg:col-6 xl:col-8' : 'col-12 '">
         <div class="grid">
             <div class="col-12 lg:col-12 xl:col-12">
-                <RealtimeLineChartPage :chartSeries="chartSeries" :lastTimestamp="lastTimestamp" />
+                <RealtimeDualLineChartPage
+                    title="Flowrate and Pressure"
+                    :colors="['#FFBB5C', '#247BA0']"
+                    :chartSeries="chartSeries"
+                    :lastTimestamp="lastTimestamp"
+                />
             </div>
-            <div class="col-12 lg:col-6 xl:col-6">
-                <RealtimeCODLineChartPage :chartSeries="chartCODSeries" :lastTimestamp="lastTimestamp" />
+            <div class="col-12 lg:col-12 xl:col-12">
+                <RealtimeLineChartPage
+                    title="COD"
+                    :colors="['#5B0888']"
+                    :chartSeries="chartCODSeries"
+                    :lastTimestamp="lastTimestamp"
+                />
             </div>
-            <div class="col-12 lg:col-6 xl:col-6">
-                <RealtimePHLineChartPage :chartSeries="chartPHSeries" :lastTimestamp="lastTimestamp" />
+            <div class="col-12 lg:col-12 xl:col-12">
+                <RealtimeLineChartPage
+                    title="PH"
+                    :colors="['#E55604']"
+                    :chartSeries="chartPHSeries"
+                    :lastTimestamp="lastTimestamp"
+                />
             </div>
-            <div class="col-12 lg:col-6 xl:col-3">
-                <RadialChartPage tag="l/s" colors="#247BA0" :name="['Flowrate']" :series="[currentFlowrate?.y]" />
+            <!-- <div class="col-12 lg:col-12 xl:col-12">
+                <RealtimeLineChartPage
+                    title="Cond"
+                    :chartSeries="chartCondSeries"
+                    :lastTimestamp="lastTimestamp"
+                />
             </div>
-            <div class="col-12 lg:col-6 xl:col-3">
-                <RadialChartPage tag="BAR" colors="#FFBB5C" :name="['Pressure']" :series="[currentPressure?.y]" />
-            </div>
-            <div class="col-12 lg:col-6 xl:col-3">
-                <RadialChartPage tag="" colors="#D0A2F7" :name="['COD']" :series="[currentCOD?.y]" />
-            </div>
-            <div class="col-12 lg:col-6 xl:col-3">
-                <RadialChartPage tag="" colors="#F875AA" :name="['Ph']" :series="[currentPH?.y]" />
-            </div>
+            <div class="col-12 lg:col-12 xl:col-12">
+                <RealtimeLineChartPage
+                    title="Level"
+                    :chartSeries="chartLevelSeries"
+                    :lastTimestamp="lastTimestamp"
+                />
+            </div> -->
         </div>
     </div>
 
-    <div class="col-12 lg:col-6 xl:col-4">
-        <CurrentMapPage v-if="dashboard.showMap" />
+    <div class="col-12 lg:col-6 xl:col-4" v-if="dashboard.showMap">
+        <CurrentMapPage />
+    </div>
+    <div class="col-12 lg:col-6 xl:col-6">
+        <RadialChartPage
+            tag="l/s"
+            title="Flowrate"
+            colors="#247BA0"
+            :name="['Flowrate']"
+            :series="[currentFlowrate?.y]"
+        />
+    </div>
+    <div class="col-12 lg:col-6 xl:col-6">
+        <RadialChartPage
+            tag="BAR"
+            title="Pressure"
+            colors="#FFBB5C"
+            :name="['Pressure']"
+            :series="[currentPressure?.y]"
+        />
+    </div>
+    <div class="col-12 lg:col-6 xl:col-6">
+        <RadialChartPage
+            tag=""
+            title="COD"
+            colors="#D0A2F7"
+            :name="['COD']"
+            :series="[currentCOD?.y]"
+        />
+    </div>
+    <div class="col-12 lg:col-6 xl:col-6">
+        <RadialChartPage
+            tag=""
+            title="PH"
+            colors="#0174BE"
+            :name="['Ph']"
+            :series="[currentPH?.y]"
+        />
+    </div>
+    <div class="col-12 lg:col-6 xl:col-6">
+        <RadialChartPage
+            tag=""
+            title="Cond"
+            colors="#C70039"
+            :name="['Cond']"
+            :series="[currentCond?.y]"
+        />
+    </div>
+    <div class="col-12 lg:col-6 xl:col-6">
+        <RadialChartPage
+            tag=""
+            title="Level"
+            colors="#3D0C11"
+            :name="['Level']"
+            :series="[currentLevel?.y]"
+        />
+    </div>
+    <div class="col-12 lg:col-4 xl:col-4">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <h4 class="block text-500 font-medium mb-3">Totalizer 1</h4>
+                    <div class="text-900 font-medium text-2xl">152 m<sup>3</sup></div>
+                </div>
+                <div
+                    class="flex align-items-center justify-content-center bg-red-100 border-round"
+                    style="width: 4rem; height: 4rem"
+                >
+                    <i class="pi pi-database text-red-500 text-3xl"></i>
+                </div>
+            </div>
+            <span class="text-500">Akhir : </span>
+            <span class="text-green-500 font-medium text-xl">24 m<sup>3</sup> </span>
+        </div>
+    </div>
+    <div class="col-12 lg:col-4 xl:col-4">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <h4 class="block text-500 font-medium mb-3">Totalizer 2</h4>
+                    <div class="text-900 font-medium text-2xl">2.100 m<sup>3</sup></div>
+                </div>
+                <div
+                    class="flex align-items-center justify-content-center bg-orange-100 border-round"
+                    style="width: 4rem; height: 4rem"
+                >
+                    <i class="pi pi-database text-orange-500 text-3xl"></i>
+                </div>
+            </div>
+            <span class="text-500">Awal : </span>
+            <span class="text-green-500 font-medium text-xl">24 m<sup>3</sup> </span>
+        </div>
+    </div>
+    <div class="col-12 lg:col-4 xl:col-4">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <h4 class="block text-500 font-medium mb-3">Totalizer 3</h4>
+                    <div class="text-900 font-medium text-2xl">28441 m<sup>3</sup></div>
+                </div>
+                <div
+                    class="flex align-items-center justify-content-center bg-cyan-100 border-round"
+                    style="width: 4rem; height: 4rem"
+                >
+                    <i class="pi pi-database text-cyan-500 text-3xl"></i>
+                </div>
+            </div>
+            <span class="text-500">Hasil : </span>
+            <span class="text-green-500 font-medium text-xl">24 m<sup>3</sup> </span>
+        </div>
+    </div>
+    <div class="col-12 lg:col-6 xl:col-3">
+        <div class="card mb-0">
+            <div class="flex justify-content-center mb-3">
+                <div class="text-center">
+                    <h4 class="block font-medium mb-3">Flowrate Max</h4>
+                    <div class="text-900 text-green-500 font-medium text-2xl">
+                        152 <small>L/s</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 lg:col-6 xl:col-3">
+        <div class="card mb-0">
+            <div class="flex justify-content-center mb-3">
+                <div class="text-center">
+                    <h4 class="block font-medium mb-3">Flowrate Min</h4>
+                    <div class="text-900 text-red-500 font-medium text-2xl">
+                        152 <small>L/s</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 lg:col-6 xl:col-3">
+        <div class="card mb-0">
+            <div class="flex justify-content-center mb-3">
+                <div class="text-center">
+                    <h4 class="block font-medium mb-3">Pressure Max</h4>
+                    <div class="text-900 text-green-500 font-medium text-2xl">
+                        152 <small>Bar</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 lg:col-6 xl:col-3">
+        <div class="card mb-0">
+            <div class="flex justify-content-center mb-3">
+                <div class="text-center">
+                    <h4 class="block font-medium mb-3">Pressure Min</h4>
+                    <div class="text-900 text-red-500 font-medium text-2xl">
+                        152 <small>Bar</small>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>

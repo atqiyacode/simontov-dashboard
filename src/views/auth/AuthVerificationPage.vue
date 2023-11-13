@@ -1,100 +1,118 @@
 <script setup>
+import { onMounted } from 'vue';
+
+import { useToast } from 'primevue/usetoast';
+import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/services/auth.store';
-import { useVuelidate } from '@vuelidate/core';
-import { required, email } from '@vuelidate/validators';
 import { useMainStore } from '@/services/main.store';
 import { storeToRefs } from 'pinia';
-import { useLayout } from '@/layout/composables/layout';
-import { computed, onMounted } from 'vue';
-import { useUserStore } from '@/services/user.store';
-import AppConfig from '@/layout/AppConfig.vue';
-
-const { layoutConfig, contextPath } = useLayout();
 
 const authStore = useAuthStore();
 const mainStore = useMainStore();
-const userStore = useUserStore();
 
-const appName = import.meta.env.VITE_APP_NAME;
+const router = useRouter();
 
-const { resetPassword } = authStore;
+const { form, hasCode, hasEmail } = storeToRefs(authStore);
 
-const { errors, loading } = storeToRefs(mainStore);
-const { form } = storeToRefs(authStore);
-
-const rules = {
-    email: { required, email },
-    password: { required },
-    password_confirmation: { required },
-    token: { required }
-};
-
-const v$ = useVuelidate(rules, form);
+const toast = useToast();
 
 onMounted(() => {
-    if (userStore.isLoggedIn && userStore.isVerified) {
-        mainStore.router.push({ name: 'dashboard' });
+    if (!mainStore.authVerification) {
+        router.push({ name: 'login' });
     }
 });
 
-const logoUrl = computed(() => {
-    return `${contextPath}layout/images/${layoutConfig.darkTheme.value ? 'vepro' : 'vepro'}.png`;
-});
+const handleOnComplete = (value) => {
+    form.value.code = value;
+    onSubmit();
+};
+
+const handleOnChange = () => {
+    form.value.code = '';
+    authStore.$patch({
+        error: null
+    });
+};
+
+const onSubmit = () => {
+    authStore.verifyLogin();
+};
+const resendCode = (method) => {
+    form.value.method = method;
+    authStore.getTokenCode().then(() => {
+        toast.add({
+            severity: 'success',
+            summary: 'Notification',
+            detail: mainStore.message,
+            life: 3000,
+            closable: false
+        });
+    });
+};
+const onLogout = () => {
+    authStore.$reset();
+    mainStore.$reset();
+    router.push({ name: 'login' });
+};
 </script>
 
 <template>
-    <ConfirmDialog :breakpoints="{ '960px': '75vw', '640px': '100vw' }" :style="{ width: '50vw' }" />
-    <Toast position="top-center" />
-    <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
-        <div class="flex flex-column align-items-center justify-content-center w-full">
-            <router-link to="/">
-                <img :src="logoUrl" alt="vepro" class="mb-5 w-15rem flex-shrink-0" />
-            </router-link>
-            <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
-                <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius: 53px">
-                    <div class="text-center mb-5 px-6">
-                        <div class="text-900 text-3xl font-medium mb-3">Verification Email Account</div>
-                        <span class="text-600 font-medium">{{ appName }}</span>
-                    </div>
-                    <div class="">
-                        <div class="p-fluid mb-3">
-                            <span class="p-float-label">
-                                <InputText id="email" class="w-full md:w-30rem" type="text" v-model="form.email" disabled :class="{ 'p-invalid': errors.email }" @input="mainStore.removeError" />
-                                <InputLabel for="email" value="email" />
-                            </span>
-                            <InputError :message="errors.email" />
-                        </div>
-                        <div class="p-fluid mb-3">
-                            <span class="p-float-label">
-                                <Password :toggle-mask="true" :feedback="true" id="password" class="w-full" type="text" v-model="form.password" :class="{ 'p-invalid': errors.password }" @input="mainStore.removeError" />
-                                <InputLabel for="password" value="Password" />
-                            </span>
-                            <InputError :message="errors.password" />
-                        </div>
-                        <div class="p-fluid mb-3">
-                            <span class="p-float-label">
-                                <Password
-                                    :toggle-mask="true"
-                                    :feedback="false"
-                                    id="password_confirmation"
-                                    class="w-full"
-                                    type="text"
-                                    v-model="form.password_confirmation"
-                                    :class="{ 'p-invalid': errors.password_confirmation }"
-                                    @input="mainStore.removeError"
-                                />
-                                <InputLabel for="password_confirmation" value="Password confirmation" />
-                            </span>
-                            <InputError :message="errors.password_confirmation" />
-                        </div>
+    <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius: 53px">
+        <div class="text-center mb-5">
+            <div class="text-900 text-3xl font-medium mb-3">Two Factor Authentication</div>
 
-                        <form @submit.prevent="resetPassword">
-                            <Button type="submit" :disabled="v$.$invalid" :loading="loading" :label="loading ? 'Processing' : 'Reset Password'" class="w-full p-3 text-xl"></Button>
-                        </form>
-                    </div>
+            <div class="w-full flex flex-wrap align-items-center justify-content-center" v-if="hasCode">
+                <span class="text-600 font-small w-30rem">
+                    <p class="mb-0">OTP Code has been sent.</p>
+                    <span class="text-sm">please check your Whatsapp Message.</span>
+                </span>
+            </div>
+            <div class="w-full flex flex-wrap align-items-center justify-content-center" v-else>
+                <span class="text-600 font-small w-30rem">
+                    <p class="mb-0">Get your OTP Code.</p>
+                    <span class="text-sm">please choose your method to get OTP Token Code.</span>
+                </span>
+            </div>
+        </div>
+        
+        <p class="text-center font-bold text-red-600" v-if="mainStore.errors['code']">
+            {{ mainStore.errors['code'][0] }}
+        </p>
+        
+        <form @submit.prevent="onSubmit" v-if="!authStore.locked">
+            <div v-if="hasCode" class="flex flex-column md:flex-row md:align-items-center md:justify-content-center mb-5">
+                <OtpInput ref="otpInput" input-classes="otp-input" separator=" " :num-inputs="6" :should-auto-focus="true" :is-input-num="true" @on-change="handleOnChange" @on-complete="handleOnComplete" />
+            </div>
+        </form>
+
+        <div class="text-center mb-3" v-if="!authStore.locked">
+            <div class="row">
+                <!-- <div class="col" v-if="hasPhone">
+                    <Button @click="resendCode('whatsapp')" label="Send Whatsapp verification Code" type="button" class="p-button-raised p-button-success" icon="pi pi-whatsapp"> </Button>
+                </div> -->
+                <div class="col" v-if="hasEmail">
+                    <Button @click="resendCode('email')" label="Send email verification Code" type="button" class="p-button-raised p-button-info" icon="pi pi-envelope"> </Button>
                 </div>
             </div>
         </div>
+
+        <div class="col-12 text-center">
+            <p class="text-muted mb-0">
+                <Button @click="onLogout()" class="p-button-sm" icon="pi pi-arrow-left" label="Use another account"> </Button>
+            </p>
+        </div>
     </div>
-    <AppConfig simple />
 </template>
+
+<style>
+.otp-input {
+    width: 60px;
+    height: 60px;
+    padding: 1px;
+    margin: 0 5px;
+    font-size: 30px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+</style>

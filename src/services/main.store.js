@@ -2,9 +2,12 @@ import { defineStore } from 'pinia';
 import { useUserStore } from './user.store';
 import { ref } from 'vue';
 import axios from '@/plugins/axios';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { useAuthStore } from './auth.store';
-import { useToast } from 'vue-toastification';
+import { useToast } from 'primevue/usetoast';
+import { i18n } from '@/plugins/i18n';
+import router from '@/router';
+
 export const useMainStore = defineStore(
     'main',
     () => {
@@ -16,55 +19,21 @@ export const useMainStore = defineStore(
         const error = ref({});
         const loading = ref(false);
         const errors = ref([]);
-        const dashboard = ref({
-            showMap: true,
-            timeoutChart: 1
-        });
+        const dashboard = ref({});
         const registerVerification = ref(false);
         const authVerification = ref(false);
         const server = import.meta.env.VITE_APP_SERVER;
         const isMaintenance = ref(false);
         const route = useRoute();
-        const router = useRouter();
         const language = ref('id');
         const socketId = ref('');
         const message = ref('');
-        const currentMap = ref(null);
+        const currentMap = ref({});
 
         const sanctumCsrf = async () => {
             if (!document.cookie) {
                 await axios.get(server + 'sanctum/csrf-cookie');
             }
-        };
-
-        const errorToast = (position = 'top-right', duration = 5000) => {
-            toast.error(message.value, {
-                position: position,
-                timeout: duration,
-                closeOnClick: true,
-                pauseOnFocusLoss: true,
-                pauseOnHover: true,
-                draggable: true,
-                draggablePercent: 0.6,
-                showCloseButtonOnHover: true,
-                hideProgressBar: true,
-                closeButton: false
-            });
-        };
-
-        const successToast = (position = 'top-right', duration = 5000) => {
-            toast.success(message.value, {
-                position: position,
-                timeout: duration,
-                closeOnClick: true,
-                pauseOnFocusLoss: true,
-                pauseOnHover: true,
-                draggable: true,
-                draggablePercent: 0.6,
-                showCloseButtonOnHover: true,
-                hideProgressBar: true,
-                closeButton: false
-            });
         };
 
         const handleErrors = async (err) => {
@@ -81,33 +50,34 @@ export const useMainStore = defineStore(
             if (statusCode === 401) {
                 clearCurrentSession();
             }
-            if (statusCode === 404) {
-                router.push({ name: 'data-not-found' });
-            }
+            // if (statusCode === 404) {
+            //     notify('API Route Not Found', 'error');
+            // }
             if (statusCode === 429) {
-                // const alert = await alertController.create({
-                //     header: i18n.t('header.information'),
-                //     subHeader: i18n.t('text.please-wait'),
-                //     message: i18n.t('text.please-wait-request'),
-                //     buttons: [
-                //         {
-                //             text: i18n.t('button.close'),
-                //             role: 'cancel'
-                //         }
-                //     ]
-                // });
-                // await alert.present();
+                notify(i18n.t('text.please-wait-request'), 'error');
+            }
+        };
+
+        const notify = (message, type = 'success') => {
+            if (message) {
+                toast.add({
+                    severity: type,
+                    summary: i18n.t('message.notification'),
+                    detail: message,
+                    life: 5000,
+                    closable: true
+                });
             }
         };
 
         const clearCurrentSession = () => {
+            userStore.$reset();
             userStore.$patch({
                 accessToken: '',
-                isLoggedIn: false,
-                sessionId: null
+                isLoggedIn: false
             });
-            localStorage.removeItem('access');
             localStorage.removeItem('user');
+            router.push({ name: 'login' });
         };
 
         const clearGuestSession = () => {
@@ -142,15 +112,14 @@ export const useMainStore = defineStore(
             clearCurrentSession,
             clearGuestSession,
             removeError,
-            errorToast,
-            successToast
+            notify
         };
     },
     {
         // persist: true,
         persist: {
             key: 'global',
-            paths: ['language', 'socketId', 'currentMap', 'dashboard']
+            paths: ['language', 'socketId', 'currentMap']
         }
     }
 );
