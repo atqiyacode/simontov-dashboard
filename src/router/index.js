@@ -81,11 +81,29 @@ const router = createRouter({
                             }
                         },
                         {
+                            path: 'user/:id/detail',
+                            name: 'master-user-detail',
+                            component: () => import('@/views/master/UserDetailPage.vue'),
+                            meta: {
+                                title: 'User Data',
+                                role: ['superman', 'superadmin']
+                            }
+                        },
+                        {
                             path: 'location',
                             name: 'master-location',
                             component: () => import('@/views/master/LocationPage.vue'),
                             meta: {
                                 title: 'Lokasi Data',
+                                role: ['superman', 'superadmin']
+                            }
+                        },
+                        {
+                            path: 'dashboard-chart',
+                            name: 'master-dashboard-chart',
+                            component: () => import('@/views/master/DashboardChartPage.vue'),
+                            meta: {
+                                title: 'DashboardChartPage Data',
                                 role: ['superman', 'superadmin']
                             }
                         },

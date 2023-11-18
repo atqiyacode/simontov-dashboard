@@ -2,10 +2,36 @@
 import { ref } from 'vue';
 import RealtimeChartPage from './chart/RealtimeChartPage.vue';
 import { useMainStore } from '@/services/main.store';
+import { useChartStore } from '@/services/chart.store';
 import { storeToRefs } from 'pinia';
 const mainStore = useMainStore();
+const chartStore = useChartStore();
 const { currentMap, dashboard } = storeToRefs(mainStore);
+const { chartLength } = storeToRefs(chartStore);
 const formDialog = ref(false);
+const chartLengthOptions = ref([
+    {
+        id: 5
+    },
+    {
+        id: 10
+    },
+    {
+        id: 15
+    },
+    {
+        id: 20
+    },
+    {
+        id: 30
+    },
+    {
+        id: 50
+    },
+    {
+        id: 100
+    }
+]);
 </script>
 
 <template>
@@ -58,6 +84,19 @@ const formDialog = ref(false);
                     </div>
                     <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
                         <InputSwitch v-model="dashboard.showMap" />
+                    </div>
+                </li>
+                <li class="p-fluid">
+                    <div class="field">
+                        <label class="font-bold capitalize" for="value"> Chart Length </label>
+                        <Dropdown
+                            v-model="chartLength"
+                            :options="chartLengthOptions"
+                            optionLabel="id"
+                            optionValue="id"
+                            placeholder="Select a Chart Length"
+                            @change="chartStore.getLastFlowrate(currentMap.id)"
+                        />
                     </div>
                 </li>
             </ul>

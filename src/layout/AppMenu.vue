@@ -46,6 +46,11 @@ const model = ref([
             { label: 'Role', icon: 'pi pi-fw pi-bookmark', to: '/app/master/role' },
             { label: 'User', icon: 'pi pi-fw pi-users', to: '/app/master/user' },
             { label: 'Location', icon: 'pi pi-fw pi-map', to: '/app/master/location' },
+            {
+                label: 'Dashboard Chart',
+                icon: 'pi pi-fw pi-map',
+                to: '/app/master/dashboard-chart'
+            },
             { label: 'Biaya Admin', icon: 'pi pi-fw pi-cog', to: '/app/master/tax' }
         ]
     }

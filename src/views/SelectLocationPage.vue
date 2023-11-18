@@ -11,7 +11,7 @@ const chartStore = useChartStore();
 const LocationStore = useLocationStore();
 const router = useRouter();
 onMounted(() => {
-    LocationStore.getData();
+    LocationStore.getBySession();
 });
 
 const gmapApiKey = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
@@ -22,10 +22,7 @@ const onSelectMap = (location) => {
     mainStore.$patch({
         currentMap: location
     });
-
     chartStore.getLastFlowrate(location.id);
-    // chartStore.$reset();
-
     router.push({
         name: 'dashboard'
     });
@@ -38,7 +35,7 @@ const onSelectMap = (location) => {
             <GoogleMap :api-key="gmapApiKey" :center="center" :zoom="10" class="map">
                 <MarkerCluster>
                     <Marker
-                        v-for="(location, i) in LocationStore.data"
+                        v-for="(location, i) in LocationStore.sessionLocation"
                         :options="{
                             position: {
                                 lat: location.lattitude,

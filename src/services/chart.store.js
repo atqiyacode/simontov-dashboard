@@ -45,6 +45,8 @@ export const useChartStore = defineStore(
             new Date().toLocaleString('en-US', { timeZone: indonesiaTimeZone.value })
         );
 
+        const chartLength = ref(15);
+
         const currentFlowrate = ref(0);
         const currentPressure = ref(0);
         const currentPH = ref(0);
@@ -52,25 +54,67 @@ export const useChartStore = defineStore(
         const currentCond = ref(0);
         const currentLevel = ref(0);
 
+        const resetValue = () => {
+            chartSeries.value = [
+                {
+                    name: 'Flowrate',
+                    data: []
+                },
+                {
+                    name: 'Pressure',
+                    data: [],
+                    yAxis: 1 // Assign this series to the second Y-axis
+                }
+            ];
+            chartPHSeries.value = [
+                {
+                    name: 'PH',
+                    data: []
+                }
+            ];
+            chartCODSeries.value = [
+                {
+                    name: 'COD',
+                    data: []
+                }
+            ];
+            chartCondSeries.value = [
+                {
+                    name: 'Cond',
+                    data: []
+                }
+            ];
+            chartLevelSeries.value = [
+                {
+                    name: 'Level',
+                    data: []
+                }
+            ];
+        };
+
         const getLastFlowrate = (id) => {
+            resetValue();
             let params = {};
-            params.location_id = id;
+            params.per_page = chartLength.value;
             params.sorts = '-id';
-            params.per_page = 20;
+            params.location_id = id;
             return new Promise((resolve, reject) => {
                 axios
                     .get(`flowrates`, {
                         params: params
                     })
-                    .then((res) => {
+                    .then(async (res) => {
                         const data = res.data.data;
-                        data.forEach((element) => {
-                            loadChart(element);
-                            loadPHChart(element);
-                            loadCODChart(element);
-                            loadCondChart(element);
-                            loadLevelChart(element);
+                        const promises = data.reverse().map(async (element) => {
+                            await Promise.all([
+                                loadChart(element),
+                                loadPHChart(element),
+                                loadCODChart(element),
+                                loadCondChart(element),
+                                loadLevelChart(element)
+                            ]);
                         });
+                        await Promise.all(promises);
                         resolve(res);
                     })
                     .catch((err) => {
@@ -80,107 +124,89 @@ export const useChartStore = defineStore(
         };
 
         const loadChart = (data) => {
-            const timestamp = data.created_at
-                ? data.created_at
-                : new Date().toLocaleString('en-US', {
-                      timeZone: indonesiaTimeZone.value
-                  });
-            const newDataPoint1 = {
+            const timestamp = data.mag_date;
+
+            const newFlowrate = {
                 x: timestamp,
                 y: parseFloat(data.flowrate).toFixed(2)
             };
-            const newDataPoint2 = {
+            const newPressure = {
                 x: timestamp,
                 y: parseFloat(data.totalizer_3).toFixed(2)
             };
-            chartSeries.value[0].data.push(newDataPoint1);
-            chartSeries.value[1].data.push(newDataPoint2);
-            currentFlowrate.value = newDataPoint1;
-            currentPressure.value = newDataPoint2;
+            chartSeries.value[0].data.push(newFlowrate);
+            chartSeries.value[1].data.push(newPressure);
+            currentFlowrate.value = newFlowrate;
+            currentPressure.value = newPressure;
             // Remove older data points to limit the chart length
-            if (chartSeries.value[0].data.length > 20) {
+            if (chartSeries.value[0].data.length > chartLength.value) {
                 chartSeries.value[0].data.shift();
                 chartSeries.value[1].data.shift();
             }
-
-            // Update the chart
-            lastTimestamp.value = timestamp;
         };
 
         const loadPHChart = (data) => {
-            const timestamp = data.created_at
-                ? data.created_at
-                : new Date().toLocaleString('en-US', {
-                      timeZone: indonesiaTimeZone.value
-                  });
+            const timestamp = data.mag_date;
 
-            const newDataPoint1 = {
+            const newPH = {
                 x: timestamp,
                 y: parseFloat(data.ph).toFixed(2)
             };
-            chartPHSeries.value[0].data.push(newDataPoint1);
-            currentPH.value = newDataPoint1;
+            chartPHSeries.value[0].data.push(newPH);
+            currentPH.value = newPH;
             // Remove older data points to limit the chart length
-            if (chartPHSeries.value[0].data.length > 20) {
+            if (chartPHSeries.value[0].data.length > chartLength.value) {
                 chartPHSeries.value[0].data.shift();
             }
         };
 
         const loadCODChart = (data) => {
-            const timestamp = data.created_at
-                ? data.created_at
-                : new Date().toLocaleString('en-US', {
-                      timeZone: indonesiaTimeZone.value
-                  });
-            const newDataPoint1 = {
+            const timestamp = data.mag_date;
+
+            const newCOD = {
                 x: timestamp,
                 y: parseFloat(data.cod).toFixed(2)
             };
-            chartCODSeries.value[0].data.push(newDataPoint1);
-            currentCOD.value = newDataPoint1;
+            chartCODSeries.value[0].data.push(newCOD);
+            currentCOD.value = newCOD;
             // Remove older data points to limit the chart length
-            if (chartCODSeries.value[0].data.length > 20) {
+            if (chartCODSeries.value[0].data.length > chartLength.value) {
                 chartCODSeries.value[0].data.shift();
             }
         };
 
         const loadCondChart = (data) => {
-            const timestamp = data.created_at
-                ? data.created_at
-                : new Date().toLocaleString('en-US', {
-                      timeZone: indonesiaTimeZone.value
-                  });
-            const newDataPoint1 = {
+            const timestamp = data.mag_date;
+
+            const newCond = {
                 x: timestamp,
                 y: parseFloat(data.cond).toFixed(2)
             };
-            chartCondSeries.value[0].data.push(newDataPoint1);
-            currentCond.value = newDataPoint1;
+            chartCondSeries.value[0].data.push(newCond);
+            currentCond.value = newCond;
             // Remove older data points to limit the chart length
-            if (chartCondSeries.value[0].data.length > 20) {
+            if (chartCondSeries.value[0].data.length > chartLength.value) {
                 chartCondSeries.value[0].data.shift();
             }
         };
 
         const loadLevelChart = (data) => {
-            const timestamp = data.created_at
-                ? data.created_at
-                : new Date().toLocaleString('en-US', {
-                      timeZone: indonesiaTimeZone.value
-                  });
-            const newDataPoint1 = {
+            const timestamp = data.mag_date;
+
+            const newLevel = {
                 x: timestamp,
                 y: parseFloat(data.level).toFixed(2)
             };
-            chartLevelSeries.value[0].data.push(newDataPoint1);
-            currentLevel.value = newDataPoint1;
+            chartLevelSeries.value[0].data.push(newLevel);
+            currentLevel.value = newLevel;
             // Remove older data points to limit the chart length
-            if (chartLevelSeries.value[0].data.length > 20) {
+            if (chartLevelSeries.value[0].data.length > chartLength.value) {
                 chartLevelSeries.value[0].data.shift();
             }
         };
 
         return {
+            chartLength,
             chartSeries,
             chartPHSeries,
             chartCODSeries,
@@ -200,7 +226,8 @@ export const useChartStore = defineStore(
             loadPHChart,
             loadCODChart,
             loadCondChart,
-            loadLevelChart
+            loadLevelChart,
+            resetValue
         };
     },
     {

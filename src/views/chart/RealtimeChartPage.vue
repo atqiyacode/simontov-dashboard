@@ -2,10 +2,12 @@
 import { onMounted } from 'vue';
 import CurrentMapPage from './CurrentMapPage.vue';
 import { useMainStore } from '@/services/main.store';
+import { useUserStore } from '@/services/user.store';
 import { useChartStore } from '@/services/chart.store';
 import { storeToRefs } from 'pinia';
 const mainStore = useMainStore();
 const chartStore = useChartStore();
+const userStore = useUserStore();
 const { dashboard } = storeToRefs(mainStore);
 const {
     chartSeries,
@@ -20,14 +22,23 @@ const {
     currentLevel
 } = storeToRefs(chartStore);
 
+const { user } = storeToRefs(userStore);
+
 onMounted(() => {
-    // loadChart();
+    userStore.session();
 });
+
+const checkAccessChart = (code) => {
+    return user.value.dashboardCharts.includes(code);
+};
 </script>
 <template>
     <div :class="dashboard.showMap ? 'col-12 lg:col-6 xl:col-8' : 'col-12 '">
         <div class="grid">
-            <div class="col-12 lg:col-12 xl:col-12">
+            <div
+                class="col-12 lg:col-12 xl:col-12"
+                v-if="checkAccessChart('realtime-flowrate-pressure')"
+            >
                 <RealtimeDualLineChartPage
                     title="Flowrate and Pressure"
                     :colors="['#FFBB5C', '#247BA0']"
@@ -35,7 +46,7 @@ onMounted(() => {
                     :lastTimestamp="lastTimestamp"
                 />
             </div>
-            <div class="col-12 lg:col-12 xl:col-12">
+            <div class="col-12 lg:col-12 xl:col-12" v-if="checkAccessChart('realtime-cod')">
                 <RealtimeLineChartPage
                     title="COD"
                     :colors="['#5B0888']"
@@ -43,7 +54,7 @@ onMounted(() => {
                     :lastTimestamp="lastTimestamp"
                 />
             </div>
-            <div class="col-12 lg:col-12 xl:col-12">
+            <div class="col-12 lg:col-12 xl:col-12" v-if="checkAccessChart('realtime-ph')">
                 <RealtimeLineChartPage
                     title="PH"
                     :colors="['#E55604']"
@@ -71,7 +82,7 @@ onMounted(() => {
     <div class="col-12 lg:col-6 xl:col-4" v-if="dashboard.showMap">
         <CurrentMapPage />
     </div>
-    <div class="col-12 lg:col-6 xl:col-6">
+    <div class="col-12 lg:col-6 xl:col-6" v-if="checkAccessChart('radial-flowrate')">
         <RadialChartPage
             tag="l/s"
             title="Flowrate"
@@ -80,7 +91,7 @@ onMounted(() => {
             :series="[currentFlowrate?.y]"
         />
     </div>
-    <div class="col-12 lg:col-6 xl:col-6">
+    <div class="col-12 lg:col-6 xl:col-6" v-if="checkAccessChart('radial-pressure')">
         <RadialChartPage
             tag="BAR"
             title="Pressure"
@@ -89,7 +100,7 @@ onMounted(() => {
             :series="[currentPressure?.y]"
         />
     </div>
-    <div class="col-12 lg:col-6 xl:col-6">
+    <div class="col-12 lg:col-6 xl:col-6" v-if="checkAccessChart('radial-cod')">
         <RadialChartPage
             tag=""
             title="COD"
@@ -98,7 +109,7 @@ onMounted(() => {
             :series="[currentCOD?.y]"
         />
     </div>
-    <div class="col-12 lg:col-6 xl:col-6">
+    <div class="col-12 lg:col-6 xl:col-6" v-if="checkAccessChart('radial-ph')">
         <RadialChartPage
             tag=""
             title="PH"
@@ -107,7 +118,7 @@ onMounted(() => {
             :series="[currentPH?.y]"
         />
     </div>
-    <div class="col-12 lg:col-6 xl:col-6">
+    <div class="col-12 lg:col-6 xl:col-6" v-if="checkAccessChart('radial-cond')">
         <RadialChartPage
             tag=""
             title="Cond"
@@ -116,7 +127,7 @@ onMounted(() => {
             :series="[currentCond?.y]"
         />
     </div>
-    <div class="col-12 lg:col-6 xl:col-6">
+    <div class="col-12 lg:col-6 xl:col-6" v-if="checkAccessChart('radial-level')">
         <RadialChartPage
             tag=""
             title="Level"
@@ -125,6 +136,8 @@ onMounted(() => {
             :series="[currentLevel?.y]"
         />
     </div>
+
+    <!-- others chart -->
     <div class="col-12 lg:col-4 xl:col-4">
         <div class="card mb-0">
             <div class="flex justify-content-between mb-3">

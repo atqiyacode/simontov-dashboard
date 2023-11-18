@@ -4,14 +4,14 @@ import { useToast } from 'vue-toastification';
 
 import _ from 'lodash';
 import axios from '@/plugins/axios';
-export const useLocationStore = defineStore(
-    'LocationStore',
+export const useDashboardChart = defineStore(
+    'DashboardChart',
     () => {
         const toast = useToast();
 
-        const apiUrl = 'locations';
+        const apiUrl = 'dashboardCharts';
 
-        const title = ref('Lokasi');
+        const title = ref('dashboard Charts');
         const sessionLocation = ref([]);
         const searchData = ref([]);
         const data = ref([]);

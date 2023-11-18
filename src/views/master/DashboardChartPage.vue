@@ -2,15 +2,17 @@
 import { ref, onMounted, onBeforeMount, onUnmounted, getCurrentInstance } from 'vue';
 
 import { useMainStore } from '@/services/main.store';
-import { useUserStore } from '@/services/master/User.store';
+import { useDashboardChart } from '@/services/master/DashboardChart.store';
 import { storeToRefs } from 'pinia';
-import router from '@/router';
+
 const mainStore = useMainStore();
-const UserStore = useUserStore();
+const DashboardChartStore = useDashboardChart();
 const { proxy } = getCurrentInstance();
-proxy.$pusher.channel('user-channel').listen('.user-event', () => {
+
+proxy.$pusher.channel('dashboard-chart-channel').listen('.dashboard-chart-event', () => {
     //
 });
+
 const {
     title,
     data,
@@ -27,7 +29,7 @@ const {
     restoreSelectedDialog,
     destroyPermanentDialog,
     destroyPermanentSelectedDialog
-} = storeToRefs(UserStore);
+} = storeToRefs(DashboardChartStore);
 const { loading, errors } = storeToRefs(mainStore);
 const {
     onChangePage,
@@ -43,9 +45,10 @@ const {
     deleteMultiple,
     exportCSV,
     exportExcel
-} = UserStore;
+} = DashboardChartStore;
 
 const dt = ref(null);
+const center = ref({ lat: -6.175327999999999, lng: 106.8271517 });
 
 onBeforeMount(() => {
     getData({
@@ -53,14 +56,15 @@ onBeforeMount(() => {
     });
 });
 onMounted(() => {
-    title.value = 'Data User';
+    title.value = 'Data Location';
 });
 
 onUnmounted(() => {
-    // UserStore.$reset();
+    // DashboardChartStore.$reset();
 });
 
 const openNew = () => {
+    center.value = { lat: -6.175327999999999, lng: 106.8271517 };
     selectedData.value = [];
     form.value = {};
     formDialog.value = true;
@@ -80,15 +84,10 @@ const saveData = () => {
 };
 
 const editData = (data) => {
-    form.value = data;
-    router.push({
-        name: 'master-user-detail',
-        params: {
-            id: data.id
-        }
-    });
-    // formDialog.value = true;
-    // selectedData.value = [];
+    center.value = { lat: data.lattitude, lng: data.longitude };
+    form.value = { ...data };
+    formDialog.value = true;
+    selectedData.value = [];
 };
 
 // destroy
@@ -213,6 +212,18 @@ const confirmDeletePermanentSelectedDialog = () => {
                     </template>
 
                     <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+
+                    <Column field="code" :sortable="true" headerStyle="min-width:15rem;">
+                        <template #header>
+                            <span class="flex-1 uppercase py-2 font-bold"> code </span>
+                        </template>
+                        <template #body="slotProps">
+                            <span :class="{ 'text-red-500': slotProps.data.trashed }">
+                                {{ slotProps.data.code }}
+                            </span>
+                        </template>
+                    </Column>
+
                     <Column field="name" :sortable="true" headerStyle="min-width:15rem;">
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold"> Name </span>
@@ -223,23 +234,27 @@ const confirmDeletePermanentSelectedDialog = () => {
                             </span>
                         </template>
                     </Column>
-                    <Column field="username" :sortable="true" headerStyle="min-width:15rem;">
+
+                    <Column field="status" :sortable="true" headerStyle="min-width:15rem;">
                         <template #header>
-                            <span class="flex-1 uppercase py-2 font-bold"> username </span>
+                            <span class="flex-1 uppercase py-2 font-bold"> status </span>
                         </template>
                         <template #body="slotProps">
-                            <span :class="{ 'text-red-500': slotProps.data.trashed }">
-                                {{ slotProps.data.username }}
-                            </span>
+                            <Tag
+                                class="mr-2"
+                                :severity="slotProps.data.status ? 'success' : 'danger'"
+                                :value="slotProps.data.status ? 'Aktif' : 'Non-aktif'"
+                            ></Tag>
                         </template>
                     </Column>
-                    <Column field="email" :sortable="true" headerStyle="min-width:15rem;">
+
+                    <Column field="description" :sortable="true" headerStyle="min-width:15rem;">
                         <template #header>
-                            <span class="flex-1 uppercase py-2 font-bold"> email </span>
+                            <span class="flex-1 uppercase py-2 font-bold"> description </span>
                         </template>
                         <template #body="slotProps">
                             <span :class="{ 'text-red-500': slotProps.data.trashed }">
-                                {{ slotProps.data.email }}
+                                {{ slotProps.data.description }}
                             </span>
                         </template>
                     </Column>
@@ -258,7 +273,7 @@ const confirmDeletePermanentSelectedDialog = () => {
                                 v-if="slotProps.data.trashed"
                                 v-tooltip.top="`Restore`"
                                 icon="pi pi-refresh"
-                                class="p-button-rounded p-button-sm p-button-secondary mr-2"
+                                class="p-button-rounded p-button-sm p-button-info mr-2"
                                 @click="confirmRestoreData(slotProps.data)"
                             />
                             <Button
@@ -315,70 +330,47 @@ const confirmDeletePermanentSelectedDialog = () => {
         :header="form.id ? 'Ubah Data' : 'Tambah Data'"
         :modal="true"
         :closable="false"
-        class="p-fluid"
+        maximizable
     >
-        <div class="grid">
-            <div class="col-8">
-                <div class="field">
-                    <label class="font-bold" for="name">Name</label>
-                    <InputText
-                        id="name"
-                        v-model.trim="form.name"
-                        required="true"
-                        :class="{ 'p-invalid': errors?.name }"
-                    />
-                    <small class="text-sm p-error" v-if="errors?.name">{{ errors?.name[0] }}</small>
+        <div class="card">
+            <div class="p-fluid formgrid grid">
+                <div class="mb-4 field col-12">
+                    <span class="p-float-label">
+                        <InputText
+                            required
+                            id="name"
+                            type="text"
+                            v-model="form.name"
+                            :class="{ 'p-invalid': errors.name }"
+                            @input="mainStore.removeError"
+                            placeholder="Name"
+                        />
+                        <InputLabel value="name" />
+                    </span>
+                    <InputError :message="errors.name" />
                 </div>
-                <div class="field">
-                    <label class="font-bold" for="email">email</label>
-                    <InputText
-                        id="email"
-                        v-model.trim="form.email"
-                        required="true"
-                        :class="{ 'p-invalid': errors?.email }"
-                    />
-                    <small class="text-sm p-error" v-if="errors?.email">{{
-                        errors?.email[0]
-                    }}</small>
+                <div class="mb-4 field col-12">
+                    <span class="p-float-label">
+                        <Textarea
+                            required
+                            id="description"
+                            :rows="5"
+                            v-model="form.description"
+                            :class="{ 'p-invalid': errors.description }"
+                            @input="mainStore.removeError"
+                            placeholder="description"
+                        />
+                        <InputLabel value="description" />
+                    </span>
+                    <InputError :message="errors.description" />
                 </div>
-                <div class="field">
-                    <label class="font-bold" for="password">password</label>
-                    <Password
-                        v-model.trim="form.password"
-                        required="true"
-                        :class="{ 'p-invalid': errors?.password }"
-                        :toggle-mask="true"
-                        :feedback="true"
-                    />
-                    <small class="text-sm p-error" v-if="errors?.password">{{
-                        errors?.password[0]
-                    }}</small>
+                <div class="mb-4 field col-12">
+                    <InputLabel value="status" class="mb-3" />
+                    <InputSwitch v-model="form.status" />
+                    <InputError :message="errors.status" />
                 </div>
-                <div class="field">
-                    <label class="font-bold" for="password_confirmation"
-                        >password_confirmation</label
-                    >
-                    <Password
-                        id="password_confirmation"
-                        v-model.trim="form.password_confirmation"
-                        required="true"
-                        :class="{ 'p-invalid': errors?.password_confirmation }"
-                        :toggle-mask="true"
-                        :feedback="false"
-                    />
-                    <small class="text-sm p-error" v-if="errors?.password_confirmation">{{
-                        errors?.password_confirmation[0]
-                    }}</small>
-                </div>
-            </div>
-            <div class="col-4">
-                <pre>
-                {{ form }}
-            </pre
-                >
             </div>
         </div>
-
         <template #footer>
             <Button
                 :disabled="loading"

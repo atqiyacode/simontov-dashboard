@@ -124,6 +124,20 @@ export const useUserStore = defineStore(
             });
         };
 
+        const getById = (id) => {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(`${apiUrl}/${id}`)
+                    .then((res) => {
+                        form.value = res.data.data;
+                        resolve(res);
+                    })
+                    .catch((err) => {
+                        reject(err);
+                    });
+            });
+        };
+
         const getData = (params) => {
             if (params) {
                 params.sorts = sortField.value;
@@ -423,6 +437,7 @@ export const useUserStore = defineStore(
             item,
             sortField,
             getAll,
+            getById,
             getData,
             onChangePage,
             onSortData,

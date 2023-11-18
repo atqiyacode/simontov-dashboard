@@ -77,14 +77,15 @@ const isOutsideClicked = (event) => {
 
 proxy.$pusher
     .channel('flowrate-channel-' + currentMap.value.id)
-    .listen('.flowrate-event', (res) => {
+    .listen('.flowrate-event', async (res) => {
         const data = res.data.data;
-        console.log(data);
-        loadChart(data);
-        loadPHChart(data);
-        loadCODChart(data);
-        loadCondChart(data);
-        loadLevelChart(data);
+        await Promise.all([
+            loadChart(data),
+            loadPHChart(data),
+            loadCODChart(data),
+            loadCondChart(data),
+            loadLevelChart(data)
+        ]);
     });
 </script>
 
