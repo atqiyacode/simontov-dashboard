@@ -268,17 +268,6 @@ const getStreetAddressFrom = async (lat, long) => {
                         </template>
                     </Column>
 
-                    <Column field="description" :sortable="true" headerStyle="min-width:15rem;">
-                        <template #header>
-                            <span class="flex-1 uppercase py-2 font-bold"> description </span>
-                        </template>
-                        <template #body="slotProps">
-                            <span :class="{ 'text-red-500': slotProps.data.trashed }">
-                                {{ slotProps.data.description }}
-                            </span>
-                        </template>
-                    </Column>
-
                     <Column
                         class="text-center"
                         headerStyle="min-width:15rem;"

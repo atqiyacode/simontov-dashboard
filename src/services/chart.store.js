@@ -231,6 +231,8 @@ export const useChartStore = defineStore(
         };
     },
     {
-        persist: true
+        persist: {
+            storage: sessionStorage
+        }
     }
 );

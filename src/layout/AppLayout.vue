@@ -7,20 +7,28 @@ import AppConfig from './AppConfig.vue';
 import { useLayout } from '@/layout/composables/layout';
 import { storeToRefs } from 'pinia';
 import { useMainStore } from '@/services/main.store';
+import { useUserStore } from '@/services/user.store';
 import { useChartStore } from '@/services/chart.store';
+import router from '@/router';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
 const outsideClickListener = ref(null);
-
 const mainStore = useMainStore();
+const userStore = useUserStore();
 const chartStore = useChartStore();
 const { currentMap } = storeToRefs(mainStore);
+const { user } = storeToRefs(userStore);
 const { loadChart, loadPHChart, loadCODChart, loadCondChart, loadLevelChart } = chartStore;
 const { proxy } = getCurrentInstance();
 
 onMounted(() => {
-    //
+    if (!currentMap.value.id) {
+        mainStore.notify('Mohon pilih lokasi', 'warning');
+        router.push({
+            name: 'select-location'
+        });
+    }
 });
 
 watch(isSidebarActive, (newVal) => {
@@ -75,6 +83,15 @@ const isOutsideClicked = (event) => {
     );
 };
 
+const checkAccessLocation = () => {
+    console.log(user.value.locations.includes(currentMap.value.id));
+    if (!user.value.locations.includes(currentMap.value.id)) {
+        router.push({
+            name: 'select-location'
+        });
+    }
+};
+
 proxy.$pusher
     .channel('flowrate-channel-' + currentMap.value.id)
     .listen('.flowrate-event', async (res) => {
@@ -86,6 +103,13 @@ proxy.$pusher
             loadCondChart(data),
             loadLevelChart(data)
         ]);
+    });
+
+proxy.$pusher
+    .channel('user-location-channel-' + user.value.id)
+    .listen('.user-location-event', async () => {
+        await userStore.session();
+        checkAccessLocation();
     });
 </script>
 

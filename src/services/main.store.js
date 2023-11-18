@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import axios from '@/plugins/axios';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from './auth.store';
-import { useToast } from 'primevue/usetoast';
+import { useToast } from 'vue-toastification';
 import { i18n } from '@/plugins/i18n';
 import router from '@/router';
 
@@ -60,12 +60,10 @@ export const useMainStore = defineStore(
 
         const notify = (message, type = 'success') => {
             if (message) {
-                toast.add({
-                    severity: type,
-                    summary: i18n.t('message.notification'),
-                    detail: message,
-                    life: 5000,
-                    closable: true
+                toast(message, {
+                    type: type,
+                    closeButton: false,
+                    timeout: 5000
                 });
             }
         };
@@ -118,7 +116,8 @@ export const useMainStore = defineStore(
     {
         // persist: true,
         persist: {
-            key: 'global',
+            storage: sessionStorage,
+            key: 'Main',
             paths: ['language', 'socketId', 'currentMap']
         }
     }

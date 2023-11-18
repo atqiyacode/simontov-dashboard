@@ -17,6 +17,25 @@ const model = ref([
         label: 'Features',
         items: [
             {
+                label: 'Master Data',
+                items: [
+                    {
+                        label: 'Permission',
+                        icon: 'pi pi-fw pi-bookmark',
+                        to: '/app/master/permission'
+                    },
+                    { label: 'Role', icon: 'pi pi-fw pi-bookmark', to: '/app/master/role' },
+                    { label: 'User', icon: 'pi pi-fw pi-users', to: '/app/master/user' },
+                    { label: 'Location', icon: 'pi pi-fw pi-map', to: '/app/master/location' },
+                    {
+                        label: 'Dashboard Chart',
+                        icon: 'pi pi-fw pi-chart-bar',
+                        to: '/app/master/dashboard-chart'
+                    },
+                    { label: 'Biaya Admin', icon: 'pi pi-fw pi-cog', to: '/app/master/tax' }
+                ]
+            },
+            {
                 label: 'MAG 8000',
                 items: [
                     {
@@ -33,25 +52,6 @@ const model = ref([
                     { label: 'Range Cost', to: '/app/billing/range-cost' }
                 ]
             }
-        ]
-    },
-    {
-        label: 'Master Data',
-        items: [
-            {
-                label: 'Permission',
-                icon: 'pi pi-fw pi-bookmark',
-                to: '/app/master/permission'
-            },
-            { label: 'Role', icon: 'pi pi-fw pi-bookmark', to: '/app/master/role' },
-            { label: 'User', icon: 'pi pi-fw pi-users', to: '/app/master/user' },
-            { label: 'Location', icon: 'pi pi-fw pi-map', to: '/app/master/location' },
-            {
-                label: 'Dashboard Chart',
-                icon: 'pi pi-fw pi-map',
-                to: '/app/master/dashboard-chart'
-            },
-            { label: 'Biaya Admin', icon: 'pi pi-fw pi-cog', to: '/app/master/tax' }
         ]
     }
 ]);

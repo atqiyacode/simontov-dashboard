@@ -187,13 +187,13 @@ const showDetail = (data) => {
                             </span>
                         </template>
                     </Column>
-                    <Column field="analog_2" :sortable="true" headerStyle="min-width:15rem;">
+                    <Column field="pressure" :sortable="true" headerStyle="min-width:15rem;">
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold"> Pressure </span>
                         </template>
                         <template #body="slotProps">
                             <span :class="{ 'text-red-500': slotProps.data.trashed }">
-                                {{ slotProps.data.analog_2 }}
+                                {{ slotProps.data.pressure }}
                             </span>
                         </template>
                     </Column>
@@ -228,7 +228,12 @@ const showDetail = (data) => {
                             </span>
                         </template>
                     </Column>
-                    <Column class="text-center" headerStyle="min-width:15rem;">
+                    <Column
+                        class="text-center"
+                        headerStyle="min-width:15rem;"
+                        :frozen="true"
+                        align-frozen="right"
+                    >
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold"> Aksi </span>
                         </template>
@@ -283,7 +288,7 @@ const showDetail = (data) => {
                 <ListDetail label="totalizer 2" :value="selected.totalizer_2" />
                 <ListDetail label="totalizer 3" :value="selected.totalizer_3" />
                 <ListDetail label="analog 1" :value="selected.analog_1" />
-                <ListDetail label="pressure" :value="selected.analog_2" />
+                <ListDetail label="pressure" :value="selected.pressure" />
                 <ListDetail label="status battery" :value="selected.status_battery" />
                 <ListDetail label="bin alarm" :value="selected.bin_alarm" />
                 <ListDetail label="file" :value="selected.file_name" />

@@ -371,12 +371,6 @@ const confirmDeletePermanentSelectedDialog = () => {
                     }}</small>
                 </div>
             </div>
-            <div class="col-4">
-                <pre>
-                {{ form }}
-            </pre
-                >
-            </div>
         </div>
 
         <template #footer>

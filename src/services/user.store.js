@@ -109,6 +109,7 @@ export const useUserStore = defineStore(
                     });
             });
         };
+
         return {
             setFirebaseToken,
             session,
