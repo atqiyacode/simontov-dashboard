@@ -41,6 +41,12 @@ export const useChartStore = defineStore(
                 data: []
             }
         ]);
+        const chartDOSeries = ref([
+            {
+                name: 'DO',
+                data: []
+            }
+        ]);
         const lastTimestamp = ref(
             new Date().toLocaleString('en-US', { timeZone: indonesiaTimeZone.value })
         );
@@ -53,6 +59,7 @@ export const useChartStore = defineStore(
         const currentCOD = ref(0);
         const currentCond = ref(0);
         const currentLevel = ref(0);
+        const currentDO = ref(0);
 
         const resetValue = () => {
             chartSeries.value = [
@@ -90,6 +97,12 @@ export const useChartStore = defineStore(
                     data: []
                 }
             ];
+            chartDOSeries.value = [
+                {
+                    name: 'DO',
+                    data: []
+                }
+            ];
         };
 
         const getLastFlowrate = (id) => {
@@ -111,7 +124,8 @@ export const useChartStore = defineStore(
                                 loadPHChart(element),
                                 loadCODChart(element),
                                 loadCondChart(element),
-                                loadLevelChart(element)
+                                loadLevelChart(element),
+                                loadDOChart(element)
                             ]);
                         });
                         await Promise.all(promises);
@@ -205,6 +219,21 @@ export const useChartStore = defineStore(
             }
         };
 
+        const loadDOChart = (data) => {
+            const timestamp = data.mag_date;
+
+            const newDO = {
+                x: timestamp,
+                y: parseFloat(data.do).toFixed(2)
+            };
+            chartDOSeries.value[0].data.push(newDO);
+            currentDO.value = newDO;
+            // Remove older data points to limit the chart length
+            if (chartDOSeries.value[0].data.length > chartLength.value) {
+                chartDOSeries.value[0].data.shift();
+            }
+        };
+
         return {
             chartLength,
             chartSeries,
@@ -212,6 +241,7 @@ export const useChartStore = defineStore(
             chartCODSeries,
             chartCondSeries,
             chartLevelSeries,
+            chartDOSeries,
             lastTimestamp,
             currentFlowrate,
             currentPressure,
@@ -219,6 +249,7 @@ export const useChartStore = defineStore(
             currentCOD,
             currentCond,
             currentLevel,
+            currentDO,
             indonesiaTimeZone,
             // fucntion
             getLastFlowrate,
@@ -227,6 +258,7 @@ export const useChartStore = defineStore(
             loadCODChart,
             loadCondChart,
             loadLevelChart,
+            loadDOChart,
             resetValue
         };
     },

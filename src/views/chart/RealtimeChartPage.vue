@@ -14,13 +14,17 @@ const {
     chartSeries,
     chartPHSeries,
     chartCODSeries,
+    chartCondSeries,
+    chartLevelSeries,
+    chartDOSeries,
     lastTimestamp,
     currentFlowrate,
     currentPressure,
     currentPH,
     currentCOD,
     currentCond,
-    currentLevel
+    currentLevel,
+    currentDO
 } = storeToRefs(chartStore);
 
 const { user } = storeToRefs(userStore);
@@ -31,7 +35,6 @@ onMounted(() => {
 });
 
 const checkAccessLocation = () => {
-    console.log(user.value.locations.includes(currentMap.value.id));
     if (!user.value.locations.includes(currentMap.value.id)) {
         router.push({
             name: 'select-location'
@@ -73,20 +76,30 @@ const checkAccessChart = (code) => {
                     :lastTimestamp="lastTimestamp"
                 />
             </div>
-            <!-- <div class="col-12 lg:col-12 xl:col-12">
+            <div class="col-12 lg:col-12 xl:col-12" v-if="checkAccessChart('realtime-cond')">
                 <RealtimeLineChartPage
-                    title="Cond"
+                    title="COND"
+                    :colors="['#E1AA74']"
                     :chartSeries="chartCondSeries"
                     :lastTimestamp="lastTimestamp"
                 />
             </div>
-            <div class="col-12 lg:col-12 xl:col-12">
+            <div class="col-12 lg:col-12 xl:col-12" v-if="checkAccessChart('realtime-level')">
                 <RealtimeLineChartPage
-                    title="Level"
+                    title="LEVEL"
+                    :colors="['#B6FFFA']"
                     :chartSeries="chartLevelSeries"
                     :lastTimestamp="lastTimestamp"
                 />
-            </div> -->
+            </div>
+            <div class="col-12 lg:col-12 xl:col-12" v-if="checkAccessChart('realtime-do')">
+                <RealtimeLineChartPage
+                    title="DO"
+                    :colors="['#A7D397']"
+                    :chartSeries="chartDOSeries"
+                    :lastTimestamp="lastTimestamp"
+                />
+            </div>
         </div>
     </div>
 
@@ -94,160 +107,130 @@ const checkAccessChart = (code) => {
         <div class="col-12 lg:col-6 xl:col-4" v-if="dashboard.showMap">
             <CurrentMapPage />
         </div>
-        <div class="col-12 lg:col-6 xl:col-6" v-if="checkAccessChart('radial-flowrate')">
-            <RadialChartPage
-                tag="l/s"
-                title="Flowrate"
-                colors="#247BA0"
-                :name="['Flowrate']"
-                :series="[currentFlowrate?.y]"
-            />
-        </div>
-        <div class="col-12 lg:col-6 xl:col-6" v-if="checkAccessChart('radial-pressure')">
-            <RadialChartPage
-                tag="BAR"
-                title="Pressure"
-                colors="#FFBB5C"
-                :name="['Pressure']"
-                :series="[currentPressure?.y]"
-            />
-        </div>
-        <div class="col-12 lg:col-6 xl:col-6" v-if="checkAccessChart('radial-cod')">
-            <RadialChartPage
-                tag=""
-                title="COD"
-                colors="#D0A2F7"
-                :name="['COD']"
-                :series="[currentCOD?.y]"
-            />
-        </div>
-        <div class="col-12 lg:col-6 xl:col-6" v-if="checkAccessChart('radial-ph')">
-            <RadialChartPage
-                tag=""
-                title="PH"
-                colors="#0174BE"
-                :name="['Ph']"
-                :series="[currentPH?.y]"
-            />
-        </div>
-        <div class="col-12 lg:col-6 xl:col-6" v-if="checkAccessChart('radial-cond')">
-            <RadialChartPage
-                tag=""
-                title="Cond"
-                colors="#C70039"
-                :name="['Cond']"
-                :series="[currentCond?.y]"
-            />
-        </div>
-        <div class="col-12 lg:col-6 xl:col-6" v-if="checkAccessChart('radial-level')">
-            <RadialChartPage
-                tag=""
-                title="Level"
-                colors="#3D0C11"
-                :name="['Level']"
-                :series="[currentLevel?.y]"
-            />
+
+        <div class="col-12">
+            <div class="grid">
+                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-flowrate')">
+                    <NewRadialChartPage
+                        tag="l/s"
+                        title="Flowrate"
+                        colors="#247BA0"
+                        :name="['Flowrate']"
+                        :series="[currentFlowrate?.y]"
+                    />
+                </div>
+                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-pressure')">
+                    <NewRadialChartPage
+                        tag="BAR"
+                        title="Pressure"
+                        colors="#FFBB5C"
+                        :name="['Pressure']"
+                        :series="[currentPressure?.y]"
+                    />
+                </div>
+                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-cod')">
+                    <NewRadialChartPage
+                        tag=""
+                        title="COD"
+                        colors="#5B0888"
+                        :name="['COD']"
+                        :series="[currentCOD?.y]"
+                    />
+                </div>
+                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-ph')">
+                    <NewRadialChartPage
+                        tag=""
+                        title="PH"
+                        colors="#E55604"
+                        :name="['Ph']"
+                        :series="[currentPH?.y]"
+                    />
+                </div>
+                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-cond')">
+                    <NewRadialChartPage
+                        tag=""
+                        title="Cond"
+                        colors="#E1AA74"
+                        :name="['Cond']"
+                        :series="[currentCond?.y]"
+                    />
+                </div>
+                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-level')">
+                    <NewRadialChartPage
+                        tag=""
+                        title="Level"
+                        colors="#B6FFFA"
+                        :name="['Level']"
+                        :series="[currentLevel?.y]"
+                    />
+                </div>
+                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-do')">
+                    <NewRadialChartPage
+                        tag=""
+                        title="DO"
+                        colors="#A7D397"
+                        :name="['DO']"
+                        :series="[currentDO?.y]"
+                    />
+                </div>
+            </div>
         </div>
 
         <!-- others chart -->
-        <div class="col-12 lg:col-4 xl:col-4">
-            <div class="card mb-0">
-                <div class="flex justify-content-between mb-3">
-                    <div>
-                        <h4 class="block text-500 font-medium mb-3">Totalizer 1</h4>
-                        <div class="text-900 font-medium text-2xl">152 m<sup>3</sup></div>
-                    </div>
-                    <div
-                        class="flex align-items-center justify-content-center bg-red-100 border-round"
-                        style="width: 4rem; height: 4rem"
-                    >
-                        <i class="pi pi-database text-red-500 text-3xl"></i>
-                    </div>
-                </div>
-                <span class="text-500">Akhir : </span>
-                <span class="text-green-500 font-medium text-xl">24 m<sup>3</sup> </span>
-            </div>
-        </div>
-        <div class="col-12 lg:col-4 xl:col-4">
-            <div class="card mb-0">
-                <div class="flex justify-content-between mb-3">
-                    <div>
-                        <h4 class="block text-500 font-medium mb-3">Totalizer 2</h4>
-                        <div class="text-900 font-medium text-2xl">2.100 m<sup>3</sup></div>
-                    </div>
-                    <div
-                        class="flex align-items-center justify-content-center bg-orange-100 border-round"
-                        style="width: 4rem; height: 4rem"
-                    >
-                        <i class="pi pi-database text-orange-500 text-3xl"></i>
-                    </div>
-                </div>
-                <span class="text-500">Awal : </span>
-                <span class="text-green-500 font-medium text-xl">24 m<sup>3</sup> </span>
-            </div>
-        </div>
-        <div class="col-12 lg:col-4 xl:col-4">
-            <div class="card mb-0">
-                <div class="flex justify-content-between mb-3">
-                    <div>
-                        <h4 class="block text-500 font-medium mb-3">Totalizer 3</h4>
-                        <div class="text-900 font-medium text-2xl">28441 m<sup>3</sup></div>
-                    </div>
-                    <div
-                        class="flex align-items-center justify-content-center bg-cyan-100 border-round"
-                        style="width: 4rem; height: 4rem"
-                    >
-                        <i class="pi pi-database text-cyan-500 text-3xl"></i>
-                    </div>
-                </div>
-                <span class="text-500">Hasil : </span>
-                <span class="text-green-500 font-medium text-xl">24 m<sup>3</sup> </span>
-            </div>
-        </div>
-        <div class="col-12 lg:col-6 xl:col-3">
-            <div class="card mb-0">
-                <div class="flex justify-content-center mb-3">
-                    <div class="text-center">
-                        <h4 class="block font-medium mb-3">Flowrate Max</h4>
-                        <div class="text-900 text-green-500 font-medium text-2xl">
-                            152 <small>L/s</small>
+        <div class="col-12">
+            <div class="grid">
+                <div class="col-12 lg:col-4 xl:col-4" v-if="checkAccessChart('totalizer-1')">
+                    <div class="card mb-0">
+                        <div class="flex justify-content-between mb-3">
+                            <div>
+                                <h4 class="block text-500 font-medium mb-3">Totalizer 1</h4>
+                                <div class="text-900 font-medium text-2xl">152 m<sup>3</sup></div>
+                            </div>
+                            <div
+                                class="flex align-items-center justify-content-center bg-red-100 border-round"
+                                style="width: 4rem; height: 4rem"
+                            >
+                                <i class="pi pi-database text-red-500 text-3xl"></i>
+                            </div>
                         </div>
+                        <span class="text-500">Akhir : </span>
+                        <span class="text-green-500 font-medium text-xl">24 m<sup>3</sup> </span>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="col-12 lg:col-6 xl:col-3">
-            <div class="card mb-0">
-                <div class="flex justify-content-center mb-3">
-                    <div class="text-center">
-                        <h4 class="block font-medium mb-3">Flowrate Min</h4>
-                        <div class="text-900 text-red-500 font-medium text-2xl">
-                            152 <small>L/s</small>
+                <div class="col-12 lg:col-4 xl:col-4" v-if="checkAccessChart('totalizer-2')">
+                    <div class="card mb-0">
+                        <div class="flex justify-content-between mb-3">
+                            <div>
+                                <h4 class="block text-500 font-medium mb-3">Totalizer 2</h4>
+                                <div class="text-900 font-medium text-2xl">2.100 m<sup>3</sup></div>
+                            </div>
+                            <div
+                                class="flex align-items-center justify-content-center bg-orange-100 border-round"
+                                style="width: 4rem; height: 4rem"
+                            >
+                                <i class="pi pi-database text-orange-500 text-3xl"></i>
+                            </div>
                         </div>
+                        <span class="text-500">Awal : </span>
+                        <span class="text-green-500 font-medium text-xl">24 m<sup>3</sup> </span>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="col-12 lg:col-6 xl:col-3">
-            <div class="card mb-0">
-                <div class="flex justify-content-center mb-3">
-                    <div class="text-center">
-                        <h4 class="block font-medium mb-3">Pressure Max</h4>
-                        <div class="text-900 text-green-500 font-medium text-2xl">
-                            152 <small>Bar</small>
+                <div class="col-12 lg:col-4 xl:col-4" v-if="checkAccessChart('totalizer-3')">
+                    <div class="card mb-0">
+                        <div class="flex justify-content-between mb-3">
+                            <div>
+                                <h4 class="block text-500 font-medium mb-3">Totalizer 3</h4>
+                                <div class="text-900 font-medium text-2xl">28441 m<sup>3</sup></div>
+                            </div>
+                            <div
+                                class="flex align-items-center justify-content-center bg-cyan-100 border-round"
+                                style="width: 4rem; height: 4rem"
+                            >
+                                <i class="pi pi-database text-cyan-500 text-3xl"></i>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 lg:col-6 xl:col-3">
-            <div class="card mb-0">
-                <div class="flex justify-content-center mb-3">
-                    <div class="text-center">
-                        <h4 class="block font-medium mb-3">Pressure Min</h4>
-                        <div class="text-900 text-red-500 font-medium text-2xl">
-                            152 <small>Bar</small>
-                        </div>
+                        <span class="text-500">Hasil : </span>
+                        <span class="text-green-500 font-medium text-xl">24 m<sup>3</sup> </span>
                     </div>
                 </div>
             </div>

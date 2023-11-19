@@ -85,7 +85,7 @@ const options = {
 </script>
 <template>
     <div class="card shadow-3">
-        <h5 class="font-bold">{{ title }}</h5>
+        <h5 class="font-bold uppercase">{{ title }}</h5>
         <apexchart :options="options" :series="series" height="300"></apexchart>
     </div>
 </template>

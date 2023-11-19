@@ -19,7 +19,8 @@ const userStore = useUserStore();
 const chartStore = useChartStore();
 const { currentMap } = storeToRefs(mainStore);
 const { user } = storeToRefs(userStore);
-const { loadChart, loadPHChart, loadCODChart, loadCondChart, loadLevelChart } = chartStore;
+const { loadChart, loadPHChart, loadCODChart, loadCondChart, loadLevelChart, loadDOChart } =
+    chartStore;
 const { proxy } = getCurrentInstance();
 
 onMounted(() => {
@@ -101,7 +102,8 @@ proxy.$pusher
             loadPHChart(data),
             loadCODChart(data),
             loadCondChart(data),
-            loadLevelChart(data)
+            loadLevelChart(data),
+            loadDOChart(data)
         ]);
     });
 
