@@ -47,6 +47,11 @@ export const useChartStore = defineStore(
                 data: []
             }
         ]);
+
+        const totalizer_1 = ref(0);
+        const totalizer_2 = ref(0);
+        const totalizer_3 = ref(0);
+
         const lastTimestamp = ref(
             new Date().toLocaleString('en-US', { timeZone: indonesiaTimeZone.value })
         );
@@ -120,6 +125,7 @@ export const useChartStore = defineStore(
                         const data = res.data.data;
                         const promises = data.reverse().map(async (element) => {
                             await Promise.all([
+                                loadTotalizer(element),
                                 loadChart(element),
                                 loadPHChart(element),
                                 loadCODChart(element),
@@ -138,7 +144,7 @@ export const useChartStore = defineStore(
         };
 
         const loadChart = (data) => {
-            const timestamp = data.mag_date;
+            const timestamp = data.created_at;
 
             const newFlowrate = {
                 x: timestamp,
@@ -160,7 +166,7 @@ export const useChartStore = defineStore(
         };
 
         const loadPHChart = (data) => {
-            const timestamp = data.mag_date;
+            const timestamp = data.created_at;
 
             const newPH = {
                 x: timestamp,
@@ -175,7 +181,7 @@ export const useChartStore = defineStore(
         };
 
         const loadCODChart = (data) => {
-            const timestamp = data.mag_date;
+            const timestamp = data.created_at;
 
             const newCOD = {
                 x: timestamp,
@@ -190,7 +196,7 @@ export const useChartStore = defineStore(
         };
 
         const loadCondChart = (data) => {
-            const timestamp = data.mag_date;
+            const timestamp = data.created_at;
 
             const newCond = {
                 x: timestamp,
@@ -205,7 +211,7 @@ export const useChartStore = defineStore(
         };
 
         const loadLevelChart = (data) => {
-            const timestamp = data.mag_date;
+            const timestamp = data.created_at;
 
             const newLevel = {
                 x: timestamp,
@@ -220,7 +226,7 @@ export const useChartStore = defineStore(
         };
 
         const loadDOChart = (data) => {
-            const timestamp = data.mag_date;
+            const timestamp = data.created_at;
 
             const newDO = {
                 x: timestamp,
@@ -232,6 +238,13 @@ export const useChartStore = defineStore(
             if (chartDOSeries.value[0].data.length > chartLength.value) {
                 chartDOSeries.value[0].data.shift();
             }
+        };
+
+        const loadTotalizer = (data) => {
+            console.log(data);
+            totalizer_1.value = parseFloat(data.totalizer_1).toFixed(2);
+            totalizer_2.value = parseFloat(data.totalizer_2).toFixed(2);
+            totalizer_3.value = parseFloat(data.totalizer_3).toFixed(2);
         };
 
         return {
@@ -250,6 +263,9 @@ export const useChartStore = defineStore(
             currentCond,
             currentLevel,
             currentDO,
+            totalizer_1,
+            totalizer_2,
+            totalizer_3,
             indonesiaTimeZone,
             // fucntion
             getLastFlowrate,
@@ -259,6 +275,7 @@ export const useChartStore = defineStore(
             loadCondChart,
             loadLevelChart,
             loadDOChart,
+            loadTotalizer,
             resetValue
         };
     },

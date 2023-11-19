@@ -8,8 +8,8 @@ const model = ref([
         label: 'Home',
         items: [
             { label: 'Ganti Lokasi', icon: 'pi pi-fw pi-map-marker', to: '/select-location' },
-            { label: 'Realtime', icon: 'pi pi-fw pi-chart-line', to: '/app/dashboard/realtime' },
-            { label: 'Static', icon: 'pi pi-fw pi-chart-bar', to: '/app/dashboard/static' }
+            { label: 'Realtime', icon: 'pi pi-fw pi-chart-line', to: '/app/dashboard/realtime' }
+            // { label: 'Static', icon: 'pi pi-fw pi-chart-bar', to: '/app/dashboard/static' }
         ]
     },
 

@@ -127,12 +127,12 @@ const options = {
     // stroke: {
     //     dashArray: 4
     // },
-    labels: props.name
+    labels: [props.title]
 };
 </script>
 <template>
-    <div class="card shadow-3">
-        <h5 class="font-bold uppercase">{{ title }}</h5>
+    <div class="card shadow-5">
+        <!-- <h5 class="font-bold uppercase">{{ title }}</h5> -->
         <apexchart :options="options" :series="series" height="300"></apexchart>
     </div>
 </template>

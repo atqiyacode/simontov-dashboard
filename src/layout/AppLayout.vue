@@ -19,8 +19,15 @@ const userStore = useUserStore();
 const chartStore = useChartStore();
 const { currentMap } = storeToRefs(mainStore);
 const { user } = storeToRefs(userStore);
-const { loadChart, loadPHChart, loadCODChart, loadCondChart, loadLevelChart, loadDOChart } =
-    chartStore;
+const {
+    loadChart,
+    loadPHChart,
+    loadCODChart,
+    loadCondChart,
+    loadLevelChart,
+    loadDOChart,
+    loadTotalizer
+} = chartStore;
 const { proxy } = getCurrentInstance();
 
 onMounted(() => {
@@ -96,6 +103,7 @@ proxy.$pusher
     .listen('.flowrate-event', async (res) => {
         const data = res.data.data;
         await Promise.all([
+            loadTotalizer(data),
             loadChart(data),
             loadPHChart(data),
             loadCODChart(data),

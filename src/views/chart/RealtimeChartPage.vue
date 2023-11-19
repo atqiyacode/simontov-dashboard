@@ -24,7 +24,10 @@ const {
     currentCOD,
     currentCond,
     currentLevel,
-    currentDO
+    currentDO,
+    totalizer_1,
+    totalizer_2,
+    totalizer_3
 } = storeToRefs(chartStore);
 
 const { user } = storeToRefs(userStore);
@@ -110,66 +113,59 @@ const checkAccessChart = (code) => {
 
         <div class="col-12">
             <div class="grid">
-                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-flowrate')">
+                <div class="col-12 lg:col-6 xl:col-3" v-if="checkAccessChart('radial-flowrate')">
                     <NewRadialChartPage
                         tag="l/s"
-                        title="Flowrate"
+                        title="FLOWRATE"
                         colors="#247BA0"
-                        :name="['Flowrate']"
                         :series="[currentFlowrate?.y]"
                     />
                 </div>
-                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-pressure')">
+                <div class="col-12 lg:col-6 xl:col-3" v-if="checkAccessChart('radial-pressure')">
                     <NewRadialChartPage
                         tag="BAR"
-                        title="Pressure"
+                        title="PRESSURE"
                         colors="#FFBB5C"
-                        :name="['Pressure']"
                         :series="[currentPressure?.y]"
                     />
                 </div>
-                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-cod')">
+                <div class="col-12 lg:col-6 xl:col-3" v-if="checkAccessChart('radial-cod')">
                     <NewRadialChartPage
                         tag=""
                         title="COD"
                         colors="#5B0888"
-                        :name="['COD']"
                         :series="[currentCOD?.y]"
                     />
                 </div>
-                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-ph')">
+                <div class="col-12 lg:col-6 xl:col-3" v-if="checkAccessChart('radial-ph')">
                     <NewRadialChartPage
                         tag=""
                         title="PH"
                         colors="#E55604"
-                        :name="['Ph']"
                         :series="[currentPH?.y]"
                     />
                 </div>
-                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-cond')">
+                <div class="col-12 lg:col-6 xl:col-3" v-if="checkAccessChart('radial-cond')">
                     <NewRadialChartPage
                         tag=""
-                        title="Cond"
+                        title="COND"
                         colors="#E1AA74"
-                        :name="['Cond']"
                         :series="[currentCond?.y]"
                     />
                 </div>
-                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-level')">
+                <div class="col-12 lg:col-6 xl:col-3" v-if="checkAccessChart('radial-level')">
                     <NewRadialChartPage
                         tag=""
-                        title="Level"
+                        title="LEVEL"
                         colors="#B6FFFA"
-                        :name="['Level']"
                         :series="[currentLevel?.y]"
                     />
                 </div>
-                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-do')">
+                <div class="col-12 lg:col-6 xl:col-3" v-if="checkAccessChart('radial-do')">
                     <NewRadialChartPage
                         tag=""
                         title="DO"
                         colors="#A7D397"
-                        :name="['DO']"
                         :series="[currentDO?.y]"
                     />
                 </div>
@@ -180,11 +176,13 @@ const checkAccessChart = (code) => {
         <div class="col-12">
             <div class="grid">
                 <div class="col-12 lg:col-4 xl:col-4" v-if="checkAccessChart('totalizer-1')">
-                    <div class="card mb-0">
+                    <div class="card shadow-5 mb-0">
                         <div class="flex justify-content-between mb-3">
                             <div>
                                 <h4 class="block text-500 font-medium mb-3">Totalizer 1</h4>
-                                <div class="text-900 font-medium text-2xl">152 m<sup>3</sup></div>
+                                <div class="text-900 font-medium text-2xl">
+                                    {{ totalizer_1 }} m<sup>3</sup>
+                                </div>
                             </div>
                             <div
                                 class="flex align-items-center justify-content-center bg-red-100 border-round"
@@ -193,16 +191,16 @@ const checkAccessChart = (code) => {
                                 <i class="pi pi-database text-red-500 text-3xl"></i>
                             </div>
                         </div>
-                        <span class="text-500">Akhir : </span>
-                        <span class="text-green-500 font-medium text-xl">24 m<sup>3</sup> </span>
                     </div>
                 </div>
                 <div class="col-12 lg:col-4 xl:col-4" v-if="checkAccessChart('totalizer-2')">
-                    <div class="card mb-0">
+                    <div class="card shadow-5 mb-0">
                         <div class="flex justify-content-between mb-3">
                             <div>
                                 <h4 class="block text-500 font-medium mb-3">Totalizer 2</h4>
-                                <div class="text-900 font-medium text-2xl">2.100 m<sup>3</sup></div>
+                                <div class="text-900 font-medium text-2xl">
+                                    {{ totalizer_2 }} m<sup>3</sup>
+                                </div>
                             </div>
                             <div
                                 class="flex align-items-center justify-content-center bg-orange-100 border-round"
@@ -211,16 +209,16 @@ const checkAccessChart = (code) => {
                                 <i class="pi pi-database text-orange-500 text-3xl"></i>
                             </div>
                         </div>
-                        <span class="text-500">Awal : </span>
-                        <span class="text-green-500 font-medium text-xl">24 m<sup>3</sup> </span>
                     </div>
                 </div>
                 <div class="col-12 lg:col-4 xl:col-4" v-if="checkAccessChart('totalizer-3')">
-                    <div class="card mb-0">
+                    <div class="card shadow-5 mb-0">
                         <div class="flex justify-content-between mb-3">
                             <div>
                                 <h4 class="block text-500 font-medium mb-3">Totalizer 3</h4>
-                                <div class="text-900 font-medium text-2xl">28441 m<sup>3</sup></div>
+                                <div class="text-900 font-medium text-2xl">
+                                    {{ totalizer_3 }} m<sup>3</sup>
+                                </div>
                             </div>
                             <div
                                 class="flex align-items-center justify-content-center bg-cyan-100 border-round"
@@ -229,8 +227,6 @@ const checkAccessChart = (code) => {
                                 <i class="pi pi-database text-cyan-500 text-3xl"></i>
                             </div>
                         </div>
-                        <span class="text-500">Hasil : </span>
-                        <span class="text-green-500 font-medium text-xl">24 m<sup>3</sup> </span>
                     </div>
                 </div>
             </div>

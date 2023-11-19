@@ -78,6 +78,22 @@ const onSelectMap = (location) => {
                                         <span
                                             class="font-bold mr-2 mb-1 md:mb-0 capitalize text-gray-500"
                                         >
+                                            Tenant
+                                        </span>
+                                    </div>
+                                    <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
+                                        <span class="font-medium text-black-alpha-90">
+                                            {{ location.company_name }}
+                                        </span>
+                                    </div>
+                                </li>
+                                <li
+                                    class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4"
+                                >
+                                    <div>
+                                        <span
+                                            class="font-bold mr-2 mb-1 md:mb-0 capitalize text-gray-500"
+                                        >
                                             Name
                                         </span>
                                     </div>

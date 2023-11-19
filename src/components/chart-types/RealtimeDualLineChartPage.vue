@@ -130,7 +130,7 @@ const chartOptions = ref({
 });
 </script>
 <template>
-    <div class="card shadow-3" v-if="chartSeries">
+    <div class="card shadow-5" v-if="chartSeries">
         <h5 class="font-bold">{{ title }}</h5>
         <apexchart
             ref="realTimeChart"

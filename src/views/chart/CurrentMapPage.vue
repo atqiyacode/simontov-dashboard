@@ -16,7 +16,7 @@ const gmapApiKey = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 </script>
 
 <template>
-    <div class="card shadow-3 mb-3" v-if="currentMap">
+    <div class="card shadow-5 mb-3">
         <GoogleMap
             :api-key="gmapApiKey"
             style="width: 100%; height: 500px"
@@ -82,7 +82,7 @@ const gmapApiKey = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
         </GoogleMap>
     </div>
 
-    <div class="card shadow-3 mb-3" v-if="currentMap">
+    <div class="card shadow-5 mb-3">
         <ul class="list-none p-0 m-0">
             <ListDetail label="Kode" :value="currentMap.code" />
             <ListDetail label="Lokasi" :value="currentMap.name" />
