@@ -3,15 +3,27 @@ import { ref, onMounted, onBeforeMount, onUnmounted, getCurrentInstance } from '
 
 import { useMainStore } from '@/services/main.store';
 import { useUserStore } from '@/services/master/User.store';
+import { useLocationStore } from '@/services/master/Location.store';
+import { useRoleStore } from '@/services/master/Role.store';
+import { usePermissionStore } from '@/services/master/Permission.store';
+import { useDashboardChart } from '@/services/master/DashboardChart.store';
 import { storeToRefs } from 'pinia';
-import router from '@/router';
+
+// import router from '@/router';
+
 const mainStore = useMainStore();
 const UserStore = useUserStore();
 const { proxy } = getCurrentInstance();
+const LocationStore = useLocationStore();
+const RoleStore = useRoleStore();
+const PermissionStore = usePermissionStore();
+const DashboardChart = useDashboardChart();
+
 proxy.$pusher.channel('user-channel').listen('.user-event', () => {
     //
 });
 const {
+    sortField,
     title,
     data,
     meta,
@@ -48,12 +60,17 @@ const {
 const dt = ref(null);
 
 onBeforeMount(() => {
+    sortField.value = '-id';
     getData({
         per_page: meta.value.per_page
     });
 });
 onMounted(() => {
     title.value = 'Data User';
+    LocationStore.getAll();
+    DashboardChart.getAll();
+    RoleStore.getData();
+    PermissionStore.getData();
 });
 
 onUnmounted(() => {
@@ -80,15 +97,15 @@ const saveData = () => {
 };
 
 const editData = (data) => {
-    form.value = data;
-    router.push({
-        name: 'master-user-detail',
-        params: {
-            id: data.id
-        }
-    });
-    // formDialog.value = true;
-    // selectedData.value = [];
+    form.value = { ...data };
+    formDialog.value = true;
+    selectedData.value = [];
+    // router.push({
+    //     name: 'master-user-detail',
+    //     params: {
+    //         id: id
+    //     }
+    // });
 };
 
 // destroy
@@ -182,7 +199,7 @@ const confirmDeletePermanentSelectedDialog = () => {
 
                 <DataTable
                     ref="dt"
-                    :row-hover="true"
+                    :row-hover="false"
                     :loading="loading"
                     :value="data"
                     v-model:selection="selectedData"
@@ -205,9 +222,14 @@ const confirmDeletePermanentSelectedDialog = () => {
                             class="flex flex-column md:flex-row md:justify-content-between md:align-items-center mb-2"
                         >
                             <h5 class="m-0 capitalize">{{ title }}</h5>
-                            <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <span class="block mt-2 md:mt-0 p-input-icon-left" v-if="!formDialog">
                                 <i class="pi pi-search" />
-                                <InputText v-model="keyword" placeholder="Cari..." />
+                                <InputText
+                                    v-model="keyword"
+                                    placeholder="Cari..."
+                                    autocomplete="false"
+                                    id="search"
+                                />
                             </span>
                         </div>
                     </template>
@@ -317,61 +339,224 @@ const confirmDeletePermanentSelectedDialog = () => {
         :closable="false"
         class="p-fluid"
     >
-        <div class="grid">
-            <div class="col-8">
-                <div class="field">
-                    <label class="font-bold" for="name">Name</label>
-                    <InputText
-                        id="name"
-                        v-model.trim="form.name"
-                        required="true"
-                        :class="{ 'p-invalid': errors?.name }"
-                    />
-                    <small class="text-sm p-error" v-if="errors?.name">{{ errors?.name[0] }}</small>
+        <TabView>
+            <TabPanel header="Detail" v-if="form.id">
+                <div class="card">
+                    <ul class="list-none p-0 m-0">
+                        <ListDetailBreak label="full name" :value="form.name" />
+                        <ListDetailBreak label="username" :value="form.username" />
+                        <ListDetailBreak label="email" :value="form.email" />
+                        <li class="mb-4">
+                            <div>
+                                <p class="text-gray-500 font-bold mr-2 mb-1 md:mb-0 capitalize">
+                                    Roles
+                                </p>
+                            </div>
+                            <div class="mt-2" v-if="form.roles_name">
+                                <template v-for="(item, index) in form.roles_name" :key="index">
+                                    <Tag class="mr-2 mb-2" severity="info" :value="`${item}`"></Tag>
+                                </template>
+                            </div>
+                            <!-- <div>
+                                <p class="text-gray-500 font-bold mr-2 mb-1 md:mb-0 capitalize">
+                                    Permissions
+                                </p>
+                            </div>
+                            <div class="mt-2" v-if="form.permissions_name">
+                                <template
+                                    v-for="(item, index) in form.permissions_name"
+                                    :key="index"
+                                >
+                                    <Tag
+                                        class="mr-2 mb-2"
+                                        severity="secondary"
+                                        :value="`${item}`"
+                                    ></Tag>
+                                </template>
+                            </div> -->
+                            <div>
+                                <p class="text-gray-500 font-bold mr-2 mb-1 md:mb-0 capitalize">
+                                    Locations
+                                </p>
+                            </div>
+                            <div class="mt-2" v-if="form.locations_name">
+                                <template v-for="(item, index) in form.locations_name" :key="index">
+                                    <Tag
+                                        class="mr-2 mb-2"
+                                        severity="primary"
+                                        :value="`${item}`"
+                                    ></Tag>
+                                </template>
+                            </div>
+                            <div>
+                                <p class="text-gray-500 font-bold mr-2 mb-1 md:mb-0 capitalize">
+                                    Charts
+                                </p>
+                            </div>
+                            <div class="mt-2" v-if="form.dashboardCharts_name">
+                                <template
+                                    v-for="(item, index) in form.dashboardCharts_name"
+                                    :key="index"
+                                >
+                                    <Tag
+                                        class="mr-2 mb-2"
+                                        severity="success"
+                                        :value="`${item}`"
+                                    ></Tag>
+                                </template>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
-                <div class="field">
-                    <label class="font-bold" for="email">email</label>
-                    <InputText
-                        id="email"
-                        v-model.trim="form.email"
-                        required="true"
-                        :class="{ 'p-invalid': errors?.email }"
-                    />
-                    <small class="text-sm p-error" v-if="errors?.email">{{
-                        errors?.email[0]
-                    }}</small>
+            </TabPanel>
+            <TabPanel header="Account">
+                <div class="card">
+                    <div class="p-fluid formgrid grid">
+                        <div class="field col-12">
+                            <label class="font-bold capitalize" for="name">Name</label>
+                            <InputText
+                                id="name"
+                                v-model="form.name"
+                                placeholder="Full Name"
+                                :class="{ 'p-invalid': errors?.name }"
+                            />
+                            <small class="text-sm p-error" v-if="errors?.name">
+                                {{ errors?.name[0] }}
+                            </small>
+                        </div>
+                        <div class="field col-12">
+                            <label class="font-bold capitalize" for="username">username</label>
+                            <InputText
+                                id="username"
+                                v-model="form.username"
+                                placeholder="Username"
+                                :class="{ 'p-invalid': errors?.username }"
+                            />
+                            <small class="text-sm p-error" v-if="errors?.username">
+                                {{ errors?.username[0] }}
+                            </small>
+                        </div>
+                        <div class="field col-12">
+                            <label class="font-bold capitalize" for="email">Email</label>
+                            <InputText
+                                id="email"
+                                v-model="form.email"
+                                placeholder="Email"
+                                :class="{ 'p-invalid': errors?.email }"
+                            />
+                            <small class="text-sm p-error" v-if="errors?.email">
+                                {{ errors?.email[0] }}
+                            </small>
+                        </div>
+                        <div class="field col-12 md:col-12">
+                            <label class="font-bold capitalize" for="roles">Roles</label>
+                            <MultiSelect
+                                display="chip"
+                                id="roles"
+                                v-model="form.roles"
+                                placeholder="Select roles"
+                                :options="RoleStore.data"
+                                optionLabel="name"
+                                optionValue="id"
+                                :class="{ 'p-invalid': errors?.roles }"
+                            />
+                            <small class="text-sm p-error" v-if="errors?.roles">
+                                {{ errors?.roles[0] }}
+                            </small>
+                        </div>
+                        <div class="field col-12 md:col-12">
+                            <label class="font-bold capitalize" for="permissions"
+                                >permissions</label
+                            >
+                            <MultiSelect
+                                display="chip"
+                                id="permissions"
+                                v-model="form.permissions"
+                                placeholder="Select permissions"
+                                :options="PermissionStore.data"
+                                optionLabel="name"
+                                optionValue="id"
+                                :class="{ 'p-invalid': errors?.permissions }"
+                            />
+                            <small class="text-sm p-error" v-if="errors?.permissions">
+                                {{ errors?.permissions[0] }}
+                            </small>
+                        </div>
+                    </div>
                 </div>
-                <div class="field">
-                    <label class="font-bold" for="password">password</label>
-                    <Password
-                        v-model.trim="form.password"
-                        required="true"
-                        :class="{ 'p-invalid': errors?.password }"
-                        :toggle-mask="true"
-                        :feedback="true"
-                    />
-                    <small class="text-sm p-error" v-if="errors?.password">{{
-                        errors?.password[0]
-                    }}</small>
+            </TabPanel>
+            <TabPanel header="Password">
+                <div class="card">
+                    <div class="p-fluid formgrid grid">
+                        <div class="field col-12 md:col-6">
+                            <label class="font-bold capitalize" for="password">password</label>
+                            <Password
+                                :toggle-mask="true"
+                                :feedback="true"
+                                v-model="form.password"
+                                placeholder="New Password"
+                            />
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label class="font-bold capitalize" for="password_confirmation"
+                                >password confirmation</label
+                            >
+                            <Password
+                                :toggle-mask="true"
+                                :feedback="false"
+                                v-model="form.password_confirmation"
+                                placeholder="Confirm New Password"
+                            />
+                        </div>
+                    </div>
                 </div>
-                <div class="field">
-                    <label class="font-bold" for="password_confirmation"
-                        >password_confirmation</label
-                    >
-                    <Password
-                        id="password_confirmation"
-                        v-model.trim="form.password_confirmation"
-                        required="true"
-                        :class="{ 'p-invalid': errors?.password_confirmation }"
-                        :toggle-mask="true"
-                        :feedback="false"
-                    />
-                    <small class="text-sm p-error" v-if="errors?.password_confirmation">{{
-                        errors?.password_confirmation[0]
-                    }}</small>
+            </TabPanel>
+
+            <TabPanel header="Location">
+                <div class="card">
+                    <div class="grid">
+                        <div
+                            class="col-12 md:col-4"
+                            v-for="location of LocationStore.allData"
+                            :key="location.key"
+                        >
+                            <div class="field-checkbox mb-0">
+                                <Checkbox
+                                    v-model="form.locations"
+                                    :inputId="location.key"
+                                    name="location"
+                                    :value="location.id"
+                                />
+                                <label :for="location.key" class="font-bold">{{
+                                    location.name
+                                }}</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </TabPanel>
+            <TabPanel header="Charts">
+                <div class="card">
+                    <div class="grid">
+                        <div
+                            class="col-12 md:col-4"
+                            v-for="item of DashboardChart.allData"
+                            :key="item.id"
+                        >
+                            <div class="field-checkbox mb-0">
+                                <Checkbox
+                                    v-model="form.dashboardCharts"
+                                    :inputId="item.id"
+                                    name="item"
+                                    :value="item.id"
+                                />
+                                <label :for="item.id" class="font-bold">{{ item.name }}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </TabPanel>
+        </TabView>
 
         <template #footer>
             <Button

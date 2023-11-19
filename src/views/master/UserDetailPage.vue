@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, getCurrentInstance } from 'vue';
 import { useUserStore } from '@/services/master/User.store';
 import { useLocationStore } from '@/services/master/Location.store';
 import { useRoleStore } from '@/services/master/Role.store';
@@ -16,10 +16,11 @@ const RoleStore = useRoleStore();
 const PermissionStore = usePermissionStore();
 const DashboardChart = useDashboardChart();
 
-const { loading } = storeToRefs(mainStore);
+const { loading, errors } = storeToRefs(mainStore);
 const { form } = storeToRefs(UserStore);
 
 const route = useRoute();
+const { proxy } = getCurrentInstance();
 
 onMounted(() => {
     UserStore.getById(route.params.id);
@@ -36,6 +37,13 @@ const saveData = () => {
         UserStore.createData();
     }
 };
+
+proxy.$pusher
+    .channel('user-detail-channel-' + route.params.id)
+    .listen('.user-detail-event', async (res) => {
+        console.log(res);
+        form.value = res.data;
+    });
 </script>
 <template>
     <div class="card">
@@ -67,9 +75,73 @@ const saveData = () => {
         </Toolbar>
         <TabView>
             <TabPanel header="Detail">
-                <pre class="m-0">
-                    {{ form }}
-                </pre>
+                <div class="card">
+                    <ul class="list-none p-0 m-0">
+                        <ListDetailBreak label="full name" :value="form.name" />
+                        <ListDetailBreak label="username" :value="form.username" />
+                        <ListDetailBreak label="email" :value="form.email" />
+                        <li class="mb-4">
+                            <div>
+                                <p class="text-gray-500 font-bold mr-2 mb-1 md:mb-0 capitalize">
+                                    Roles
+                                </p>
+                            </div>
+                            <div class="mt-2" v-if="form.roles_name">
+                                <template v-for="(item, index) in form.roles_name" :key="index">
+                                    <Tag class="mr-2 mb-2" severity="info" :value="`${item}`"></Tag>
+                                </template>
+                            </div>
+                            <!-- <div>
+                                <p class="text-gray-500 font-bold mr-2 mb-1 md:mb-0 capitalize">
+                                    Permissions
+                                </p>
+                            </div>
+                            <div class="mt-2" v-if="form.permissions_name">
+                                <template
+                                    v-for="(item, index) in form.permissions_name"
+                                    :key="index"
+                                >
+                                    <Tag
+                                        class="mr-2 mb-2"
+                                        severity="secondary"
+                                        :value="`${item}`"
+                                    ></Tag>
+                                </template>
+                            </div> -->
+                            <div>
+                                <p class="text-gray-500 font-bold mr-2 mb-1 md:mb-0 capitalize">
+                                    Locations
+                                </p>
+                            </div>
+                            <div class="mt-2" v-if="form.locations_name">
+                                <template v-for="(item, index) in form.locations_name" :key="index">
+                                    <Tag
+                                        class="mr-2 mb-2"
+                                        severity="primary"
+                                        :value="`${item}`"
+                                    ></Tag>
+                                </template>
+                            </div>
+                            <div>
+                                <p class="text-gray-500 font-bold mr-2 mb-1 md:mb-0 capitalize">
+                                    Charts
+                                </p>
+                            </div>
+                            <div class="mt-2" v-if="form.dashboardCharts_name">
+                                <template
+                                    v-for="(item, index) in form.dashboardCharts_name"
+                                    :key="index"
+                                >
+                                    <Tag
+                                        class="mr-2 mb-2"
+                                        severity="success"
+                                        :value="`${item}`"
+                                    ></Tag>
+                                </template>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </TabPanel>
             <TabPanel header="Account">
                 <div class="card">
@@ -81,7 +153,11 @@ const saveData = () => {
                                 type="text"
                                 v-model="form.name"
                                 placeholder="Full Name"
+                                :class="{ 'p-invalid': errors?.name }"
                             />
+                            <small class="text-sm p-error" v-if="errors?.name">
+                                {{ errors?.name[0] }}
+                            </small>
                         </div>
                         <div class="field col-12 md:col-4">
                             <label class="font-bold capitalize" for="username">username</label>
@@ -90,7 +166,11 @@ const saveData = () => {
                                 type="text"
                                 v-model="form.username"
                                 placeholder="Username"
+                                :class="{ 'p-invalid': errors?.username }"
                             />
+                            <small class="text-sm p-error" v-if="errors?.username">
+                                {{ errors?.username[0] }}
+                            </small>
                         </div>
                         <div class="field col-12 md:col-4">
                             <label class="font-bold capitalize" for="email">Email</label>
@@ -99,8 +179,52 @@ const saveData = () => {
                                 type="text"
                                 v-model="form.email"
                                 placeholder="Email"
+                                :class="{ 'p-invalid': errors?.email }"
                             />
+                            <small class="text-sm p-error" v-if="errors?.email">
+                                {{ errors?.email[0] }}
+                            </small>
                         </div>
+                        <div class="field col-12 md:col-12">
+                            <label class="font-bold capitalize" for="roles">Roles</label>
+                            <MultiSelect
+                                display="chip"
+                                id="roles"
+                                v-model="form.roles"
+                                placeholder="Select roles"
+                                :options="RoleStore.data"
+                                optionLabel="name"
+                                optionValue="id"
+                                :class="{ 'p-invalid': errors?.roles }"
+                            />
+                            <small class="text-sm p-error" v-if="errors?.roles">
+                                {{ errors?.roles[0] }}
+                            </small>
+                        </div>
+                        <div class="field col-12 md:col-12">
+                            <label class="font-bold capitalize" for="permissions"
+                                >permissions</label
+                            >
+                            <MultiSelect
+                                display="chip"
+                                id="permissions"
+                                v-model="form.permissions"
+                                placeholder="Select permissions"
+                                :options="PermissionStore.data"
+                                optionLabel="name"
+                                optionValue="id"
+                                :class="{ 'p-invalid': errors?.permissions }"
+                            />
+                            <small class="text-sm p-error" v-if="errors?.permissions">
+                                {{ errors?.permissions[0] }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </TabPanel>
+            <TabPanel header="Password">
+                <div class="card">
+                    <div class="p-fluid formgrid grid">
                         <div class="field col-12 md:col-6">
                             <label class="font-bold capitalize" for="password">password</label>
                             <Password
@@ -123,33 +247,10 @@ const saveData = () => {
                                 placeholder="Confirm New Password"
                             />
                         </div>
-                        <div class="field col-12 md:col-12">
-                            <label class="font-bold capitalize" for="roles">Roles</label>
-                            <MultiSelect
-                                id="roles"
-                                v-model="form.roles"
-                                placeholder="Select roles"
-                                :options="RoleStore.data"
-                                optionLabel="name"
-                                optionValue="id"
-                            />
-                        </div>
-                        <div class="field col-12 md:col-12">
-                            <label class="font-bold capitalize" for="permissions"
-                                >permissions</label
-                            >
-                            <MultiSelect
-                                id="permissions"
-                                v-model="form.permissions"
-                                placeholder="Select permissions"
-                                :options="PermissionStore.data"
-                                optionLabel="name"
-                                optionValue="id"
-                            />
-                        </div>
                     </div>
                 </div>
             </TabPanel>
+
             <TabPanel header="Location">
                 <div class="card">
                     <div class="grid">

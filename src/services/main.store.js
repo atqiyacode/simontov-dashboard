@@ -28,7 +28,7 @@ export const useMainStore = defineStore(
         const language = ref('id');
         const socketId = ref('');
         const message = ref('');
-        const currentMap = ref({});
+        const currentMap = ref(null);
 
         const sanctumCsrf = async () => {
             if (!document.cookie) {
@@ -69,12 +69,11 @@ export const useMainStore = defineStore(
         };
 
         const clearCurrentSession = () => {
+            currentMap.value = null;
             userStore.$reset();
             userStore.$patch({
-                accessToken: '',
                 isLoggedIn: false
             });
-            localStorage.removeItem('user');
             router.push({ name: 'login' });
         };
 

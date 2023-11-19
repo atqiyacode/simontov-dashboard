@@ -214,7 +214,7 @@ const getStreetAddressFrom = async (lat, long) => {
 
                 <DataTable
                     ref="dt"
-                    :row-hover="true"
+                    :row-hover="false"
                     :loading="loading"
                     :value="data"
                     v-model:selection="selectedData"
@@ -253,6 +253,17 @@ const getStreetAddressFrom = async (lat, long) => {
                         <template #body="slotProps">
                             <span :class="{ 'text-red-500': slotProps.data.trashed }">
                                 {{ slotProps.data.code }}
+                            </span>
+                        </template>
+                    </Column>
+
+                    <Column field="company_name" :sortable="true" headerStyle="min-width:15rem;">
+                        <template #header>
+                            <span class="flex-1 uppercase py-2 font-bold"> company name </span>
+                        </template>
+                        <template #body="slotProps">
+                            <span :class="{ 'text-red-500': slotProps.data.trashed }">
+                                {{ slotProps.data.company_name }}
                             </span>
                         </template>
                     </Column>
@@ -357,6 +368,21 @@ const getStreetAddressFrom = async (lat, long) => {
                         <InputLabel value="code" />
                     </span>
                     <InputError :message="errors.code" />
+                </div>
+                <div class="mb-4 field col-12">
+                    <span class="p-float-label">
+                        <InputText
+                            required
+                            id="company_name"
+                            type="text"
+                            v-model="form.company_name"
+                            :class="{ 'p-invalid': errors.company_name }"
+                            @input="mainStore.removeError"
+                            placeholder="company name"
+                        />
+                        <InputLabel value="company name" />
+                    </span>
+                    <InputError :message="errors.company_name" />
                 </div>
                 <div class="mb-4 field col-12">
                     <span class="p-float-label">

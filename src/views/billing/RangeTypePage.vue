@@ -175,7 +175,7 @@ const confirmDeletePermanentSelectedDialog = () => {
 
                 <DataTable
                     ref="dt"
-                    :row-hover="true"
+                    :row-hover="false"
                     :loading="loading"
                     :value="data"
                     v-model:selection="selectedData"

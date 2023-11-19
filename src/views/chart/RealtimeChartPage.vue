@@ -35,7 +35,7 @@ onMounted(() => {
 });
 
 const checkAccessLocation = () => {
-    if (!user.value.locations.includes(currentMap.value.id)) {
+    if (!user.value.locations.includes(currentMap.value?.id)) {
         router.push({
             name: 'select-location'
         });
@@ -103,7 +103,7 @@ const checkAccessChart = (code) => {
         </div>
     </div>
 
-    <template v-if="currentMap.id">
+    <template v-if="currentMap?.id">
         <div class="col-12 lg:col-6 xl:col-4" v-if="dashboard.showMap">
             <CurrentMapPage />
         </div>

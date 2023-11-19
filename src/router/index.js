@@ -81,7 +81,7 @@ const router = createRouter({
                             }
                         },
                         {
-                            path: 'user/:id/detail',
+                            path: 'user/detail/:id',
                             name: 'master-user-detail',
                             component: () => import('@/views/master/UserDetailPage.vue'),
                             meta: {

@@ -33,7 +33,7 @@ export const useAuthStore = defineStore('auth', () => {
                     if (res.data.token) {
                         directLogin(res.data);
                     } else {
-                        router.push({ name: 'auth-verification' })
+                        router.push({ name: 'auth-verification' });
                     }
                     resolve(res);
                 })
@@ -200,8 +200,6 @@ export const useAuthStore = defineStore('auth', () => {
             axios
                 .post(`auth/logout`)
                 .then((res) => {
-                    localStorage.removeItem('sessionToken');
-                    localStorage.removeItem('option');
                     mainStore.clearCurrentSession();
                     resolve(res);
                 })

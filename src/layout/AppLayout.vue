@@ -24,8 +24,7 @@ const { loadChart, loadPHChart, loadCODChart, loadCondChart, loadLevelChart, loa
 const { proxy } = getCurrentInstance();
 
 onMounted(() => {
-    if (!currentMap.value.id) {
-        mainStore.notify('Mohon pilih lokasi', 'warning');
+    if (!currentMap.value) {
         router.push({
             name: 'select-location'
         });
@@ -85,8 +84,7 @@ const isOutsideClicked = (event) => {
 };
 
 const checkAccessLocation = () => {
-    console.log(user.value.locations.includes(currentMap.value.id));
-    if (!user.value.locations.includes(currentMap.value.id)) {
+    if (!user.value.locations.includes(currentMap.value?.id)) {
         router.push({
             name: 'select-location'
         });
@@ -94,7 +92,7 @@ const checkAccessLocation = () => {
 };
 
 proxy.$pusher
-    .channel('flowrate-channel-' + currentMap.value.id)
+    .channel('flowrate-channel-' + currentMap.value?.id)
     .listen('.flowrate-event', async (res) => {
         const data = res.data.data;
         await Promise.all([
