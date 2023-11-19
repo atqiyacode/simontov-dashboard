@@ -1,6 +1,5 @@
 <script setup>
 import { onMounted } from 'vue';
-import CurrentMapPage from './CurrentMapPage.vue';
 import { useMainStore } from '@/services/main.store';
 import { useUserStore } from '@/services/user.store';
 import { useChartStore } from '@/services/chart.store';
@@ -9,7 +8,7 @@ import router from '@/router';
 const mainStore = useMainStore();
 const chartStore = useChartStore();
 const userStore = useUserStore();
-const { dashboard, currentMap } = storeToRefs(mainStore);
+const { currentMap } = storeToRefs(mainStore);
 const {
     chartSeries,
     chartPHSeries,
@@ -50,7 +49,7 @@ const checkAccessChart = (code) => {
 };
 </script>
 <template>
-    <div :class="dashboard.showMap ? 'col-12 lg:col-6 xl:col-8' : 'col-12 '">
+    <div class="col-12">
         <div class="grid">
             <div
                 class="col-12 lg:col-12 xl:col-12"
@@ -107,13 +106,9 @@ const checkAccessChart = (code) => {
     </div>
 
     <template v-if="currentMap?.id">
-        <div class="col-12 lg:col-6 xl:col-4" v-if="dashboard.showMap">
-            <CurrentMapPage />
-        </div>
-
         <div class="col-12">
             <div class="grid">
-                <div class="col-12 lg:col-6 xl:col-3" v-if="checkAccessChart('radial-flowrate')">
+                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-flowrate')">
                     <NewRadialChartPage
                         tag="l/s"
                         title="FLOWRATE"
@@ -121,7 +116,7 @@ const checkAccessChart = (code) => {
                         :series="[currentFlowrate?.y]"
                     />
                 </div>
-                <div class="col-12 lg:col-6 xl:col-3" v-if="checkAccessChart('radial-pressure')">
+                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-pressure')">
                     <NewRadialChartPage
                         tag="BAR"
                         title="PRESSURE"
@@ -129,7 +124,7 @@ const checkAccessChart = (code) => {
                         :series="[currentPressure?.y]"
                     />
                 </div>
-                <div class="col-12 lg:col-6 xl:col-3" v-if="checkAccessChart('radial-cod')">
+                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-cod')">
                     <NewRadialChartPage
                         tag=""
                         title="COD"
@@ -137,7 +132,7 @@ const checkAccessChart = (code) => {
                         :series="[currentCOD?.y]"
                     />
                 </div>
-                <div class="col-12 lg:col-6 xl:col-3" v-if="checkAccessChart('radial-ph')">
+                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-ph')">
                     <NewRadialChartPage
                         tag=""
                         title="PH"
@@ -145,7 +140,7 @@ const checkAccessChart = (code) => {
                         :series="[currentPH?.y]"
                     />
                 </div>
-                <div class="col-12 lg:col-6 xl:col-3" v-if="checkAccessChart('radial-cond')">
+                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-cond')">
                     <NewRadialChartPage
                         tag=""
                         title="COND"
@@ -153,7 +148,7 @@ const checkAccessChart = (code) => {
                         :series="[currentCond?.y]"
                     />
                 </div>
-                <div class="col-12 lg:col-6 xl:col-3" v-if="checkAccessChart('radial-level')">
+                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-level')">
                     <NewRadialChartPage
                         tag=""
                         title="LEVEL"
@@ -161,7 +156,7 @@ const checkAccessChart = (code) => {
                         :series="[currentLevel?.y]"
                     />
                 </div>
-                <div class="col-12 lg:col-6 xl:col-3" v-if="checkAccessChart('radial-do')">
+                <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-do')">
                     <NewRadialChartPage
                         tag=""
                         title="DO"
