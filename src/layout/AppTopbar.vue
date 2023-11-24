@@ -2,14 +2,29 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '../services/auth.store';
+import { useAuthStore } from '@/services/auth.store';
+import { useMainStore } from '@/services/main.store';
+import { storeToRefs } from 'pinia';
 
 const { layoutConfig, onMenuToggle, contextPath } = useLayout();
 const { logout } = useAuthStore();
+const { language } = storeToRefs(useMainStore());
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
 const router = useRouter();
 const logoutDialog = ref(false);
+const changeLanguageDialog = ref(false);
+
+const languages = [
+    {
+        name: 'Indonesia',
+        code: 'id'
+    },
+    {
+        name: 'English',
+        code: 'en'
+    }
+];
 
 onMounted(() => {
     bindOutsideClickListener();
@@ -91,6 +106,15 @@ const isOutsideClicked = (event) => {
         </button>
 
         <div class="layout-topbar-menu" :class="topbarMenuClasses">
+            <button
+                @click="changeLanguageDialog = true"
+                class="p-link layout-topbar-button bg-gray-300"
+            >
+                <b>
+                    {{ language === 'id' ? 'ID' : 'EN' }}
+                </b>
+            </button>
+
             <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
                 <i class="pi pi-bell"></i>
                 <span>Notification</span>
@@ -110,6 +134,11 @@ const isOutsideClicked = (event) => {
         :header="$t('alert.confirmation')"
         :modal="true"
         :closable="false"
+        :pt="{
+            mask: {
+                style: 'backdrop-filter: blur(2px)'
+            }
+        }"
     >
         <div class="text-center">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
@@ -135,6 +164,41 @@ const isOutsideClicked = (event) => {
         </template>
     </Dialog>
     <!-- end logout dialog -->
+    <Dialog
+        v-model:visible="changeLanguageDialog"
+        :style="{ width: '450px' }"
+        :header="$t('select-language')"
+        :modal="true"
+        :closable="false"
+        :pt="{
+            mask: {
+                style: 'backdrop-filter: blur(2px)'
+            }
+        }"
+    >
+        <div v-for="lang in languages" :key="lang.code" class="">
+            <div class="card flex align-items-center mb-3">
+                <RadioButton
+                    v-model="language"
+                    :inputId="lang.code"
+                    name="dynamic"
+                    :value="lang.code"
+                />
+                <label :for="lang.code" class="ml-2">
+                    <b class="uppercase">{{ lang.code }} - {{ $t(lang.code) }}</b>
+                </label>
+            </div>
+        </div>
+
+        <template #footer>
+            <Button
+                :label="$t('button.close')"
+                icon="pi pi-times"
+                class="p-button-rounded p-button-text"
+                @click="changeLanguageDialog = false"
+            />
+        </template>
+    </Dialog>
 </template>
 
 <style lang="scss" scoped></style>

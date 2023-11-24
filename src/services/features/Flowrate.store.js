@@ -5,6 +5,7 @@ import { useToast } from 'vue-toastification';
 import _ from 'lodash';
 import axios from '@/plugins/axios';
 import { useMainStore } from '../main.store';
+import { i18n } from '@/plugins/i18n';
 export const useFlowrateStore = defineStore(
     'FlowrateStore',
     () => {
@@ -13,7 +14,7 @@ export const useFlowrateStore = defineStore(
 
         const apiUrl = 'flowrates';
 
-        const title = ref('Flowrates');
+        const title = ref(i18n.t('page.flow-meter'));
         const searchData = ref([]);
         const data = ref([]);
         const allData = ref([]);
@@ -48,7 +49,6 @@ export const useFlowrateStore = defineStore(
         watch(
             keyword,
             _.debounce((value) => {
-                console.log(value);
                 let length = value.length;
                 if (length >= 3 || length == 0) {
                     keyword.value = value;

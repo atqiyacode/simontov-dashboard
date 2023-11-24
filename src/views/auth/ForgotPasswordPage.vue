@@ -42,28 +42,45 @@ const onSubmit = () => {
             <div class="text-900 text-3xl font-medium mb-3">
                 {{ $t('text.forgot-password') }}
             </div>
-            <span class="text-600 font-medium w-11"> Kami akan mengirimkan link reset password ke akun email anda. </span>
+            <span class="text-600 font-medium w-11"> {{ $t('text.forgot-password-text') }}</span>
         </div>
         <Message severity="success my-5" :closable="false" v-if="!loading && message">
             {{ message }}
         </Message>
         <div class="p-fluid mb-3">
             <span class="p-float-label">
-                <InputText id="email" class="w-full" type="text" v-model="form.email" :class="{ 'p-invalid': errors.email }" @input="mainStore.removeError" />
+                <InputText
+                    id="email"
+                    class="w-full"
+                    type="text"
+                    v-model="form.email"
+                    :class="{ 'p-invalid': errors.email }"
+                    @input="mainStore.removeError"
+                />
                 <InputLabel for="email" value="email" />
             </span>
             <InputError :message="errors.email" />
         </div>
 
         <form @submit.prevent="onSubmit()">
-            <Button type="submit" :disabled="v$.$invalid" :loading="loading" :label="loading ? 'Processing' : $t('button.send-link-reset-password')" class="w-full p-3 text-xl"></Button>
+            <Button
+                type="submit"
+                :disabled="v$.$invalid"
+                :loading="loading"
+                :label="loading ? 'Processing' : $t('button.send-link-reset-password')"
+                class="w-full p-3 text-xl"
+            ></Button>
         </form>
 
         <div class="flex align-items-end justify-content-center mt-5">
             <span>
                 {{ $t('text.remember-password') }}
             </span>
-            <router-link :to="{ name: 'login' }" class="font-medium no-underline cursor-pointer mx-1" style="color: var(--primary-color)">
+            <router-link
+                :to="{ name: 'login' }"
+                class="font-medium no-underline cursor-pointer mx-1"
+                style="color: var(--primary-color)"
+            >
                 {{ $t('button.login') }}
             </router-link>
         </div>

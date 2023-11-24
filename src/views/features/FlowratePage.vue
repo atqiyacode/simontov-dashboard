@@ -91,7 +91,9 @@ const showDetail = (data) => {
                         <div
                             class="flex flex-column md:flex-row md:justify-content-center md:align-items-center my-3"
                         >
-                            <h5 class="m-0 text-red-600">Data Tidak Ditemukan</h5>
+                            <h5 class="m-0 text-red-600">
+                                {{ $t('alert.no-data-found') }}
+                            </h5>
                         </div>
                     </template>
                     <template #header>
@@ -101,7 +103,7 @@ const showDetail = (data) => {
                             <h5 class="m-0 capitalize">{{ title }} - {{ currentMap.name }}</h5>
                             <span class="block mt-2 md:mt-0 p-input-icon-left">
                                 <i class="pi pi-search" />
-                                <InputText v-model="keyword" placeholder="Cari..." />
+                                <InputText v-model="keyword" :placeholder="$t('table.search')" />
                             </span>
                         </div>
                     </template>
@@ -235,7 +237,9 @@ const showDetail = (data) => {
                         align-frozen="right"
                     >
                         <template #header>
-                            <span class="flex-1 uppercase py-2 font-bold"> Aksi </span>
+                            <span class="flex-1 uppercase py-2 font-bold">
+                                {{ $t('table.action') }}
+                            </span>
                         </template>
                         <template #body="slotProps">
                             <Button
@@ -278,6 +282,11 @@ const showDetail = (data) => {
         header="Detail"
         :modal="true"
         :closable="false"
+        :pt="{
+            mask: {
+                style: 'backdrop-filter: blur(2px)'
+            }
+        }"
     >
         <div class="card" v-if="selected">
             <ul class="list-none p-0 m-0">

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { useUserStore } from './user.store';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import axios from '@/plugins/axios';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from './auth.store';
@@ -25,10 +25,17 @@ export const useMainStore = defineStore(
         const server = import.meta.env.VITE_APP_SERVER;
         const isMaintenance = ref(false);
         const route = useRoute();
-        const language = ref('id');
+
+        const language = ref(import.meta.env.VITE_APP_I18N_LOCALE);
+
         const socketId = ref('');
         const message = ref('');
         const currentMap = ref(null);
+
+        watch(language, (value) => {
+            i18n.locale.value = value;
+            // window.location.reload();
+        });
 
         const sanctumCsrf = async () => {
             if (!document.cookie) {

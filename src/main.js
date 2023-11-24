@@ -131,8 +131,8 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import resetStore from '@/plugins/reset-store';
 // pusher js
 import PluginPusher from '@/plugins/pusher';
-import globalMixin from './plugins/global-mixin';
-import { useUserStore } from './services/user.store';
+import globalMixin from '@/plugins/global-mixin';
+import { useUserStore } from '@/services/user.store';
 
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);

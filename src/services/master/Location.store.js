@@ -4,6 +4,7 @@ import { useToast } from 'vue-toastification';
 
 import _ from 'lodash';
 import axios from '@/plugins/axios';
+import { i18n } from '@/plugins/i18n';
 export const useLocationStore = defineStore(
     'LocationStore',
     () => {
@@ -11,7 +12,7 @@ export const useLocationStore = defineStore(
 
         const apiUrl = 'locations';
 
-        const title = ref('Lokasi');
+        const title = ref(i18n.t('page.locations'));
         const sessionLocation = ref([]);
         const searchData = ref([]);
         const data = ref([]);
@@ -47,7 +48,6 @@ export const useLocationStore = defineStore(
         watch(
             keyword,
             _.debounce((value) => {
-                console.log(value);
                 let length = value.length;
                 if (length >= 3 || length == 0) {
                     keyword.value = value;

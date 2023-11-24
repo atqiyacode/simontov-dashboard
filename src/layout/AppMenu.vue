@@ -5,59 +5,88 @@ import AppMenuItem from './AppMenuItem.vue';
 
 const model = ref([
     {
-        label: 'Home',
+        label: 'menu.home.index',
         items: [
-            { label: 'Ganti Lokasi', icon: 'pi pi-fw pi-map-marker', to: '/select-location' },
-            { label: 'Realtime', icon: 'pi pi-fw pi-chart-line', to: '/app/dashboard/realtime' }
+            {
+                label: 'menu.home.change-location',
+                icon: 'pi pi-fw pi-map-marker',
+                to: '/select-location'
+            },
+            {
+                label: 'menu.home.realtime-chart',
+                icon: 'pi pi-fw pi-chart-line',
+                to: '/app/dashboard/realtime'
+            }
             // { label: 'Static', icon: 'pi pi-fw pi-chart-bar', to: '/app/dashboard/static' }
         ]
     },
 
     {
-        label: 'Features',
+        label: 'menu.features.index',
         items: [
             {
-                label: 'MAG 8000',
+                label: 'menu.features.mag-8000.index',
                 items: [
                     {
-                        label: 'Status Alarm',
+                        label: 'menu.features.mag-8000.status-alarm',
                         to: '/app/feature/status-alarm'
                     },
-                    { label: 'Flowrate', to: '/app/feature/flowrate' }
+                    {
+                        label: 'menu.features.mag-8000.flow-meter',
+                        to: '/app/feature/flowrate'
+                    }
                 ]
             },
             {
-                label: 'Billing',
+                label: 'menu.features.billing.index',
                 items: [
-                    { label: 'Range Type', to: '/app/billing/range-type' },
-                    { label: 'Range Cost', to: '/app/billing/range-cost' }
+                    {
+                        label: 'menu.features.billing.range-type',
+                        to: '/app/billing/range-type'
+                    },
+                    {
+                        label: 'menu.features.billing.range-cost',
+                        to: '/app/billing/range-cost'
+                    }
                 ]
             }
         ]
     },
 
     {
-        label: 'Master Auth',
+        label: 'menu.master-auth.index',
         items: [
             {
-                label: 'Permission',
+                label: 'menu.master-auth.permissions',
                 icon: 'pi pi-fw pi-bookmark',
                 to: '/app/master/permission'
             },
-            { label: 'Role', icon: 'pi pi-fw pi-bookmark', to: '/app/master/role' }
+            {
+                label: 'menu.master-auth.roles',
+                icon: 'pi pi-fw pi-bookmark',
+                to: '/app/master/role'
+            }
         ]
     },
     {
-        label: 'Master Data',
+        label: 'menu.master-data.index',
         items: [
-            { label: 'User', icon: 'pi pi-fw pi-users', to: '/app/master/user' },
+            {
+                label: 'menu.master-data.user',
+                icon: 'pi pi-fw pi-users',
+                to: '/app/master/user'
+            },
             { label: 'Location', icon: 'pi pi-fw pi-map', to: '/app/master/location' },
             {
-                label: 'Dashboard Chart',
+                label: 'menu.master-data.chart-type',
                 icon: 'pi pi-fw pi-chart-bar',
                 to: '/app/master/dashboard-chart'
             },
-            { label: 'Biaya Admin', icon: 'pi pi-fw pi-cog', to: '/app/master/tax' }
+            {
+                label: 'menu.master-data.tax',
+                icon: 'pi pi-fw pi-cog',
+                to: '/app/master/tax'
+            }
         ]
     }
 ]);

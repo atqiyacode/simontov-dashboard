@@ -1,15 +1,7 @@
 {
-  "language": "Bahasa",
-  "message": {
-    "loading": "Sedang diproses",
-    "notification": "Pemberitahuan",
-    "new-notification": "Anda memiliki pemberitahuan baru",
-    "not-available-yet": "Belum tersedia",
-    "hello": "Selamat Datang!",
-    "pin-active": "PIN diaktifkan",
-    "pin-updated": "PIN diperbarui",
-    "pin-deleted": "PIN dihapus"
-  },
+  "id": "Bahasa Indonesia",
+  "en": "Bahasa Inggris",
+  "select-language": "Pilih Bahasa",
   "alert": {
     "confirmation": "Konfirmasi",
     "no-data-found": "Data tidak ditemukan",
@@ -26,32 +18,6 @@
     "no-network": "Sinyal Internet tidak tersedia.",
     "wrong-confirm-pin": "Konfirmasi PIN salah.",
     "inactive-pin": "PIN akan dinonaktifkan?"
-  },
-  "header": {
-    "detail": "Detail data",
-    "warning": "Peringatan",
-    "add-whatsapp-number": "Tambahkan No. whatsapp",
-    "change-language": "Ganti Bahasa",
-    "select-language": "Pilih Bahasa",
-    "search": "Cari",
-    "information": "Informasi",
-    "mark-all-notification": "Tandai Semua Pemberitahuan dibaca?",
-    "delete-all-notification": "Hapus Semua Pemberitahuan?"
-  },
-  "menu": {
-    "home": "Beranda",
-    "notification": "Pemberitahuan",
-    "account": "Akun",
-    "registration-form": "Form Pendaftaran",
-    "login": "Masuk",
-    "register": "Daftar",
-    "verification-account": "Verifikasi Akun",
-    "forgot-password": "Lupa Kata Sandi",
-    "detail-employee": "Detail Karyawan",
-    "payslip": "Slip Gaji",
-    "tax": "Pajak Tahunan",
-    "contact": "Kontak",
-    "thr": "Tunjangan hari raya"
   },
   "button": {
     "back": "Kembali",
@@ -81,6 +47,7 @@
     "show-data": "Detail Data",
     "edit-data": "Ubah Data",
     "delete-data": "Hapus Data",
+    "delete-data-Permanent": "Hapus Data Permanen",
     "restore-data": "Pulihkan Data",
     "destroy-data": "Hapus Permanen Data",
     "yes-delete": "Ya, Hapus",
@@ -88,145 +55,93 @@
     "yes-destroy": "Ya, Hapus Permanen",
     "send-link-reset-password": "Kirim link reset password"
   },
-  "profile": {
-    "security": "Keamanan",
-    "information": "Informasi",
-    "setting": "Pengaturan",
-    "personal-data": "Data Diri",
-    "login-history": "Riwayat Login",
-    "address": "Alamat",
-    "avatar": "Avatar",
-    "email": "Email",
-    "whatsapp-number": "No. Whatsapp",
-    "password": "Kata Sandi",
-    "help": "Bantuan",
-    "terms": "Syarat & Ketentuan",
-    "privacy-policy": "Kebijakan Privasi",
-    "FAQ": "FAQ",
-    "about": "Tentang"
-  },
-  "password": {
-    "old-password": "Kata Sandi Lama",
-    "new-password": "Kata Sandi Baru",
-    "confirm-new-password": "Ulangi Kata Sandi Baru"
-  },
-  "text": {
-    "unverified": "Belum Lengkap",
-    "verified": "Terverifikasi",
-    "valid": "Aktif",
-    "invalid": "Aktif",
-    "active": "Aktif",
-    "inactive": "Tidak aktif",
-    "public": "Publik",
-    "private": "Khusus",
-    "public-notification": "Notifikasi Publik",
-    "private-notification": "Notifikasi Khusus",
-    "filter-notification": "Saring Notifikasi",
-    "security": "Sistem Keamanan",
-    "pin": "PIN",
-    "confirm-pin": "Konfirmasi PIN",
-    "new-pin": "Buat PIN",
-    "update-pin": "Ubah PIN",
-    "date": "Tanggal",
-    "detail": "Detail",
-    "confirm-password-text": "Silahkan masukkan kata sandi akun anda",
-    "login-text": "Silahkan masuk ke akun anda",
-    "register-text": "Silahkan daftarkan akun anda",
-    "register-form": "Pastikan data karyawan sudah benar",
-    "forgot-password": "Lupa Kata Sandi?",
-    "remember-password": "Ingat Kata sandi?",
-    "remember-me": "Ingat saya",
-    "no-have-account": "Belum punya akun?",
-    "have-account": "Sudah punya akun?",
-    "input-verification-code": "Silahkan masukkan kode verifikasi",
-    "send-verification-method": "Dapatkan kode verifikasi :",
-    "resend-verification-method": "Kirim ulang kode verifikasi :",
-    "full-fill-form": "Silahkan lengkapi form berikut",
-    "forgot-password-verification": "Verifikasi lupa kata sandi",
-    "cut-slip-number": "Nomor bukti potong",
-    "unread": "Belum Dibaca",
-    "read": "Sudah Dibaca",
-    "show-all": "Semua",
-    "mark-all-notification": "Tandai semua dibaca",
-    "click-upload-avatar": "Klik untuk upload avatar",
-    "delete-all-notification": "Hapus Semua",
-    "please-wait": "Mohon Tunggu ...",
-    "please-wait-request": "Mohon bersabar permintaan anda sedang diproses"
-  },
-  "form": {
-    "employee-nik": "No. KTP",
-    "employee-code": "Kode Karyawan",
-    "password": "Kata Sandi",
-    "confirm-password": "Ulangi Kata Sandi",
-    "email": "Email",
-    "agree": "Saya menyetujui"
-  },
-  "employee": {
-    "nik": "No. KTP",
-    "code": "Kode Karyawan",
-    "whatsapp-number": "No. Whatsapp",
-    "full-name": "Nama Lengkap",
-    "npwp": "NPWP",
-    "jamsostek": "Jamsostek",
-    "department": "Department",
-    "designation": "Designation",
-    "grade": "Grade",
-    "child": "Anak",
-    "dependent": "Tanggungan"
-  },
-  "slip": {
-    "earnings": "Pendapatan",
-    "deductions": "Potongan",
-    "overtime": "Overtime",
-    "shift-exc": "Shift Exc",
-    "total-earnings": "Total Pendapatan",
-    "total-deductions": "Total Potongan",
-    "net-amount": "Pendapatan Bersih",
-    "incentive": "Incentive",
-    "gross-amount": "Total Bruto",
-    "allowance": "Tunjangan",
-    "basic-salary": "Gaji Pokok",
-    "amount-calc": "Jumlah perhitungan",
-    "tax": "Pajak"
-  },
-  "device": {
-    "brand": "Merk",
-    "model": "Model",
-    "platform": "Platform",
-    "system": "Sistem operasi",
-    "detail-login": "Detail Login",
-    "detail-device": "Detail Perangkat"
-  },
-  "address": {
-    "province": "Provinsi",
-    "city": "Kota/Kab.",
-    "district": "Kecamatan",
-    "village": "Desa",
-    "rt": "RT",
-    "rw": "RW",
-    "post-code": "Kode Pos",
-    "detail": "Alamat Lengkap",
-    "new": "Alamat Baru",
-    "edit": "Ubah Alamat"
-  },
-  "message-update": {
-    "avatar": "Avatar berhasil diperbarui",
-    "password": "Kata sandi berhasil diperbarui",
-    "email": "Email berhasil diperbarui",
-    "cancel-new-email": "Perubahan email dibatalkan",
-    "check-email": "Silahkan cek email anda"
-  },
-  "method": {
-    "pin": "Masuk dengan PIN",
-    "email": "Kirim OTP ke Email",
-    "whatsapp": "Kirim OTP ke Whatsapp",
-    "device": "Kirim OTP ke Perangkat"
-  },
+
   "table":{
+    "search": "Cari...",
     "action": "Aksi"
   },
-  "confirmation":{
-    "delete": "Apakah kamu yakin akan menghapus data?",
-    "restore": "Apakah kamu yakin akan memulihkan data?"
+
+  "location":{
+    "code": "Kode",
+    "name": "Nama Lokasi",
+    "tenant": "Nama Tenant",
+    "select-location": "Pilih lokasi ini"
+  },
+
+  "page":{
+    "users": "Pengguna",
+    "roles": "Peran",
+    "permissions": "Izin",
+    "locations": "Lokasi",
+    "chart-types": "Jenis Chart",
+    "status-alarm": "Alarm Status",
+    "flow-meter": "Pengukur Aliran",
+    "range-types": "Jenis Rentang",
+    "range-costs": "Kisrab biaya",
+    "tax": "Pajak"
+  },
+
+  "dialog":{
+    "create-form": "Form Tambah",
+    "edit-form": "Form Edit",
+    "restore-text": "Apakah Anda yakin akan memulihkan data?",
+    "delete-text": "Apakah Anda yakin ingin menghapus data?",
+    "delete-permanent-text": "Apakah Anda yakin ingin menghapus data secara permanen?",
+    "delete-multiple-text": "Apakah Anda yakin ingin menghapus {count} data yang dipilih?",
+    "restore-multiple-text": "Apakah Anda yakin akan memulihkan {count} data yang dipilih?",
+    "delete-permanent-multiple-text": "Apakah Anda yakin ingin menghapus data {count} yang dipilih secara permanen?",
+    "delete-permanent-alert-text": "Data tidak dapat dipulihkan lagi."
+  },
+
+  "menu":{
+    "home":{
+      "index": "Beranda",
+      "change-location": "Ganti Lokasi",
+      "realtime-chart": "Realtime Chart"
+    },
+    "features":{
+      "index": "Fitur",
+      "mag-8000": {
+        "index":"Mag 8000",
+        "status-alarm":"Alarm Status",
+        "flow-meter":"Pengukur Aliran"
+      },
+      "billing": {
+        "index":"Tagihan",
+        "range-type":"Jenis Rentang",
+        "range-cost":"Kisaran biaya"
+      }
+      
+    },
+    "master-auth": {
+      "index":"Master Auth",
+      "permissions":"Izin",
+      "roles":"peran"
+    },
+    "master-data": {
+      "index":"Master Data",
+      "user":"pengguna",
+      "location":"lokasi",
+      "chart-type":"jenis chart",
+      "tax":"pajak"
+    }
+  },
+
+  "text":{
+    "name":"Nama",
+    "guard-name":"Nama Penjaga",
+
+    "full-name":"Nama Lengkap",
+    "username":"Nama pengguna",
+    "email":"Email",
+
+    "company-name":"Nama Perusahaan",
+    "code":"kode",
+    "location":"lokasi",
+    "lattitude":"garis lintang",
+    "longitude":"garis bujur",
+
+    "status":"status",
+    "description":"deskripsi"
   }
 }

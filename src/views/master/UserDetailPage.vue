@@ -41,7 +41,6 @@ const saveData = () => {
 proxy.$pusher
     .channel('user-detail-channel-' + route.params.id)
     .listen('.user-detail-event', async (res) => {
-        console.log(res);
         form.value = res.data;
     });
 </script>

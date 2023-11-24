@@ -70,6 +70,11 @@ const chartLengthOptions = ref([
         header="Setting"
         :modal="true"
         :closable="false"
+        :pt="{
+            mask: {
+                style: 'backdrop-filter: blur(2px)'
+            }
+        }"
         class="p-fluid"
     >
         <div class="field">
@@ -101,6 +106,11 @@ const chartLengthOptions = ref([
         header="Map Lokasi"
         :modal="true"
         :closable="false"
+        :pt="{
+            mask: {
+                style: 'backdrop-filter: blur(2px)'
+            }
+        }"
         class="p-fluid"
     >
         <CurrentMapPage />

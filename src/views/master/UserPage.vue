@@ -66,7 +66,6 @@ onBeforeMount(() => {
     });
 });
 onMounted(() => {
-    title.value = 'Data User';
     LocationStore.getAll();
     DashboardChart.getAll();
     RoleStore.getData();
@@ -151,20 +150,20 @@ const confirmDeletePermanentSelectedDialog = () => {
                     <template v-slot:start>
                         <div class="my-2">
                             <Button
-                                v-tooltip.top="`Tambah`"
+                                v-tooltip.top="$t('button.new-data')"
                                 icon="pi pi-plus"
                                 class="p-button-rounded p-button-sm p-button-success mr-2"
                                 @click="openNew"
                             />
                             <Button
-                                v-tooltip.top="`Hapus`"
+                                v-tooltip.top="$t('button.delete-data')"
                                 icon="pi pi-trash"
                                 class="p-button-rounded p-button-sm p-button-warning mr-2"
                                 @click="confirmDeleteSelected"
                                 :disabled="!selectedData || !selectedData.length"
                             />
                             <Button
-                                v-tooltip.top="`Restore`"
+                                v-tooltip.top="$t('button.restore-data')"
                                 icon="pi pi-refresh"
                                 class="p-button-rounded p-button-sm p-button-info mr-2"
                                 @click="confirmRestoreSelected"
@@ -187,8 +186,8 @@ const confirmDeletePermanentSelectedDialog = () => {
                             @click="exportExcel($event)"
                         />
                         <Button
-                            label="Hapus Permanen"
-                            v-tooltip.top="`Hapus Permanen`"
+                            :label="$t('button.delete-data-Permanent')"
+                            v-tooltip.top="$t('button.delete-data-Permanent')"
                             icon="pi pi-trash"
                             class="p-button-sm p-button-danger"
                             @click="confirmDeletePermanentSelectedDialog"
@@ -214,7 +213,9 @@ const confirmDeletePermanentSelectedDialog = () => {
                         <div
                             class="flex flex-column md:flex-row md:justify-content-center md:align-items-center my-3"
                         >
-                            <h5 class="m-0 text-red-600">Data Tidak Ditemukan</h5>
+                            <h5 class="m-0 text-red-600">
+                                {{ $t('alert.no-data-found') }}
+                            </h5>
                         </div>
                     </template>
                     <template #header>
@@ -237,7 +238,9 @@ const confirmDeletePermanentSelectedDialog = () => {
                     <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
                     <Column field="name" :sortable="true" headerStyle="min-width:15rem;">
                         <template #header>
-                            <span class="flex-1 uppercase py-2 font-bold"> Name </span>
+                            <span class="flex-1 uppercase py-2 font-bold">
+                                {{ $t('text.full-name') }}
+                            </span>
                         </template>
                         <template #body="slotProps">
                             <span :class="{ 'text-red-500': slotProps.data.trashed }">
@@ -247,7 +250,9 @@ const confirmDeletePermanentSelectedDialog = () => {
                     </Column>
                     <Column field="username" :sortable="true" headerStyle="min-width:15rem;">
                         <template #header>
-                            <span class="flex-1 uppercase py-2 font-bold"> username </span>
+                            <span class="flex-1 uppercase py-2 font-bold">
+                                {{ $t('text.username') }}
+                            </span>
                         </template>
                         <template #body="slotProps">
                             <span :class="{ 'text-red-500': slotProps.data.trashed }">
@@ -257,7 +262,9 @@ const confirmDeletePermanentSelectedDialog = () => {
                     </Column>
                     <Column field="email" :sortable="true" headerStyle="min-width:15rem;">
                         <template #header>
-                            <span class="flex-1 uppercase py-2 font-bold"> email </span>
+                            <span class="flex-1 uppercase py-2 font-bold">
+                                {{ $t('text.email') }}
+                            </span>
                         </template>
                         <template #body="slotProps">
                             <span :class="{ 'text-red-500': slotProps.data.trashed }">
@@ -268,38 +275,40 @@ const confirmDeletePermanentSelectedDialog = () => {
 
                     <Column
                         class="text-center"
-                        headerStyle="min-width:15rem;"
+                        headerStyle="min-width:7rem;"
                         alignFrozen="right"
                         :frozen="true"
                     >
                         <template #header>
-                            <span class="flex-1 uppercase py-2 font-bold"> Aksi </span>
+                            <span class="flex-1 uppercase py-2 font-bold">
+                                {{ $t('table.action') }}
+                            </span>
                         </template>
                         <template #body="slotProps">
                             <Button
                                 v-if="slotProps.data.trashed"
-                                v-tooltip.top="`Restore`"
+                                v-tooltip.top="$t('button.restore-data')"
                                 icon="pi pi-refresh"
                                 class="p-button-rounded p-button-sm p-button-secondary mr-2"
                                 @click="confirmRestoreData(slotProps.data)"
                             />
                             <Button
                                 v-if="slotProps.data.trashed"
-                                v-tooltip.top="`Hapus`"
+                                v-tooltip.top="$t('button.delete-data')"
                                 icon="pi pi-trash"
                                 class="p-button-rounded p-button-sm p-button-danger mr-2"
                                 @click="confirmDeletePermanentData(slotProps.data)"
                             />
                             <Button
                                 v-if="!slotProps.data.trashed"
-                                v-tooltip.top="`Ubah`"
+                                v-tooltip.top="$t('button.edit-data')"
                                 icon="pi pi-pencil"
                                 class="p-button-rounded p-button-sm p-button-success mr-2"
                                 @click="editData(slotProps.data)"
                             />
                             <Button
                                 v-if="!slotProps.data.trashed"
-                                v-tooltip.top="`Hapus`"
+                                v-tooltip.top="$t('button.delete-data')"
                                 icon="pi pi-trash"
                                 class="p-button-rounded p-button-sm p-button-warning mt-2"
                                 @click="confirmDestroyData(slotProps.data)"
@@ -334,9 +343,14 @@ const confirmDeletePermanentSelectedDialog = () => {
         v-model:visible="formDialog"
         :style="{ width: '50vw' }"
         :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
-        :header="form.id ? 'Ubah Data' : 'Tambah Data'"
+        :header="form.id ? $t('button.edit-data') : $t('button.new-data')"
         :modal="true"
         :closable="false"
+        :pt="{
+            mask: {
+                style: 'backdrop-filter: blur(2px)'
+            }
+        }"
         class="p-fluid"
     >
         <TabView>
@@ -561,14 +575,14 @@ const confirmDeletePermanentSelectedDialog = () => {
         <template #footer>
             <Button
                 :disabled="loading"
-                label="Batal"
+                :label="$t('button.cancel')"
                 icon="pi pi-times"
                 class="p-button-text"
                 @click="hideDialog"
             />
             <Button
                 :loading="loading"
-                :label="form.id ? 'Update' : 'Simpan'"
+                :label="form.id ? $t('button.update') : $t('button.save')"
                 icon="pi pi-check"
                 class="p-button-success"
                 @click="saveData"
@@ -580,27 +594,34 @@ const confirmDeletePermanentSelectedDialog = () => {
     <Dialog
         v-model:visible="restoreDataDialog"
         :style="{ width: '450px' }"
-        header="Konfirmasi Pemulihan"
+        :header="$t('alert.confirmation')"
         :modal="true"
         :closable="false"
+        :pt="{
+            mask: {
+                style: 'backdrop-filter: blur(2px)'
+            }
+        }"
     >
         <div class="flex align-items-center justify-content-center">
             <i class="pi pi-exclamation-triangle text-center mb-3" style="font-size: 3rem" />
         </div>
-        <p v-if="item" class="text-center">Apakah yakin akan memulihkan data ?</p>
+        <p v-if="item" class="text-center">
+            {{ $t('dialog.restore-text') }}
+        </p>
         <p v-if="item" class="text-center">
             <b>{{ item.name }}</b>
         </p>
         <template #footer>
             <Button
                 :disabled="loading"
-                label="Tidak"
+                :label="$t('button.cancel')"
                 icon="pi pi-times"
                 class="p-button-text"
                 @click="restoreDataDialog = false"
             />
             <Button
-                label="Ya, Pulihkan"
+                :label="$t('button.yes-restore')"
                 icon="pi pi-check"
                 class="p-button-success"
                 @click="restoreData(item.id)"
@@ -613,27 +634,34 @@ const confirmDeletePermanentSelectedDialog = () => {
     <Dialog
         v-model:visible="destroyDataDialog"
         :style="{ width: '450px' }"
-        header="Konfirmasi Penghapusan"
+        :header="$t('alert.confirmation')"
         :modal="true"
         :closable="false"
+        :pt="{
+            mask: {
+                style: 'backdrop-filter: blur(2px)'
+            }
+        }"
     >
         <div class="flex align-items-center justify-content-center">
             <i class="pi pi-exclamation-triangle text-center mb-3" style="font-size: 3rem" />
         </div>
-        <p v-if="item" class="text-center">Apakah yakin akan menghapus data ?</p>
+        <p v-if="item" class="text-center">
+            {{ $t('dialog.delete-text') }}
+        </p>
         <p v-if="item" class="text-center">
             <b>{{ item.name }}</b>
         </p>
         <template #footer>
             <Button
                 :disabled="loading"
-                label="Tidak"
+                :label="$t('button.cancel')"
                 icon="pi pi-times"
                 class="p-button-text"
                 @click="destroyDataDialog = false"
             />
             <Button
-                label="Ya, Hapus"
+                :label="$t('button.yes-delete')"
                 icon="pi pi-check"
                 class="p-button-danger"
                 @click="destroyData(item.id)"
@@ -647,27 +675,34 @@ const confirmDeletePermanentSelectedDialog = () => {
     <Dialog
         v-model:visible="destroyPermanentDialog"
         :style="{ width: '450px' }"
-        header="Konfirmasi Penghapusan Permanen"
+        :header="$t('alert.confirmation')"
         :modal="true"
         :closable="false"
+        :pt="{
+            mask: {
+                style: 'backdrop-filter: blur(2px)'
+            }
+        }"
     >
         <div class="flex align-items-center justify-content-center">
             <i class="pi pi-exclamation-triangle text-center mb-3" style="font-size: 3rem" />
         </div>
-        <p v-if="item" class="text-center">Apakah yakin akan menghapus permanen data ?</p>
+        <p v-if="item" class="text-center">
+            {{ $t('dialog.delete-permanent-text') }}
+        </p>
         <p v-if="item" class="text-center">
             <b>{{ item.name }}</b>
         </p>
         <template #footer>
             <Button
                 :disabled="loading"
-                label="Batal"
+                :label="$t('button.cancel')"
                 icon="pi pi-times"
                 class="p-button-text"
                 @click="destroyPermanentDialog = false"
             />
             <Button
-                label="Ya, Hapus Permanen"
+                :label="$t('button.yes-destroy')"
                 icon="pi pi-check"
                 class="p-button-danger"
                 @click="deleteData(item.id)"
@@ -681,26 +716,31 @@ const confirmDeletePermanentSelectedDialog = () => {
     <Dialog
         v-model:visible="destroySelectedDialog"
         :style="{ width: '450px' }"
-        header="Konfirmasi Penghapusan"
+        :header="$t('alert.confirmation')"
         :modal="true"
         :closable="false"
+        :pt="{
+            mask: {
+                style: 'backdrop-filter: blur(2px)'
+            }
+        }"
     >
         <div class="flex align-items-center justify-content-center">
             <i class="pi pi-exclamation-triangle text-center mb-3" style="font-size: 3rem" />
         </div>
         <p v-if="selectedData" class="text-center">
-            Apakah yakin akan menghapus <b>{{ selectedData.length }}</b> data yang dipilih ?
+            {{ $t('dialog.delete-multiple-text', { count: selectedData.length }) }}
         </p>
         <template #footer>
             <Button
                 :disabled="loading"
-                label="Batal"
+                :label="$t('button.cancel')"
                 icon="pi pi-times"
                 class="p-button-text"
                 @click="destroySelectedDialog = false"
             />
             <Button
-                label="Ya, Hapus"
+                :label="$t('button.yes-delete')"
                 icon="pi pi-check"
                 class="p-button-danger"
                 @click="destroyMultiple()"
@@ -714,26 +754,31 @@ const confirmDeletePermanentSelectedDialog = () => {
     <Dialog
         v-model:visible="restoreSelectedDialog"
         :style="{ width: '450px' }"
-        header="Konfirmasi Pemulihan"
+        :header="$t('alert.confirmation')"
         :modal="true"
         :closable="false"
+        :pt="{
+            mask: {
+                style: 'backdrop-filter: blur(2px)'
+            }
+        }"
     >
         <div class="flex align-items-center justify-content-center">
             <i class="pi pi-exclamation-triangle text-center mb-3" style="font-size: 3rem" />
         </div>
         <p v-if="selectedData" class="text-center">
-            Apakah yakin akan memulihkan <b>{{ selectedData.length }}</b> data yang dipilih ?
+            {{ $t('dialog.restore-multiple-text', { count: selectedData.length }) }}
         </p>
         <template #footer>
             <Button
                 :disabled="loading"
-                label="Batal"
+                :label="$t('button.cancel')"
                 icon="pi pi-times"
                 class="p-button-text"
                 @click="restoreSelectedDialog = false"
             />
             <Button
-                label="Ya, Pulihkan"
+                :label="$t('button.yes-restore')"
                 icon="pi pi-check"
                 class="p-button-warning"
                 @click="restoreMultiple()"
@@ -746,9 +791,14 @@ const confirmDeletePermanentSelectedDialog = () => {
     <Dialog
         v-model:visible="destroyPermanentSelectedDialog"
         :style="{ width: '450px' }"
-        header="Konfirmasi Penghapusan Masal"
+        :header="$t('alert.confirmation')"
         :modal="true"
         :closable="false"
+        :pt="{
+            mask: {
+                style: 'backdrop-filter: blur(2px)'
+            }
+        }"
     >
         <div class="flex align-items-center justify-content-center">
             <i class="pi pi-exclamation-triangle text-center mb-3" style="font-size: 3rem" />
@@ -756,17 +806,17 @@ const confirmDeletePermanentSelectedDialog = () => {
         <p v-if="selectedData" class="text-center">
             Apakah yakin akan mengapus permanen <b>{{ selectedData.length }}</b> data yang dipilih ?
         </p>
-        <h4 class="font-bold text-center">Data Tidak dapat dipulihkan lagi.</h4>
+        <h4 class="font-bold text-center">{{ $t('dialog.delete-permanent-alert-text') }}</h4>
         <template #footer>
             <Button
                 :disabled="loading"
-                label="Batal"
+                :label="$t('button.cancel')"
                 icon="pi pi-times"
                 class="p-button-text"
                 @click="destroyPermanentSelectedDialog = false"
             />
             <Button
-                label="Ya, Hapus Permanen"
+                :label="$t('button.yes-destroy')"
                 icon="pi pi-check"
                 class="p-button-danger"
                 @click="deleteMultiple()"

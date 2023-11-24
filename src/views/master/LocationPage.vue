@@ -58,7 +58,7 @@ onBeforeMount(() => {
     });
 });
 onMounted(() => {
-    title.value = 'Data Location';
+    //
 });
 
 onUnmounted(() => {
@@ -166,20 +166,20 @@ const getStreetAddressFrom = async (lat, long) => {
                     <template v-slot:start>
                         <div class="my-2">
                             <Button
-                                v-tooltip.top="`Tambah`"
+                                v-tooltip.top="$t('button.new-data')"
                                 icon="pi pi-plus"
                                 class="p-button-rounded p-button-sm p-button-success mr-2"
                                 @click="openNew"
                             />
                             <Button
-                                v-tooltip.top="`Hapus`"
+                                v-tooltip.top="$t('button.delete-data')"
                                 icon="pi pi-trash"
                                 class="p-button-rounded p-button-sm p-button-warning mr-2"
                                 @click="confirmDeleteSelected"
                                 :disabled="!selectedData || !selectedData.length"
                             />
                             <Button
-                                v-tooltip.top="`Restore`"
+                                v-tooltip.top="$t('button.restore-data')"
                                 icon="pi pi-refresh"
                                 class="p-button-rounded p-button-sm p-button-info mr-2"
                                 @click="confirmRestoreSelected"
@@ -202,8 +202,8 @@ const getStreetAddressFrom = async (lat, long) => {
                             @click="exportExcel($event)"
                         />
                         <Button
-                            label="Hapus Permanen"
-                            v-tooltip.top="`Hapus Permanen`"
+                            :label="$t('button.delete-data-Permanent')"
+                            v-tooltip.top="$t('button.delete-data-Permanent')"
                             icon="pi pi-trash"
                             class="p-button-sm p-button-danger"
                             @click="confirmDeletePermanentSelectedDialog"
@@ -229,7 +229,9 @@ const getStreetAddressFrom = async (lat, long) => {
                         <div
                             class="flex flex-column md:flex-row md:justify-content-center md:align-items-center my-3"
                         >
-                            <h5 class="m-0 text-red-600">Data Tidak Ditemukan</h5>
+                            <h5 class="m-0 text-red-600">
+                                {{ $t('alert.no-data-found') }}
+                            </h5>
                         </div>
                     </template>
                     <template #header>
@@ -239,7 +241,7 @@ const getStreetAddressFrom = async (lat, long) => {
                             <h5 class="m-0 capitalize">{{ title }}</h5>
                             <span class="block mt-2 md:mt-0 p-input-icon-left">
                                 <i class="pi pi-search" />
-                                <InputText v-model="keyword" placeholder="Cari..." />
+                                <InputText v-model="keyword" :placeholder="$t('table.search')" />
                             </span>
                         </div>
                     </template>
@@ -248,7 +250,9 @@ const getStreetAddressFrom = async (lat, long) => {
 
                     <Column field="code" :sortable="true" headerStyle="min-width:15rem;">
                         <template #header>
-                            <span class="flex-1 uppercase py-2 font-bold"> code </span>
+                            <span class="flex-1 uppercase py-2 font-bold">
+                                {{ $t('text.code') }}
+                            </span>
                         </template>
                         <template #body="slotProps">
                             <span :class="{ 'text-red-500': slotProps.data.trashed }">
@@ -259,7 +263,9 @@ const getStreetAddressFrom = async (lat, long) => {
 
                     <Column field="company_name" :sortable="true" headerStyle="min-width:15rem;">
                         <template #header>
-                            <span class="flex-1 uppercase py-2 font-bold"> company name </span>
+                            <span class="flex-1 uppercase py-2 font-bold">
+                                {{ $t('text.company-name') }}
+                            </span>
                         </template>
                         <template #body="slotProps">
                             <span :class="{ 'text-red-500': slotProps.data.trashed }">
@@ -270,7 +276,9 @@ const getStreetAddressFrom = async (lat, long) => {
 
                     <Column field="name" :sortable="true" headerStyle="min-width:15rem;">
                         <template #header>
-                            <span class="flex-1 uppercase py-2 font-bold"> Name </span>
+                            <span class="flex-1 uppercase py-2 font-bold">
+                                {{ $t('text.name') }}
+                            </span>
                         </template>
                         <template #body="slotProps">
                             <span :class="{ 'text-red-500': slotProps.data.trashed }">
@@ -281,38 +289,40 @@ const getStreetAddressFrom = async (lat, long) => {
 
                     <Column
                         class="text-center"
-                        headerStyle="min-width:15rem;"
+                        headerStyle="min-width:7rem;"
                         alignFrozen="right"
                         :frozen="true"
                     >
                         <template #header>
-                            <span class="flex-1 uppercase py-2 font-bold"> Aksi </span>
+                            <span class="flex-1 uppercase py-2 font-bold">
+                                {{ $t('table.action') }}
+                            </span>
                         </template>
                         <template #body="slotProps">
                             <Button
                                 v-if="slotProps.data.trashed"
-                                v-tooltip.top="`Restore`"
+                                v-tooltip.top="$t('button.restore-data')"
                                 icon="pi pi-refresh"
                                 class="p-button-rounded p-button-sm p-button-info mr-2"
                                 @click="confirmRestoreData(slotProps.data)"
                             />
                             <Button
                                 v-if="slotProps.data.trashed"
-                                v-tooltip.top="`Hapus`"
+                                v-tooltip.top="$t('button.delete-data')"
                                 icon="pi pi-trash"
                                 class="p-button-rounded p-button-sm p-button-danger mr-2"
                                 @click="confirmDeletePermanentData(slotProps.data)"
                             />
                             <Button
                                 v-if="!slotProps.data.trashed"
-                                v-tooltip.top="`Ubah`"
+                                v-tooltip.top="$t('button.edit-data')"
                                 icon="pi pi-pencil"
                                 class="p-button-rounded p-button-sm p-button-success mr-2"
                                 @click="editData(slotProps.data)"
                             />
                             <Button
                                 v-if="!slotProps.data.trashed"
-                                v-tooltip.top="`Hapus`"
+                                v-tooltip.top="$t('button.delete-data')"
                                 icon="pi pi-trash"
                                 class="p-button-rounded p-button-sm p-button-warning mt-2"
                                 @click="confirmDestroyData(slotProps.data)"
@@ -347,9 +357,14 @@ const getStreetAddressFrom = async (lat, long) => {
         v-model:visible="formDialog"
         :style="{ width: '50vw' }"
         :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
-        :header="form.id ? 'Ubah Data' : 'Tambah Data'"
+        :header="form.id ? $t('button.edit-data') : $t('button.new-data')"
         :modal="true"
         :closable="false"
+        :pt="{
+            mask: {
+                style: 'backdrop-filter: blur(2px)'
+            }
+        }"
         maximizable
     >
         <div class="card">
@@ -363,9 +378,8 @@ const getStreetAddressFrom = async (lat, long) => {
                             v-model="form.code"
                             :class="{ 'p-invalid': errors.code }"
                             @input="mainStore.removeError"
-                            placeholder="code"
                         />
-                        <InputLabel value="code" />
+                        <InputLabel :value="$t('text.code')" />
                     </span>
                     <InputError :message="errors.code" />
                 </div>
@@ -378,9 +392,8 @@ const getStreetAddressFrom = async (lat, long) => {
                             v-model="form.company_name"
                             :class="{ 'p-invalid': errors.company_name }"
                             @input="mainStore.removeError"
-                            placeholder="company name"
                         />
-                        <InputLabel value="company name" />
+                        <InputLabel :value="$t('text.company-name')" />
                     </span>
                     <InputError :message="errors.company_name" />
                 </div>
@@ -393,9 +406,8 @@ const getStreetAddressFrom = async (lat, long) => {
                             v-model="form.name"
                             :class="{ 'p-invalid': errors.name }"
                             @input="mainStore.removeError"
-                            placeholder="Name"
                         />
-                        <InputLabel value="name" />
+                        <InputLabel :value="$t('text.name')" />
                     </span>
                     <InputError :message="errors.name" />
                 </div>
@@ -408,9 +420,8 @@ const getStreetAddressFrom = async (lat, long) => {
                             v-model="form.description"
                             :class="{ 'p-invalid': errors.description }"
                             @input="mainStore.removeError"
-                            placeholder="description"
                         />
-                        <InputLabel value="description" />
+                        <InputLabel :value="$t('text.description')" />
                     </span>
                     <InputError :message="errors.description" />
                 </div>
@@ -424,10 +435,9 @@ const getStreetAddressFrom = async (lat, long) => {
                             v-model="form.lattitude"
                             :class="{ 'p-invalid': errors.lattitude }"
                             @input="mainStore.removeError"
-                            placeholder="Lattitude"
                             readonly
                         />
-                        <InputLabel value="Lattitude" />
+                        <InputLabel :value="$t('text.lattitude')" />
                     </span>
                 </div>
                 <div class="mb-4 field col-12">
@@ -439,10 +449,9 @@ const getStreetAddressFrom = async (lat, long) => {
                             v-model="form.longitude"
                             :class="{ 'p-invalid': errors.longitude }"
                             @input="mainStore.removeError"
-                            placeholder="Longitude"
                             readonly
                         />
-                        <InputLabel value="Longitude" />
+                        <InputLabel :value="$t('text.longitude')" />
                     </span>
                 </div>
                 <div class="mb-4 field col-12">
@@ -454,10 +463,9 @@ const getStreetAddressFrom = async (lat, long) => {
                             v-model="location"
                             :class="{ 'p-invalid': errors.lattitude || errors.longitude }"
                             @input="mainStore.removeError"
-                            placeholder="Lokasi"
                             readonly
                         />
-                        <InputLabel value="Lokasi" />
+                        <InputLabel :value="$t('text.location')" />
                     </span>
                 </div>
                 <div class="mb-4 field col-12">
@@ -476,14 +484,14 @@ const getStreetAddressFrom = async (lat, long) => {
         <template #footer>
             <Button
                 :disabled="loading"
-                label="Batal"
+                :label="$t('button.cancel')"
                 icon="pi pi-times"
                 class="p-button-text"
                 @click="hideDialog"
             />
             <Button
                 :loading="loading"
-                :label="form.id ? 'Update' : 'Simpan'"
+                :label="form.id ? $t('button.update') : $t('button.save')"
                 icon="pi pi-check"
                 class="p-button-success"
                 @click="saveData"
@@ -495,27 +503,34 @@ const getStreetAddressFrom = async (lat, long) => {
     <Dialog
         v-model:visible="restoreDataDialog"
         :style="{ width: '450px' }"
-        header="Konfirmasi Pemulihan"
+        :header="$t('alert.confirmation')"
         :modal="true"
         :closable="false"
+        :pt="{
+            mask: {
+                style: 'backdrop-filter: blur(2px)'
+            }
+        }"
     >
         <div class="flex align-items-center justify-content-center">
             <i class="pi pi-exclamation-triangle text-center mb-3" style="font-size: 3rem" />
         </div>
-        <p v-if="item" class="text-center">Apakah yakin akan memulihkan data ?</p>
+        <p v-if="item" class="text-center">
+            {{ $t('dialog.restore-text') }}
+        </p>
         <p v-if="item" class="text-center">
             <b>{{ item.name }}</b>
         </p>
         <template #footer>
             <Button
                 :disabled="loading"
-                label="Tidak"
+                :label="$t('button.cancel')"
                 icon="pi pi-times"
                 class="p-button-text"
                 @click="restoreDataDialog = false"
             />
             <Button
-                label="Ya, Pulihkan"
+                :label="$t('button.yes-restore')"
                 icon="pi pi-check"
                 class="p-button-success"
                 @click="restoreData(item.id)"
@@ -528,27 +543,34 @@ const getStreetAddressFrom = async (lat, long) => {
     <Dialog
         v-model:visible="destroyDataDialog"
         :style="{ width: '450px' }"
-        header="Konfirmasi Penghapusan"
+        :header="$t('alert.confirmation')"
         :modal="true"
         :closable="false"
+        :pt="{
+            mask: {
+                style: 'backdrop-filter: blur(2px)'
+            }
+        }"
     >
         <div class="flex align-items-center justify-content-center">
             <i class="pi pi-exclamation-triangle text-center mb-3" style="font-size: 3rem" />
         </div>
-        <p v-if="item" class="text-center">Apakah yakin akan menghapus data ?</p>
+        <p v-if="item" class="text-center">
+            {{ $t('dialog.delete-text') }}
+        </p>
         <p v-if="item" class="text-center">
             <b>{{ item.name }}</b>
         </p>
         <template #footer>
             <Button
                 :disabled="loading"
-                label="Tidak"
+                :label="$t('button.cancel')"
                 icon="pi pi-times"
                 class="p-button-text"
                 @click="destroyDataDialog = false"
             />
             <Button
-                label="Ya, Hapus"
+                :label="$t('button.yes-delete')"
                 icon="pi pi-check"
                 class="p-button-danger"
                 @click="destroyData(item.id)"
@@ -562,27 +584,34 @@ const getStreetAddressFrom = async (lat, long) => {
     <Dialog
         v-model:visible="destroyPermanentDialog"
         :style="{ width: '450px' }"
-        header="Konfirmasi Penghapusan Permanen"
+        :header="$t('alert.confirmation')"
         :modal="true"
         :closable="false"
+        :pt="{
+            mask: {
+                style: 'backdrop-filter: blur(2px)'
+            }
+        }"
     >
         <div class="flex align-items-center justify-content-center">
             <i class="pi pi-exclamation-triangle text-center mb-3" style="font-size: 3rem" />
         </div>
-        <p v-if="item" class="text-center">Apakah yakin akan menghapus permanen data ?</p>
+        <p v-if="item" class="text-center">
+            {{ $t('dialog.delete-permanent-text') }}
+        </p>
         <p v-if="item" class="text-center">
             <b>{{ item.name }}</b>
         </p>
         <template #footer>
             <Button
                 :disabled="loading"
-                label="Batal"
+                :label="$t('button.cancel')"
                 icon="pi pi-times"
                 class="p-button-text"
                 @click="destroyPermanentDialog = false"
             />
             <Button
-                label="Ya, Hapus Permanen"
+                :label="$t('button.yes-destroy')"
                 icon="pi pi-check"
                 class="p-button-danger"
                 @click="deleteData(item.id)"
@@ -596,26 +625,31 @@ const getStreetAddressFrom = async (lat, long) => {
     <Dialog
         v-model:visible="destroySelectedDialog"
         :style="{ width: '450px' }"
-        header="Konfirmasi Penghapusan"
+        :header="$t('alert.confirmation')"
         :modal="true"
         :closable="false"
+        :pt="{
+            mask: {
+                style: 'backdrop-filter: blur(2px)'
+            }
+        }"
     >
         <div class="flex align-items-center justify-content-center">
             <i class="pi pi-exclamation-triangle text-center mb-3" style="font-size: 3rem" />
         </div>
         <p v-if="selectedData" class="text-center">
-            Apakah yakin akan menghapus <b>{{ selectedData.length }}</b> data yang dipilih ?
+            {{ $t('dialog.delete-multiple-text', { count: selectedData.length }) }}
         </p>
         <template #footer>
             <Button
                 :disabled="loading"
-                label="Batal"
+                :label="$t('button.cancel')"
                 icon="pi pi-times"
                 class="p-button-text"
                 @click="destroySelectedDialog = false"
             />
             <Button
-                label="Ya, Hapus"
+                :label="$t('button.yes-delete')"
                 icon="pi pi-check"
                 class="p-button-danger"
                 @click="destroyMultiple()"
@@ -629,26 +663,31 @@ const getStreetAddressFrom = async (lat, long) => {
     <Dialog
         v-model:visible="restoreSelectedDialog"
         :style="{ width: '450px' }"
-        header="Konfirmasi Pemulihan"
+        :header="$t('alert.confirmation')"
         :modal="true"
         :closable="false"
+        :pt="{
+            mask: {
+                style: 'backdrop-filter: blur(2px)'
+            }
+        }"
     >
         <div class="flex align-items-center justify-content-center">
             <i class="pi pi-exclamation-triangle text-center mb-3" style="font-size: 3rem" />
         </div>
         <p v-if="selectedData" class="text-center">
-            Apakah yakin akan memulihkan <b>{{ selectedData.length }}</b> data yang dipilih ?
+            {{ $t('dialog.restore-multiple-text', { count: selectedData.length }) }}
         </p>
         <template #footer>
             <Button
                 :disabled="loading"
-                label="Batal"
+                :label="$t('button.cancel')"
                 icon="pi pi-times"
                 class="p-button-text"
                 @click="restoreSelectedDialog = false"
             />
             <Button
-                label="Ya, Pulihkan"
+                :label="$t('button.yes-restore')"
                 icon="pi pi-check"
                 class="p-button-warning"
                 @click="restoreMultiple()"
@@ -661,9 +700,14 @@ const getStreetAddressFrom = async (lat, long) => {
     <Dialog
         v-model:visible="destroyPermanentSelectedDialog"
         :style="{ width: '450px' }"
-        header="Konfirmasi Penghapusan Masal"
+        :header="$t('alert.confirmation')"
         :modal="true"
         :closable="false"
+        :pt="{
+            mask: {
+                style: 'backdrop-filter: blur(2px)'
+            }
+        }"
     >
         <div class="flex align-items-center justify-content-center">
             <i class="pi pi-exclamation-triangle text-center mb-3" style="font-size: 3rem" />
@@ -671,17 +715,17 @@ const getStreetAddressFrom = async (lat, long) => {
         <p v-if="selectedData" class="text-center">
             Apakah yakin akan mengapus permanen <b>{{ selectedData.length }}</b> data yang dipilih ?
         </p>
-        <h4 class="font-bold text-center">Data Tidak dapat dipulihkan lagi.</h4>
+        <h4 class="font-bold text-center">{{ $t('dialog.delete-permanent-alert-text') }}</h4>
         <template #footer>
             <Button
                 :disabled="loading"
-                label="Batal"
+                :label="$t('button.cancel')"
                 icon="pi pi-times"
                 class="p-button-text"
                 @click="destroyPermanentSelectedDialog = false"
             />
             <Button
-                label="Ya, Hapus Permanen"
+                :label="$t('button.yes-destroy')"
                 icon="pi pi-check"
                 class="p-button-danger"
                 @click="deleteMultiple()"

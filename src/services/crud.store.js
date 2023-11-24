@@ -118,7 +118,9 @@ export const useCrudStore = defineStore('crud', () => {
                 nama_paket: form.value.nama_paket,
                 kode_sirup: form.value.kode_sirup,
                 nomor_permohonan_pengadaan: form.value.nomor_permohonan_pengadaan,
-                tanggal_permohonan_pengadaan: formatDatetime(form.value.tanggal_permohonan_pengadaan),
+                tanggal_permohonan_pengadaan: formatDatetime(
+                    form.value.tanggal_permohonan_pengadaan
+                ),
                 no_und_dpl: form.value.no_und_dpl,
                 tanggal_und_dpl: formatDatetime(form.value.tanggal_und_dpl),
                 no_ba_hpl: form.value.no_ba_hpl,
@@ -182,7 +184,9 @@ export const useCrudStore = defineStore('crud', () => {
                 nama_paket: form.value.nama_paket,
                 kode_sirup: form.value.kode_sirup,
                 nomor_permohonan_pengadaan: form.value.nomor_permohonan_pengadaan,
-                tanggal_permohonan_pengadaan: formatDatetime(form.value.tanggal_permohonan_pengadaan),
+                tanggal_permohonan_pengadaan: formatDatetime(
+                    form.value.tanggal_permohonan_pengadaan
+                ),
                 no_und_dpl: form.value.no_und_dpl,
                 tanggal_und_dpl: formatDatetime(form.value.tanggal_und_dpl),
                 no_ba_hpl: form.value.no_ba_hpl,
@@ -326,7 +330,6 @@ export const useCrudStore = defineStore('crud', () => {
     watch(
         keyword,
         _.debounce((value) => {
-            console.log(value);
             let length = value.length;
             if (length >= 3 || length == 0) {
                 keyword.value = value;
@@ -348,7 +351,9 @@ export const useCrudStore = defineStore('crud', () => {
     const onSortData = (val) => {
         if (val.sortField) {
             const params = {};
-            val.sortOrder > 0 ? (params.sorts = val.sortField) : (params.sorts = `-${val.sortField}`);
+            val.sortOrder > 0
+                ? (params.sorts = val.sortField)
+                : (params.sorts = `-${val.sortField}`);
             load(params);
         } else {
             load();

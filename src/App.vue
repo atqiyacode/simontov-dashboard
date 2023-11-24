@@ -1,6 +1,6 @@
 <script setup>
 import { getCurrentInstance, onMounted } from 'vue';
-import { useMainStore } from './services/main.store';
+import { useMainStore } from '@/services/main.store';
 const { proxy } = getCurrentInstance();
 const mainStore = useMainStore();
 

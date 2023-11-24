@@ -62,7 +62,7 @@ const onSelectMap = (location) => {
                                         <span
                                             class="font-bold mr-2 mb-1 md:mb-0 capitalize text-gray-500"
                                         >
-                                            Kode
+                                            {{ $t('location.code') }}
                                         </span>
                                     </div>
                                     <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
@@ -78,7 +78,7 @@ const onSelectMap = (location) => {
                                         <span
                                             class="font-bold mr-2 mb-1 md:mb-0 capitalize text-gray-500"
                                         >
-                                            Tenant
+                                            {{ $t('location.tenant') }}
                                         </span>
                                     </div>
                                     <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
@@ -94,7 +94,7 @@ const onSelectMap = (location) => {
                                         <span
                                             class="font-bold mr-2 mb-1 md:mb-0 capitalize text-gray-500"
                                         >
-                                            Name
+                                            {{ $t('location.name') }}
                                         </span>
                                     </div>
                                     <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
@@ -137,7 +137,7 @@ const onSelectMap = (location) => {
                                         class="w-full"
                                         icon="pi pi-search"
                                         severity="warning"
-                                        label="Pilih lokasi ini"
+                                        :label="$t('location.select-location')"
                                         size="small"
                                     ></Button>
                                 </li>

@@ -1,15 +1,7 @@
 {
-  "language": "Language",
-  "message": {
-    "loading": "Processing",
-    "notification": "Notification",
-    "new-notification": "You have new notification",
-    "not-available-yet": "Not available yet",
-    "hello": "Welcome!",
-    "pin-active": "PIN Activated",
-    "pin-updated": "PIN updated",
-    "pin-deleted": "PIN deleted"
-  },
+  "id": "Indonesian",
+  "en": "English",
+  "select-language": "Select language",
   "alert": {
     "confirmation": "Confirmation",
     "no-data-found": "Data Not Found",
@@ -26,32 +18,6 @@
     "no-network": "Internet signal not available.",
     "wrong-confirm-pin": "Wrong PIN Confirmation.",
     "inactive-pin": "PIN will Inactivated?"
-  },
-  "header": {
-    "warning": "Warning",
-    "detail": "Detail data",
-    "add-whatsapp-number": "Add Whatsapp Number",
-    "change-language": "Change Language",
-    "select-language": "Select Language",
-    "search": "Search",
-    "information": "Information",
-    "mark-all-notification": "Mark All Read Notification?",
-    "delete-all-notification": "Delete All Notification?"
-  },
-  "menu": {
-    "home": "Home",
-    "notification": "Notification",
-    "account": "Account",
-    "registration-form": "Registration Form",
-    "login": "Login",
-    "register": "Register",
-    "verification-account": "Account Verification",
-    "forgot-password": "Forgot Password",
-    "detail-employee": "Detail Employee",
-    "payslip": "Payslip",
-    "tax": "Annual Tax",
-    "contact": "Contact",
-    "thr": "Holiday allowance"
   },
   "button": {
     "back": "Back",
@@ -81,6 +47,7 @@
     "show-data": "Show Data",
     "edit-data": "Edit Data",
     "delete-data": "Delete Data",
+    "delete-data-Permanent": "Delete Data Permanent",
     "restore-data": "Restore Data",
     "destroy-data": "Destroy Data",
     "yes-delete": "Yes, Delete",
@@ -88,138 +55,93 @@
     "yes-destroy": "Yes, Delete Permanent",
     "send-link-reset-password": "Send link reset password"
   },
-  "profile": {
-    "information": "Information",
-    "setting": "Setting",
-    "personal-data": "Personal Data",
-    "login-history": "Login History",
-    "address": "Address",
-    "avatar": "Avatar",
-    "email": "Email",
-    "whatsapp-number": "No. Whatsapp",
-    "password": "Password",
-    "help": "Help",
-    "terms": "Terms and Condition",
-    "privacy-policy": "Privacy Policy",
-    "FAQ": "FAQ",
-    "about": "About"
-  },
-  "password": {
-    "old-password": "Old Password",
-    "new-password": "New Password",
-    "confirm-new-password": "Confirm New Password"
-  },
-  "text": {
-    "unverified": "Unverified",
-    "verified": "Verified",
-    "active": "Active",
-    "inactive": "Non Active",
-    "public": "Public",
-    "private": "Private",
-    "public-notification": "Public notification",
-    "private-notification": "Private notification",
-    "filter-notification": "Filter Notification",
-    "security": "Security system",
-    "pin": "PIN",
-    "confirm-pin": "Confirmation PIN",
-    "new-pin": "New PIN",
-    "update-pin": "Edit PIN",
-    "date": "Date",
-    "detail": "Detail",
-    "confirm-password-text": "Please enter your account password",
-    "login-text": "Login to your account",
-    "register-text": "Create Your Account",
-    "register-form": "Make sure the employee data is correct",
-    "forgot-password": "Forgot password?",
-    "remember-password": "Remember your password?",
-    "remember-me": "Remember me",
-    "no-have-account": "Don't have account?",
-    "have-account": "Have account?",
-    "input-verification-code": "Please fill verification code",
-    "send-verification-method": "Send verification code via :",
-    "resend-verification-method": "Resend verification code via :",
-    "full-fill-form": "Please fill form input",
-    "forgot-password-verification": "Forgot Password Verification",
-    "cut-slip-number": "Cut slip number",
-    "unread": "Unread",
-    "mark-all-notification": "Mark All Read",
-    "click-upload-avatar": "Click to upload avatar",
-    "delete-all-notification": "Delete All",
-    "please-wait": "Please wait ...",
-    "please-wait-request": "Please be patient, your request is being processed"
-  },
-  "form": {
-    "employee-nik": "ID Card (NIK/KTP)",
-    "employee-code": "Employee Code",
-    "password": "Password",
-    "confirm-password": "Confirm Password",
-    "email": "Email",
-    "agree": "I Agree"
-  },
-  "employee": {
-    "nik": "No. ID Card",
-    "code": "Employee Code",
-    "whatsapp-number": "No. Whatsapp",
-    "full-name": "Full Name",
-    "npwp": "NPWP",
-    "jamsostek": "Jamsostek",
-    "department": "Department",
-    "designation": "Designation",
-    "grade": "Grade",
-    "child": "Child",
-    "dependent": "Dependent"
-  },
-  "slip": {
-    "earnings": "Earnings",
-    "deductions": "Deductions",
-    "overtime": "Overtime",
-    "shift-exc": "Shift Exc",
-    "total-earnings": "Total Earning",
-    "total-deductions": "Total Deduction",
-    "net-amount": "Net Amount",
-    "incentive": "Incentive",
-    "gross-amount": "Gross Amount",
-    "allowance": "Allowance",
-    "basic-salary": "Basic Salary",
-    "amount-calc": "Amount Calc.",
-    "tax": "TAX"
-  },
-  "device": {
-    "brand": "Merk",
-    "model": "Model",
-    "platform": "Platform",
-    "system": "Operating System",
-    "detail-login": "Detail Login",
-    "detail-device": "Detail Device"
-  },
-  "address": {
-    "province": "Province",
-    "city": "City",
-    "district": "District",
-    "village": "Village",
-    "rt": "RT",
-    "rw": "RW",
-    "post-code": "Post Code",
-    "detail": "Detail Address",
-    "new": "New Address",
-    "edit": "Edit Address"
-  },
-  "message-update": {
-    "avatar": "Avatar Updated Successfully",
-    "password": "Password Updated Successfully",
-    "email": "Email Updated Successfully",
-    "cancel-new-email": "Email change canceled",
-    "check-email": "Please check your email"
-  },
-  "method": {
-    "pin": "Login with PIN",
-    "email": "Send OTP to Email",
-    "whatsapp": "Send OTP to Whatsapp",
-    "device": "Send OTP to Device"
-  },
+
   "table":{
+    "search": "Search...",
     "action": "Action"
   },
-  "delete": "Are you sure you want to delete?",
-    "restore": "Are you sure you want to restore?"
+
+  "location":{
+    "code": "Code",
+    "name": "Location Name",
+    "tenant": "Tenant Name",
+    "select-location": "Select this location"
+  },
+
+  "page":{
+    "users": "Users",
+    "roles": "Roles",
+    "permissions": "Permissions",
+    "locations": "Locations",
+    "chart-types": "Chart types",
+    "status-alarm": "Status Alarm",
+    "flow-meter": "Flow Meter",
+    "range-types": "Range Types",
+    "range-costs": "Range Cost",
+    "tax": "Tax"
+  },
+
+  "dialog":{
+    "create-form": "Form Create",
+    "edit-form": "Form Edit",
+    "restore-text": "Are you sure you will recover the data?",
+    "delete-text": "Are you sure you want to delete the data?",
+    "delete-permanent-text": "Are you sure you want to permanently delete the data?",
+    "delete-multiple-text": "Are you sure you want to delete the selected {count} data?",
+    "restore-multiple-text": "Are you sure you will recover the selected {count} data?",
+    "delete-permanent-multiple-text": "Are you sure you want to permanently delete {count} selected data?",
+    "delete-permanent-alert-text": "Data cannot be recovered anymore."
+  },
+
+  "menu":{
+    "home":{
+      "index": "Home",
+      "change-location": "Change Location",
+      "realtime-chart": "Realtime Chart"
+    },
+    "features":{
+      "index": "Features",
+      "mag-8000": {
+        "index":"Mag 8000",
+        "status-alarm":"Status alarm",
+        "flow-meter":"Flow Meter"
+      },
+      "billing": {
+        "index":"Billing",
+        "range-type":"Range type",
+        "range-cost":"Range cost"
+      }
+      
+    },
+    "master-auth": {
+      "index":"Master Auth",
+      "permissions":"permissions",
+      "roles":"roles"
+    },
+    "master-data": {
+      "index":"Master Data",
+      "user":"user",
+      "location":"location",
+      "chart-type":"chart type",
+      "tax":"tax"
+    }
+  },
+
+  "text":{
+    "name":"Name",
+    "guard-name":"Guard Name",
+
+    "full-name":"Full Name",
+    "username":"Username",
+    "email":"Email",
+
+    "company-name":"Company Name",
+    "code":"code",
+    "location":"location",
+    "lattitude":"lattitude",
+    "longitude":"longitude",
+
+    "status":"status",
+    "description":"description"
+  }
 }

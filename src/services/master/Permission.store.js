@@ -4,6 +4,7 @@ import { useToast } from 'vue-toastification';
 
 import _ from 'lodash';
 import axios from '@/plugins/axios';
+import { i18n } from '@/plugins/i18n';
 export const usePermissionStore = defineStore(
     'PermissionStore',
     () => {
@@ -11,7 +12,7 @@ export const usePermissionStore = defineStore(
 
         const apiUrl = 'permissions';
 
-        const title = ref('permission');
+        const title = ref(i18n.t('page.permissions'));
         const searchData = ref([]);
         const data = ref([]);
         const allData = ref([]);
@@ -46,7 +47,6 @@ export const usePermissionStore = defineStore(
         watch(
             keyword,
             _.debounce((value) => {
-                console.log(value);
                 let length = value.length;
                 if (length >= 3 || length == 0) {
                     keyword.value = value;

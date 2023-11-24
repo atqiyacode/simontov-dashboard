@@ -283,12 +283,12 @@ function multipleInArray(arr, values) {
 
 router.beforeEach((to, from, next) => {
     const { isLoggedIn, user } = useUserStore();
-    const nearestWithTitle = to.matched
-        .slice()
-        .reverse()
-        .find((r) => r.meta && r.meta.title);
+    // const nearestWithTitle = to.matched
+    //     .slice()
+    //     .reverse()
+    //     .find((r) => r.meta && r.meta.title);
 
-    if (nearestWithTitle) document.title = nearestWithTitle.meta.title;
+    // if (nearestWithTitle) document.title = nearestWithTitle.meta.title;
 
     if (to.name === 'login' && isLoggedIn) {
         next({ name: 'dashboard' });

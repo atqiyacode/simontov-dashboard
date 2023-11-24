@@ -1,7 +1,21 @@
 <script setup>
 import { ref } from 'vue';
 // emits
-defineEmits(['import, change', 'search', 'create', 'show', 'edit', 'destroy', 'restore', 'deletePermanent', 'deleteSelected', 'restoreSelected', 'changePage', 'upload', 'sort']);
+defineEmits([
+    'import, change',
+    'search',
+    'create',
+    'show',
+    'edit',
+    'destroy',
+    'restore',
+    'deletePermanent',
+    'deleteSelected',
+    'restoreSelected',
+    'changePage',
+    'upload',
+    'sort'
+]);
 // props
 defineProps({
     title: String,
@@ -64,9 +78,27 @@ const selectedData = ref(null);
                 <Toolbar class="mb-3" v-if="canCreate || canUpload || canBack">
                     <template v-slot:start>
                         <div class="my-0">
-                            <Button v-if="canBack" :label="$t('button.back')" icon="pi pi-arrow-left" class="p-button-sm p-button-rounded p-button-info mr-2" @click="$emit('back')" />
-                            <Button v-if="canUpload" :label="$t('button.upload')" icon="pi pi-upload" class="p-button-sm p-button-rounded p-button-success mr-2" @click="$emit('upload')" />
-                            <Button v-if="canCreate" :label="$t('button.new-data')" icon="pi pi-plus" class="p-button-sm p-button-rounded p-button-success mr-2" @click="$emit('create'), (selectedData = false)" />
+                            <Button
+                                v-if="canBack"
+                                :label="$t('button.back')"
+                                icon="pi pi-arrow-left"
+                                class="p-button-sm p-button-rounded p-button-info mr-2"
+                                @click="$emit('back')"
+                            />
+                            <Button
+                                v-if="canUpload"
+                                :label="$t('button.upload')"
+                                icon="pi pi-upload"
+                                class="p-button-sm p-button-rounded p-button-success mr-2"
+                                @click="$emit('upload')"
+                            />
+                            <Button
+                                v-if="canCreate"
+                                :label="$t('button.new-data')"
+                                icon="pi pi-plus"
+                                class="p-button-sm p-button-rounded p-button-success mr-2"
+                                @click="$emit('create'), (selectedData = false)"
+                            />
                             <Button
                                 v-if="canSelectMultiple && canDestroy"
                                 :label="$t('button.delete-data')"
@@ -86,46 +118,111 @@ const selectedData = ref(null);
                         </div>
                     </template>
                 </Toolbar>
-                <DataTable :value="data" :rowHover="true" v-model:selection="selectedData" :loading="loading" @sort="$emit('sort', $event)" dataKey="id" responsiveLayout="scroll" scrollable removableSort>
+                <DataTable
+                    :value="data"
+                    :rowHover="true"
+                    v-model:selection="selectedData"
+                    :loading="loading"
+                    @sort="$emit('sort', $event)"
+                    dataKey="id"
+                    responsiveLayout="scroll"
+                    scrollable
+                    removableSort
+                >
                     <template #empty>
-                        <div class="flex flex-column md:flex-row md:justify-content-center md:align-items-center mb-3">
-                            <h5 class="m-0 text-red-600">Data Tidak Ditemukan</h5>
+                        <div
+                            class="flex flex-column md:flex-row md:justify-content-center md:align-items-center mb-3"
+                        >
+                            <h5 class="m-0 text-red-600">
+                                {{ $t('alert.no-data-found') }}
+                            </h5>
                         </div>
                     </template>
                     <h5 v-if="title === 'Employee'" class="mb-4 capitalize">{{ label }}</h5>
-                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center mb-3">
+                    <div
+                        class="flex flex-column md:flex-row md:justify-content-between md:align-items-center mb-3"
+                    >
                         <h5 v-if="title !== 'Employee'" class="mb-4 capitalize">{{ label }}</h5>
 
-                        <Button v-if="title === 'Employee'" @click="$emit('import')" label="Import Employee" icon="pi pi-upload" />
+                        <Button
+                            v-if="title === 'Employee'"
+                            @click="$emit('import')"
+                            label="Import Employee"
+                            icon="pi pi-upload"
+                        />
                         <span class="block mt-2 md:mt-0 p-input-icon-left" v-if="canSearch">
                             <i class="pi pi-search" />
-                            <InputText @input="$emit('search', $event.target.value), (selectedData = false)" :value="keyword" :placeholder="$t('header.search')" />
+                            <InputText
+                                @input="
+                                    $emit('search', $event.target.value), (selectedData = false)
+                                "
+                                :value="keyword"
+                                :placeholder="$t('table.search')"
+                            />
                         </span>
                     </div>
-                    <Column selectionMode="multiple" headerStyle="width: 3rem" v-if="canSelectMultiple"></Column>
+                    <Column
+                        selectionMode="multiple"
+                        headerStyle="width: 3rem"
+                        v-if="canSelectMultiple"
+                    ></Column>
 
-                    <Column v-for="body in tableBody" :key="body.id" class="text-center" :sortable="body.sort || false" :field="body.value">
+                    <Column
+                        v-for="body in tableBody"
+                        :key="body.id"
+                        class="text-center"
+                        :sortable="body.sort || false"
+                        :field="body.value"
+                    >
                         <template #header>
                             <div class="flex-1 text-center capitalize">{{ body.label }}</div>
                         </template>
                         <template #body="slotProps">
                             <!-- boolean chip -->
                             <template v-if="body.type === 'image'">
-                                <img :alt="slotProps.data[body.value]" :src="slotProps.data[body.value]" width="32" style="vertical-align: middle" />
+                                <img
+                                    :alt="slotProps.data[body.value]"
+                                    :src="slotProps.data[body.value]"
+                                    width="32"
+                                    style="vertical-align: middle"
+                                />
                             </template>
                             <!-- boolean chip -->
                             <template v-if="body.type === 'boolean-chip'">
-                                <Tag :value="slotProps.data[body.value] ? body.labels[0].label : body.labels[1].label" :severity="slotProps.data[body.value] ? body.labels[0].color : body.labels[1].color"> </Tag>
+                                <Tag
+                                    :value="
+                                        slotProps.data[body.value]
+                                            ? body.labels[0].label
+                                            : body.labels[1].label
+                                    "
+                                    :severity="
+                                        slotProps.data[body.value]
+                                            ? body.labels[0].color
+                                            : body.labels[1].color
+                                    "
+                                >
+                                </Tag>
                             </template>
                             <!-- array chip -->
                             <template v-if="body.type === 'array-chip'">
-                                <template v-for="(arrayChip, arrayChipId) in slotProps.data[body.value]" :key="arrayChipId">
-                                    <Tag class="mr-2 mb-1" :severity="body.color" :value="arrayChip.name"></Tag>
+                                <template
+                                    v-for="(arrayChip, arrayChipId) in slotProps.data[body.value]"
+                                    :key="arrayChipId"
+                                >
+                                    <Tag
+                                        class="mr-2 mb-1"
+                                        :severity="body.color"
+                                        :value="arrayChip.name"
+                                    ></Tag>
                                 </template>
                             </template>
                             <!-- object -->
                             <template v-if="body.type === 'object'">
-                                {{ slotProps.data[body.value] ? slotProps.data[body.value][body.object] : '-' }}
+                                {{
+                                    slotProps.data[body.value]
+                                        ? slotProps.data[body.value][body.object]
+                                        : '-'
+                                }}
                             </template>
                             <!-- text -->
                             <template v-if="body.type === 'text'">
@@ -154,7 +251,9 @@ const selectedData = ref(null);
                                 class="p-button-sm p-button-rounded p-button-outlined mx-1 p-button-danger"
                                 icon="pi pi-trash"
                                 v-tooltip.top="$t('button.destroy-data')"
-                                @click="$emit('deletePermanent', slotProps.data), (selectedData = false)"
+                                @click="
+                                    $emit('deletePermanent', slotProps.data), (selectedData = false)
+                                "
                             />
                             <Button
                                 v-if="canShow && !slotProps.data.trashed"
@@ -164,7 +263,9 @@ const selectedData = ref(null);
                                 @click="$emit('show', slotProps.data), (selectedData = false)"
                             />
                             <Button
-                                v-if="canEdit && !slotProps.data.trashed && !slotProps.data.is_expired"
+                                v-if="
+                                    canEdit && !slotProps.data.trashed && !slotProps.data.is_expired
+                                "
                                 class="p-button-sm p-button-rounded mx-1 p-button-warning"
                                 icon="pi pi-pencil"
                                 v-tooltip.top="$t('button.edit-data')"
@@ -186,9 +287,12 @@ const selectedData = ref(null);
                     v-if="meta?.total > 1"
                     :template="{
                         '640px': 'PrevPageLink CurrentPageReport NextPageLink RowsPerPageDropdown',
-                        '960px': 'FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink RowsPerPageDropdown',
-                        '1300px': 'FirstPageLink PrevPageLink CurrentPageReport PageLink NextPageLink LastPageLink RowsPerPageDropdown',
-                        default: 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown CurrentPageReport'
+                        '960px':
+                            'FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink RowsPerPageDropdown',
+                        '1300px':
+                            'FirstPageLink PrevPageLink CurrentPageReport PageLink NextPageLink LastPageLink RowsPerPageDropdown',
+                        default:
+                            'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown CurrentPageReport'
                     }"
                     :first="meta.to - 1"
                     :rows="parseInt(meta.per_page)"

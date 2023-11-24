@@ -71,7 +71,9 @@ const editData = (data) => {
                         <div
                             class="flex flex-column md:flex-row md:justify-content-center md:align-items-center my-3"
                         >
-                            <h5 class="m-0 text-red-600">Data Tidak Ditemukan</h5>
+                            <h5 class="m-0 text-red-600">
+                                {{ $t('alert.no-data-found') }}
+                            </h5>
                         </div>
                     </template>
                     <template #header>
@@ -94,17 +96,19 @@ const editData = (data) => {
                     </Column>
                     <Column
                         class="text-center"
-                        headerStyle="min-width:15rem;"
+                        headerStyle="min-width:7rem;"
                         alignFrozen="right"
                         :frozen="true"
                     >
                         <template #header>
-                            <span class="flex-1 uppercase py-2 font-bold"> Aksi </span>
+                            <span class="flex-1 uppercase py-2 font-bold">
+                                {{ $t('table.action') }}
+                            </span>
                         </template>
                         <template #body="slotProps">
                             <Button
                                 v-if="!slotProps.data.trashed"
-                                v-tooltip.top="`Ubah`"
+                                v-tooltip.top="$t('button.edit-data')"
                                 icon="pi pi-pencil"
                                 class="p-button-rounded p-button-sm p-button-success mr-2"
                                 @click="editData(slotProps.data)"
@@ -120,9 +124,14 @@ const editData = (data) => {
     <Dialog
         v-model:visible="formDialog"
         :style="{ width: '450px' }"
-        :header="form.id ? 'Ubah Data' : 'Tambah Data'"
+        :header="form.id ? $t('button.edit-data') : $t('button.new-data')"
         :modal="true"
         :closable="false"
+        :pt="{
+            mask: {
+                style: 'backdrop-filter: blur(2px)'
+            }
+        }"
         class="p-fluid"
     >
         <div class="field">
@@ -144,14 +153,14 @@ const editData = (data) => {
         <template #footer>
             <Button
                 :disabled="loading"
-                label="Batal"
+                :label="$t('button.cancel')"
                 icon="pi pi-times"
                 class="p-button-text"
                 @click="hideDialog"
             />
             <Button
                 :loading="loading"
-                :label="form.id ? 'Update' : 'Simpan'"
+                :label="form.id ? $t('button.update') : $t('button.save')"
                 icon="pi pi-check"
                 class="p-button-success"
                 @click="saveData"

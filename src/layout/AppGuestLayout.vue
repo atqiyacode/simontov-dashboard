@@ -1,7 +1,7 @@
 <script setup>
 import { useLayout } from '@/layout/composables/layout';
 import { computed, onMounted } from 'vue';
-import { useUserStore } from '../services/user.store';
+import { useUserStore } from '@/services/user.store';
 import AppConfig from '@/layout/AppConfig.vue';
 import router from '../router';
 

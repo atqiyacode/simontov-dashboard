@@ -4,6 +4,7 @@ import { useToast } from 'vue-toastification';
 
 import _ from 'lodash';
 import axios from '@/plugins/axios';
+import { i18n } from '@/plugins/i18n';
 export const useTaxStore = defineStore(
     'TaxStore',
     () => {
@@ -11,7 +12,8 @@ export const useTaxStore = defineStore(
 
         const apiUrl = 'taxes';
 
-        const title = ref('Pajak');
+        const title = ref(i18n.t('page.tax'));
+
         const searchData = ref([]);
         const data = ref([]);
         const allData = ref([]);
@@ -46,7 +48,6 @@ export const useTaxStore = defineStore(
         watch(
             keyword,
             _.debounce((value) => {
-                console.log(value);
                 let length = value.length;
                 if (length >= 3 || length == 0) {
                     keyword.value = value;

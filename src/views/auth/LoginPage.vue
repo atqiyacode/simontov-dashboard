@@ -34,7 +34,9 @@ onMounted(() => {
 <template>
     <div class="w-full surface-card py-8 px-5 sm:px-8 shadow-5" style="border-radius: 53px">
         <div class="text-center mb-5 px-6">
-            <div class="text-900 text-3xl font-medium mb-3">Masuk</div>
+            <div class="text-900 text-3xl font-medium mb-3">
+                {{ $t('menu.login') }}
+            </div>
             <span class="text-600 font-medium">{{ appName }}</span>
         </div>
         <form @submit.prevent="login">
