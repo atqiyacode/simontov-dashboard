@@ -53,7 +53,9 @@
     "yes-delete": "Ya, Hapus",
     "yes-restore": "Ya, Pulihkan",
     "yes-destroy": "Ya, Hapus Permanen",
-    "send-link-reset-password": "Kirim link reset password"
+    "send-link-reset-password": "Kirim link reset password",
+    "search": "Cari",
+    "filter": "Saring"
   },
 
   "table":{
@@ -142,6 +144,15 @@
     "longitude":"garis bujur",
 
     "status":"status",
-    "description":"deskripsi"
+    "description":"deskripsi",
+    "interval":"Jarak waktu",
+    "minutes":"{count} Menit",
+    "report-static":"Laporan : {date}"
+  },
+
+  "totalizer":{
+    "first":"Totalizer Awal",
+    "last":"Totalizer Akhir",
+    "result":"Totalizer Final"
   }
 }

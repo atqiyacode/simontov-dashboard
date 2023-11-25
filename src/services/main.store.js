@@ -34,7 +34,6 @@ export const useMainStore = defineStore(
 
         watch(language, (value) => {
             i18n.locale.value = value;
-            // window.location.reload();
         });
 
         const sanctumCsrf = async () => {

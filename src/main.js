@@ -114,6 +114,8 @@ import RestoreDialog from '@/components/RestoreDialog.vue';
 // chart-types
 import RealtimeLineChartPage from '@/components/chart-types/RealtimeLineChartPage.vue';
 import RealtimeDualLineChartPage from '@/components/chart-types/RealtimeDualLineChartPage.vue';
+import DualLineChartPage from '@/components/chart-types/DualLineChartPage.vue';
+import LineChartPage from '@/components/chart-types/LineChartPage.vue';
 import RadialChartPage from '@/components/chart-types/RadialChartPage.vue';
 import NewRadialChartPage from '@/components/chart-types/NewRadialChartPage.vue';
 import OtpInput from 'vue3-otp-input';
@@ -255,6 +257,8 @@ pinia.use(resetStore);
     app.component('DeleteDialog', DeleteDialog);
     app.component('RestoreDialog', RestoreDialog);
 
+    app.component('DualLineChartPage', DualLineChartPage);
+    app.component('LineChartPage', LineChartPage);
     app.component('RealtimeLineChartPage', RealtimeLineChartPage);
     app.component('RealtimeDualLineChartPage', RealtimeDualLineChartPage);
     app.component('RadialChartPage', RadialChartPage);

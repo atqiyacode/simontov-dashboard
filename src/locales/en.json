@@ -53,7 +53,9 @@
     "yes-delete": "Yes, Delete",
     "yes-restore": "Yes, Restore",
     "yes-destroy": "Yes, Delete Permanent",
-    "send-link-reset-password": "Send link reset password"
+    "send-link-reset-password": "Send link reset password",
+    "search": "Search",
+    "filter": "Filter"
   },
 
   "table":{
@@ -142,6 +144,15 @@
     "longitude":"longitude",
 
     "status":"status",
-    "description":"description"
+    "description":"description",
+    "interval":"Interval",
+    "minutes":"{count} Minutes",
+    "report-static":"Report : {date}"
+  },
+
+  "totalizer":{
+    "first":"First Totalizer",
+    "last":"Last Totalizer",
+    "result":"Final Totalizer"
   }
 }

@@ -16,8 +16,8 @@ const model = ref([
                 label: 'menu.home.realtime-chart',
                 icon: 'pi pi-fw pi-chart-line',
                 to: '/app/dashboard/realtime'
-            }
-            // { label: 'Static', icon: 'pi pi-fw pi-chart-bar', to: '/app/dashboard/static' }
+            },
+            { label: 'Static', icon: 'pi pi-fw pi-chart-bar', to: '/app/dashboard/static' }
         ]
     },
 

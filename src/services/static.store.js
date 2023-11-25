@@ -1,10 +1,18 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import axios from '@/plugins/axios';
-export const useChartStore = defineStore(
-    'ChartStore',
+
+export const useStaticChartStore = defineStore(
+    'StaticChartStore',
     () => {
         const indonesiaTimeZone = ref('Asia/Jakarta');
+        const title = ref('');
+        const intervals = ref([5, 10, 15, 20, 30, 60]);
+        const interval = ref(30);
+        const form = ref({
+            start: '',
+            end: ''
+        });
         // store
         const chartSeries = ref([
             {
@@ -144,6 +152,7 @@ export const useChartStore = defineStore(
         };
 
         const getFlorateRange = (id, params) => {
+            resetValue();
             params.sorts = '-id';
             params.location_id = id;
             return new Promise((resolve, reject) => {
@@ -152,6 +161,7 @@ export const useChartStore = defineStore(
                         params: params
                     })
                     .then(async (res) => {
+                        title.value = res.data.title;
                         resolve(res);
                     })
                     .catch((err) => {
@@ -161,7 +171,7 @@ export const useChartStore = defineStore(
         };
 
         const loadChart = (data) => {
-            const timestamp = data.created_at;
+            const timestamp = data.mag_date;
 
             const newFlowrate = {
                 x: timestamp,
@@ -183,7 +193,7 @@ export const useChartStore = defineStore(
         };
 
         const loadPHChart = (data) => {
-            const timestamp = data.created_at;
+            const timestamp = data.mag_date;
 
             const newPH = {
                 x: timestamp,
@@ -198,7 +208,7 @@ export const useChartStore = defineStore(
         };
 
         const loadCODChart = (data) => {
-            const timestamp = data.created_at;
+            const timestamp = data.mag_date;
 
             const newCOD = {
                 x: timestamp,
@@ -213,7 +223,7 @@ export const useChartStore = defineStore(
         };
 
         const loadCondChart = (data) => {
-            const timestamp = data.created_at;
+            const timestamp = data.mag_date;
 
             const newCond = {
                 x: timestamp,
@@ -228,7 +238,7 @@ export const useChartStore = defineStore(
         };
 
         const loadLevelChart = (data) => {
-            const timestamp = data.created_at;
+            const timestamp = data.mag_date;
 
             const newLevel = {
                 x: timestamp,
@@ -243,7 +253,7 @@ export const useChartStore = defineStore(
         };
 
         const loadDOChart = (data) => {
-            const timestamp = data.created_at;
+            const timestamp = data.mag_date;
 
             const newDO = {
                 x: timestamp,
@@ -293,12 +303,15 @@ export const useChartStore = defineStore(
             loadDOChart,
             loadTotalizer,
             resetValue,
-            getFlorateRange
+            getFlorateRange,
+
+            form,
+            title,
+            interval,
+            intervals
         };
     },
     {
-        persist: {
-            storage: sessionStorage
-        }
+        persist: false
     }
 );

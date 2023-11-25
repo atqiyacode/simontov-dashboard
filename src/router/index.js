@@ -41,7 +41,7 @@ const router = createRouter({
                         {
                             path: 'static',
                             name: 'dashboard-static',
-                            component: () => import('@/views/Dashboard.vue'),
+                            component: () => import('@/views/StaticChartPage.vue'),
                             meta: {
                                 title: 'Dashbaord Static',
                                 role: ['superman', 'superadmin']
