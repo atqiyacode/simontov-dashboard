@@ -28,7 +28,7 @@ onMounted(() => {
 
 const onSubmit = () => {
     sendLinkForgotPassword().then((res) => {
-        message.value = res.data.message;
+        message.value = res.data.status;
         setTimeout(() => {
             message.value = '';
         }, 10000);
@@ -47,7 +47,7 @@ const onSubmit = () => {
         <Message severity="success my-5" :closable="false" v-if="!loading && message">
             {{ message }}
         </Message>
-        <div class="p-fluid mb-3">
+        <div class="p-fluid mb-3 pt-5">
             <span class="p-float-label">
                 <InputText
                     id="email"
@@ -67,7 +67,7 @@ const onSubmit = () => {
                 type="submit"
                 :disabled="v$.$invalid"
                 :loading="loading"
-                :label="loading ? 'Processing' : $t('button.send-link-reset-password')"
+                :label="loading ? $t('button.process') : $t('button.send-link-reset-password')"
                 class="w-full p-3 text-xl"
             ></Button>
         </form>

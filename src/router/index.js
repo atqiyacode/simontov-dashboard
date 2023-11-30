@@ -146,6 +146,15 @@ const router = createRouter({
                     path: '/app/feature',
                     children: [
                         {
+                            path: 'topic',
+                            name: 'feature-topic',
+                            component: () => import('@/views/features/TopicPage.vue'),
+                            meta: {
+                                title: 'Topic Data',
+                                role: ['superman', 'superadmin']
+                            }
+                        },
+                        {
                             path: 'status-alarm',
                             name: 'feature-status-alarm',
                             component: () => import('@/views/features/StatusAlarmPage.vue'),

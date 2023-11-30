@@ -22,14 +22,23 @@ onMounted(() => {
 });
 
 const logoUrl = computed(() => {
-    return `${contextPath}logo/${layoutConfig.darkTheme.value === 'true' ? 'new-bapenda-career-logo-white' : 'new-bapenda-career-logo'}.png`;
+    return `${contextPath}logo/${
+        layoutConfig.darkTheme.value
+            ? 'simontov-logo-horizontal-white-text'
+            : 'simontov-logo-horizontal'
+    }.png`;
 });
 </script>
 
 <template>
-    <ConfirmDialog :breakpoints="{ '960px': '75vw', '640px': '100vw' }" :style="{ width: '50vw' }" />
+    <ConfirmDialog
+        :breakpoints="{ '960px': '75vw', '640px': '100vw' }"
+        :style="{ width: '50vw' }"
+    />
     <Toast position="top-center" />
-    <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden shadow-5">
+    <div
+        class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden shadow-5"
+    >
         <div class="flex flex-column align-items-center justify-content-center w-full">
             <router-link to="/">
                 <img :src="logoUrl" alt="main-logo" class="mb-5 w-15rem flex-shrink-0" />

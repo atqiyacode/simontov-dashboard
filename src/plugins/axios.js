@@ -43,7 +43,7 @@ instance.interceptors.request.use(
         // if (userStore.isLoggedIn) {
         //     config.headers.Authorization = `Bearer ${userStore.accessToken}`;
         // }
-        config.headers.Language = `${mainStore.language}`;
+        config.headers['X-Language'] = `${mainStore.language}`;
         config.headers['X-Socket-Id'] = `${mainStore.socketId}`;
         return config;
     },

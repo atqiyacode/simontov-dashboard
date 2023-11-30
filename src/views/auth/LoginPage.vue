@@ -4,14 +4,12 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, email } from '@vuelidate/validators';
 import { useMainStore } from '@/services/main.store';
 import { storeToRefs } from 'pinia';
-import { onMounted } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
 
 localStorage.removeItem('register');
 
 const authStore = useAuthStore();
 const mainStore = useMainStore();
-
-const appName = import.meta.env.VITE_APP_NAME;
 
 const { login } = authStore;
 
@@ -29,18 +27,22 @@ onMounted(() => {
     mainStore.removeError();
     mainStore.clearCurrentSession();
 });
+
+onUnmounted(() => {
+    authStore.form.email = '';
+    authStore.form.password = '';
+});
 </script>
 
 <template>
     <div class="w-full surface-card py-8 px-5 sm:px-8 shadow-5" style="border-radius: 53px">
         <div class="text-center mb-5 px-6">
             <div class="text-900 text-3xl font-medium mb-3">
-                {{ $t('menu.login') }}
+                {{ $t('page.login-text') }}
             </div>
-            <span class="text-600 font-medium">{{ appName }}</span>
         </div>
-        <form @submit.prevent="login">
-            <div class="p-fluid mb-3">
+        <form @submit.prevent="login" class="pt-5">
+            <div class="p-fluid mb-5">
                 <span class="p-float-label">
                     <InputText
                         id="email"
@@ -54,7 +56,7 @@ onMounted(() => {
                 </span>
                 <InputError :message="errors.email" />
             </div>
-            <div class="p-fluid mb-3">
+            <div class="p-fluid mb-5">
                 <span class="p-float-label">
                     <Password
                         :toggle-mask="true"
@@ -74,7 +76,7 @@ onMounted(() => {
                 type="submit"
                 :disabled="v$.$invalid"
                 :loading="loading"
-                :label="loading ? 'Processing' : 'Login'"
+                :label="loading ? $t('button.process') : $t('button.login')"
                 class="w-full p-3 text-xl"
             ></Button>
             <div class="flex align-items-end justify-content-center mt-5 gap-5">

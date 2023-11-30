@@ -25,7 +25,7 @@ document.documentElement.style.fontSize = scaleSetup + 'px';
 
 const layoutConfig = reactive({
     ripple: rippleSetup === 'true' ? true : false,
-    darkTheme: darkThemeSetup,
+    darkTheme: darkThemeSetup === 'true' ? true : false,
     inputStyle: inputStyleSetup,
     menuMode: menuModeSetup,
     theme: themeSetup,
@@ -71,9 +71,23 @@ export function useLayout() {
         }
     };
 
-    const isSidebarActive = computed(() => layoutState.overlayMenuActive || layoutState.staticMenuMobileActive);
+    const isSidebarActive = computed(
+        () => layoutState.overlayMenuActive || layoutState.staticMenuMobileActive
+    );
 
     const isDarkTheme = computed(() => layoutConfig.darkTheme);
 
-    return { appName, developerTeam, contextPath, layoutConfig: toRefs(layoutConfig), layoutState: toRefs(layoutState), changeThemeSettings, setScale, onMenuToggle, isSidebarActive, isDarkTheme, setActiveMenuItem };
+    return {
+        appName,
+        developerTeam,
+        contextPath,
+        layoutConfig: toRefs(layoutConfig),
+        layoutState: toRefs(layoutState),
+        changeThemeSettings,
+        setScale,
+        onMenuToggle,
+        isSidebarActive,
+        isDarkTheme,
+        setActiveMenuItem
+    };
 }

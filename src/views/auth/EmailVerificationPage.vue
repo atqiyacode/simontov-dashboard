@@ -11,11 +11,20 @@ const { sendLinkEmailVerification } = authStore;
 
             <div class="w-full flex flex-wrap align-items-center justify-content-center">
                 <span class="text-600 font-small w-30rem">
-                    <span class="text-sm">Jika belum mendapatkan email verifikasi, anda dapat mengirim ulang ke alamat email anda lagi.</span>
+                    <span class="text-sm"
+                        >Jika belum mendapatkan email verifikasi, anda dapat mengirim ulang ke
+                        alamat email anda lagi.</span
+                    >
                 </span>
             </div>
         </div>
-        <Button @click="sendLinkEmailVerification" type="button" :loading="loading" :label="loading ? 'Processing' : 'Kirim verifikasi email'" class="w-full p-3 text-xl"></Button>
+        <Button
+            @click="sendLinkEmailVerification"
+            type="button"
+            :loading="loading"
+            :label="loading ? $t('button.process') : 'Kirim verifikasi email'"
+            class="w-full p-3 text-xl"
+        ></Button>
     </div>
 </template>
 

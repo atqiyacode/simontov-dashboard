@@ -34,6 +34,10 @@ const model = ref([
                     {
                         label: 'menu.features.mag-8000.flow-meter',
                         to: '/app/feature/flowrate'
+                    },
+                    {
+                        label: 'menu.features.topics',
+                        to: '/app/feature/topic'
                     }
                 ]
             },

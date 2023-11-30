@@ -42,7 +42,11 @@ const onLogout = () => {
 };
 
 const logoUrl = computed(() => {
-    return `${contextPath}logo/${layoutConfig.darkTheme.value === 'true' ? 'vepro' : 'vepro'}.png`;
+    return `${contextPath}logo/${
+        layoutConfig.darkTheme.value
+            ? 'simontov-logo-horizontal-white-text'
+            : 'simontov-logo-horizontal'
+    }.png`;
 });
 
 const onTopBarMenuButton = () => {
