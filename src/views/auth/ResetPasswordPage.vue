@@ -88,7 +88,7 @@ const onSubmit = () => {
                     </div>
                     <div class="">
                         <div class="p-fluid mb-5">
-                            
+                            <span class="p-float-label">
                                 <InputText
                                     id="email"
                                     class="w-full md:w-30rem"
