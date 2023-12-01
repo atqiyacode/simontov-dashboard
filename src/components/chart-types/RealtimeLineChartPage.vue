@@ -1,5 +1,7 @@
 <script setup>
 import { ref } from 'vue';
+import { useLayout } from '@/layout/composables/layout';
+const { layoutConfig } = useLayout();
 const props = defineProps({
     title: {
         type: String,
@@ -40,7 +42,9 @@ const chartOptions = ref({
     xaxis: {
         type: 'datetime',
         labels: {
-            // formatter: (value) => new Date(value).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
+            style: {
+                colors: layoutConfig.darkTheme.value ? '#FFFFFF' : '#000000'
+            },
             formatter: function (e) {
                 const date = new Date(e);
 
@@ -78,6 +82,7 @@ const chartOptions = ref({
         }
     ],
     tooltip: {
+        theme: 'dark',
         // shared: !1,
         y: {
             formatter: function (e) {
@@ -96,7 +101,7 @@ const chartOptions = ref({
         curve: 'smooth',
         lineCap: 'butt',
         colors: undefined,
-        width: 4,
+        width: 1.5,
         dashArray: 0
     },
     plotOptions: {

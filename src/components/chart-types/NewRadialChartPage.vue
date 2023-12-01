@@ -110,6 +110,9 @@ const options = {
     //     }
     // },
     colors: ['#20E647'],
+    tooltip: {
+        theme: 'dark'
+    },
     // colors: [props.colors],
     // fill: {
     // type: 'gradient',

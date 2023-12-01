@@ -63,6 +63,9 @@ const options = {
             }
         }
     },
+    tooltip: {
+        theme: 'dark'
+    },
     colors: [props.colors],
     fill: {
         // type: 'gradient',

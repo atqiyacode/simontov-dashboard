@@ -79,6 +79,7 @@ const chartOptions = ref({
     ],
     tooltip: {
         // shared: !1,
+        theme: 'dark',
         y: {
             formatter: function (e) {
                 return e;
