@@ -56,6 +56,7 @@ export const useStaticChartStore = defineStore(
             }
         ]);
 
+        const final_billing = ref(0);
         const totalizer_1 = ref(0);
         const totalizer_2 = ref(0);
         const totalizer_3 = ref(0);
@@ -273,6 +274,24 @@ export const useStaticChartStore = defineStore(
             totalizer_3.value = parseFloat(data.totalizer_3).toFixed(2);
         };
 
+        const getBilling = (id, final) => {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(`flowrates/${id}/billing`, {
+                        params: {
+                            total: final
+                        }
+                    })
+                    .then(async (res) => {
+                        final_billing.value = res.data.total;
+                        resolve(res);
+                    })
+                    .catch((err) => {
+                        reject(err);
+                    });
+            });
+        };
+
         return {
             chartLength,
             chartSeries,
@@ -304,11 +323,13 @@ export const useStaticChartStore = defineStore(
             loadTotalizer,
             resetValue,
             getFlorateRange,
+            getBilling,
 
             form,
             title,
             interval,
-            intervals
+            intervals,
+            final_billing
         };
     },
     {

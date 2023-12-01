@@ -24,7 +24,8 @@ const {
     chartDOSeries,
     interval,
     title,
-    intervals
+    intervals,
+    final_billing
 } = storeToRefs(staticChartStore);
 const { user } = storeToRefs(userStore);
 
@@ -60,6 +61,7 @@ const loadChart = () => {
                 );
                 totLast.value = parseFloat(res.data.result[0].totalizer_1);
                 chartFilterData(res);
+                getBilling();
             } else {
                 staticChartStore.resetValue();
                 totFirst.value = 0;
@@ -104,6 +106,11 @@ const check = (count, res, list) => {
 
 const checkAccessChart = (code) => {
     return chartSeries.value[0].data.length > 0 && user.value.dashboardCharts.includes(code);
+};
+
+const getBilling = () => {
+    const final = Number.parseFloat(totFirst.value - totLast.value).toFixed(2);
+    staticChartStore.getBilling(mainStore.currentMap.id, final);
 };
 </script>
 
@@ -159,7 +166,7 @@ const checkAccessChart = (code) => {
                 </Message>
             </div>
         </div>
-        <div class="col-12 lg:col-4 xl:col-4" v-if="totFirst && !loading">
+        <div class="col-12 lg:col-12 xl:col-12" v-if="totFirst && !loading">
             <div class="card shadow-5 mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
@@ -167,7 +174,10 @@ const checkAccessChart = (code) => {
                             {{ $t('totalizer.result') }}
                         </h4>
                         <div class="text-900 font-bold text-2xl text-green-500">
-                            {{ totFirst - totLast }} m<sup>3</sup>
+                            {{ formatFLowrate(totFirst - totLast) }} m<sup>3</sup>
+                            <span class="text-blue-500 text-xl">
+                                ({{ formatCurrency(final_billing) }})
+                            </span>
                         </div>
                     </div>
                     <div
@@ -179,12 +189,14 @@ const checkAccessChart = (code) => {
                 </div>
             </div>
         </div>
-        <div class="col-12 lg:col-4 xl:col-4" v-if="totFirst && !loading">
+        <div class="col-12 lg:col-6 xl:col-6" v-if="totFirst && !loading">
             <div class="card shadow-5 mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
                         <h4 class="block text-500 font-medium mb-3">{{ $t('totalizer.last') }}</h4>
-                        <div class="text-900 font-bold text-2xl">{{ totFirst }} m<sup>3</sup></div>
+                        <div class="text-900 font-bold text-2xl">
+                            {{ formatFLowrate(totFirst) }} m<sup>3</sup>
+                        </div>
                     </div>
                     <div
                         class="flex align-items-center justify-content-center bg-blue-100 border-round"
@@ -195,12 +207,14 @@ const checkAccessChart = (code) => {
                 </div>
             </div>
         </div>
-        <div class="col-12 lg:col-4 xl:col-4" v-if="totFirst && !loading">
+        <div class="col-12 lg:col-6 xl:col-6" v-if="totFirst && !loading">
             <div class="card shadow-5 mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
                         <h4 class="block text-500 font-medium mb-3">{{ $t('totalizer.first') }}</h4>
-                        <div class="text-900 font-bold text-2xl">{{ totLast }} m<sup>3</sup></div>
+                        <div class="text-900 font-bold text-2xl">
+                            {{ formatFLowrate(totLast) }} m<sup>3</sup>
+                        </div>
                     </div>
                     <div
                         class="flex align-items-center justify-content-center bg-yellow-100 border-round"

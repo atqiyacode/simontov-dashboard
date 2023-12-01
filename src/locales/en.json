@@ -116,7 +116,8 @@
       "mag-8000": {
         "index":"Mag 8000",
         "status-alarm":"Status alarm",
-        "flow-meter":"Flow Meter"
+        "flow-meter":"Flow Meter",
+        "topics":"Topics"
       },
       "billing": {
         "index":"Billing",

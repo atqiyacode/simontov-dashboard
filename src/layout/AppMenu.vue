@@ -36,7 +36,7 @@ const model = ref([
                         to: '/app/feature/flowrate'
                     },
                     {
-                        label: 'menu.features.topics',
+                        label: 'menu.features.mag-8000.topics',
                         to: '/app/feature/topic'
                     }
                 ]

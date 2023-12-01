@@ -116,7 +116,8 @@
       "mag-8000": {
         "index":"Mag 8000",
         "status-alarm":"Alarm Status",
-        "flow-meter":"Pengukur Aliran"
+        "flow-meter":"Pengukur Aliran",
+        "topics":"Topik"
       },
       "billing": {
         "index":"Tagihan",
