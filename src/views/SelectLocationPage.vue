@@ -15,14 +15,21 @@ const router = useRouter();
 
 const { sessionLocation } = storeToRefs(LocationStore);
 const { getBySession } = LocationStore;
-onMounted(async () => {
-    await getBySession();
-    listenFlowrate();
-});
 
 const gmapApiKey = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 
-const center = { lat: -6.177915895055959, lng: 106.8185290963413 };
+// const center = { lat: -6.177915895055959, lng: 106.8185290963413 };
+
+const center = ref({ lat: 3.6626168, lng: 98.7212061 });
+
+onMounted(async () => {
+    await getBySession();
+    center.value = {
+        lat: LocationStore.sessionLocation[0].lattitude,
+        lng: LocationStore.sessionLocation[0].longitude
+    };
+    listenFlowrate();
+});
 
 const onSelectMap = (location) => {
     mainStore.$patch({
@@ -63,7 +70,7 @@ const rowStyle = (data) => {
 <template>
     <div class="grid">
         <div class="col-12">
-            <GoogleMap :api-key="gmapApiKey" :center="center" :zoom="10" class="map">
+            <GoogleMap :api-key="gmapApiKey" :center="center" :zoom="14" class="map">
                 <MarkerCluster>
                     <Marker
                         v-for="(location, i) in sessionLocation"

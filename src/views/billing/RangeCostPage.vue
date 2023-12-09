@@ -218,7 +218,7 @@ const confirmDeletePermanentSelectedDialog = () => {
                     <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
                     <Column field="range_type.name" :sortable="true" headerStyle="min-width:15rem;">
                         <template #header>
-                            <span class="flex-1 uppercase py-2 font-bold"> Jenis Pemakaian </span>
+                            <span class="flex-1 uppercase py-2 font-bold"> Use type </span>
                         </template>
                         <template #body="slotProps">
                             <span
@@ -239,7 +239,7 @@ const confirmDeletePermanentSelectedDialog = () => {
 
                     <Column field="value" :sortable="true" headerStyle="min-width:15rem;">
                         <template #header>
-                            <span class="flex-1 uppercase py-2 font-bold"> Harga </span>
+                            <span class="flex-1 uppercase py-2 font-bold"> {{ $t('text.price') }} </span>
                         </template>
                         <template #body="slotProps">
                             <span

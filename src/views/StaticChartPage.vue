@@ -171,7 +171,7 @@ const getBilling = () => {
                 <div class="flex justify-content-between mb-3">
                     <div>
                         <h4 class="block text-500 font-medium mb-3">
-                            {{ $t('totalizer.result') }}
+                            {{ $t('totalizer.result') }} - {{ final_billing }}
                         </h4>
                         <div class="text-900 font-bold text-2xl text-green-500">
                             {{ formatFLowrate(totFirst - totLast) }} m<sup>3</sup>

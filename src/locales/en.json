@@ -114,7 +114,7 @@
     "features":{
       "index": "Features",
       "mag-8000": {
-        "index":"Mag 8000",
+        "index":"Data",
         "status-alarm":"Status alarm",
         "flow-meter":"Flow Meter",
         "topics":"Topics"
@@ -197,7 +197,8 @@
     "description":"description",
     "interval":"Interval",
     "minutes":"{count} Minutes",
-    "report-static":"Report : {date}"
+    "report-static":"Report : {date}",
+    "price":"Price"
   },
 
   "totalizer":{
