@@ -52,7 +52,6 @@ const listenFlowrate = () => {
             if (matchedLocation) {
                 matchedLocation.flowrates = res.data.data;
             }
-            // getBySession();
         });
     });
 };
@@ -194,7 +193,7 @@ const rowStyle = (data) => {
                     :rows="5"
                     :rowsPerPageOptions="[5, 10, 20, 50]"
                 >
-                    <Column field="code" :sortable="false" headerStyle="min-width:10rem;">
+                    <Column field="code" :sortable="false" headerStyle="min-width:3rem;">
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold"> Code </span>
                         </template>
@@ -220,7 +219,11 @@ const rowStyle = (data) => {
                         </template>
                         <template #body="slotProps">
                             <span :class="{ 'text-red-500': slotProps.data.trashed }">
-                                {{ formatFLowrate(slotProps.data.flowrates?.flowrate) }}
+                                {{
+                                    formatFLowrate(
+                                        parseFloat(slotProps.data.flowrates?.flowrate || 0)
+                                    )
+                                }}
                                 m<sup>3</sup>/h
                             </span>
                         </template>
@@ -231,7 +234,11 @@ const rowStyle = (data) => {
                         </template>
                         <template #body="slotProps">
                             <span :class="{ 'text-red-500': slotProps.data.trashed }">
-                                {{ formatFLowrate(slotProps.data.flowrates?.totalizer_1) }}
+                                {{
+                                    formatFLowrate(
+                                        parseFloat(slotProps.data.flowrates?.totalizer_1 || 0)
+                                    )
+                                }}
                                 m<sup>3</sup>
                             </span>
                         </template>
@@ -243,7 +250,7 @@ const rowStyle = (data) => {
                         </template>
                         <template #body="slotProps">
                             <span :class="{ 'text-red-500': slotProps.data.trashed }">
-                                {{ numberFloat(slotProps.data.flowrates?.ph) }}
+                                {{ numberFloat(slotProps.data.flowrates?.ph || 0) }}
                             </span>
                         </template>
                     </Column>
