@@ -1,17 +1,23 @@
 <script setup>
-import { onMounted } from 'vue';
+import { getCurrentInstance, onMounted, ref } from 'vue';
 import { GoogleMap, Marker, InfoWindow, MarkerCluster } from 'vue3-google-map';
 import { useMainStore } from '@/services/main.store';
 import { useChartStore } from '@/services/chart.store';
 import { useLocationStore } from '@/services/master/Location.store';
 import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
+const { proxy } = getCurrentInstance();
 
 const mainStore = useMainStore();
 const chartStore = useChartStore();
 const LocationStore = useLocationStore();
 const router = useRouter();
-onMounted(() => {
-    LocationStore.getBySession();
+
+const { sessionLocation } = storeToRefs(LocationStore);
+const { getBySession } = LocationStore;
+onMounted(async () => {
+    await getBySession();
+    listenFlowrate();
 });
 
 const gmapApiKey = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
@@ -27,15 +33,40 @@ const onSelectMap = (location) => {
         name: 'dashboard'
     });
 };
+const active = ref(null);
+
+const listenFlowrate = () => {
+    sessionLocation.value.forEach((element) => {
+        proxy.$pusher.channel('flowrate-channel-' + element.id).listen('.flowrate-event', (res) => {
+            active.value = res.data.data.location_id;
+
+            const matchedLocation = sessionLocation.value.find((data) => data.id === active.value);
+
+            if (matchedLocation) {
+                matchedLocation.flowrates = res.data.data;
+            }
+            // getBySession();
+        });
+    });
+};
+
+const rowClass = (data) => {
+    return [{ 'font-bold bg-primary': data.id === active.value }];
+};
+const rowStyle = (data) => {
+    if (data.id === active.value) {
+        return { fontWeight: 'bold' };
+    }
+};
 </script>
 
 <template>
     <div class="grid">
-        <div class="col-12 h-22rem">
+        <div class="col-12">
             <GoogleMap :api-key="gmapApiKey" :center="center" :zoom="10" class="map">
                 <MarkerCluster>
                     <Marker
-                        v-for="(location, i) in LocationStore.sessionLocation"
+                        v-for="(location, i) in sessionLocation"
                         :options="{
                             position: {
                                 lat: location.lattitude,
@@ -146,6 +177,71 @@ const onSelectMap = (location) => {
                     </Marker>
                 </MarkerCluster>
             </GoogleMap>
+            <div class="card my-3 shadow-3">
+                <DataTable
+                    :value="sessionLocation"
+                    responsiveLayout="scroll"
+                    :rowClass="rowClass"
+                    :rowStyle="rowStyle"
+                    paginator
+                    :rows="5"
+                    :rowsPerPageOptions="[5, 10, 20, 50]"
+                >
+                    <Column field="code" :sortable="false" headerStyle="min-width:10rem;">
+                        <template #header>
+                            <span class="flex-1 uppercase py-2 font-bold"> Code </span>
+                        </template>
+                        <template #body="slotProps">
+                            <span :class="{ 'text-red-500': slotProps.data.trashed }">
+                                {{ slotProps.data.code }}
+                            </span>
+                        </template>
+                    </Column>
+                    <Column field="company_name" :sortable="false" headerStyle="min-width:10rem;">
+                        <template #header>
+                            <span class="flex-1 uppercase py-2 font-bold"> company name </span>
+                        </template>
+                        <template #body="slotProps">
+                            <span :class="{ 'text-red-500': slotProps.data.trashed }">
+                                {{ slotProps.data.company_name }}
+                            </span>
+                        </template>
+                    </Column>
+                    <Column field="flowrate" :sortable="false" headerStyle="min-width:10rem;">
+                        <template #header>
+                            <span class="flex-1 uppercase py-2 font-bold"> flowrate </span>
+                        </template>
+                        <template #body="slotProps">
+                            <span :class="{ 'text-red-500': slotProps.data.trashed }">
+                                {{ formatFLowrate(slotProps.data.flowrates?.flowrate) }}
+                                m<sup>3</sup>/h
+                            </span>
+                        </template>
+                    </Column>
+                    <Column field="totalizer" :sortable="false" headerStyle="min-width:10rem;">
+                        <template #header>
+                            <span class="flex-1 uppercase py-2 font-bold"> totalizer </span>
+                        </template>
+                        <template #body="slotProps">
+                            <span :class="{ 'text-red-500': slotProps.data.trashed }">
+                                {{ formatFLowrate(slotProps.data.flowrates?.totalizer_1) }}
+                                m<sup>3</sup>
+                            </span>
+                        </template>
+                    </Column>
+
+                    <Column field="ph" :sortable="false" headerStyle="min-width:10rem;">
+                        <template #header>
+                            <span class="flex-1 uppercase py-2 font-bold"> ph </span>
+                        </template>
+                        <template #body="slotProps">
+                            <span :class="{ 'text-red-500': slotProps.data.trashed }">
+                                {{ numberFloat(slotProps.data.flowrates?.ph) }}
+                            </span>
+                        </template>
+                    </Column>
+                </DataTable>
+            </div>
         </div>
     </div>
 </template>
@@ -154,6 +250,6 @@ const onSelectMap = (location) => {
 .map {
     /* position: relative; */
     width: 100%;
-    height: 720px;
+    height: 520px;
 }
 </style>
