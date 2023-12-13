@@ -225,6 +225,42 @@ const getBilling = () => {
                 </div>
             </div>
         </div>
+        <div class="col-12 lg:col-6 xl:col-6" v-if="totFirst && !loading">
+            <div class="card shadow-5 mb-0">
+                <div class="flex justify-content-between mb-3">
+                    <div>
+                        <h4 class="block text-500 font-medium mb-3">Panel Stat</h4>
+                        <div class="text-900 font-bold text-2xl">
+                            {{ formatFLowrate(totLast) }} m<sup>3</sup>
+                        </div>
+                    </div>
+                    <div
+                        class="flex align-items-center justify-content-center bg-yellow-100 border-round"
+                        style="width: 4rem; height: 4rem"
+                    >
+                        <i class="pi pi-database text-yellow-500 text-3xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 lg:col-6 xl:col-6" v-if="totFirst && !loading">
+            <div class="card shadow-5 mb-0">
+                <div class="flex justify-content-between mb-3">
+                    <div>
+                        <h4 class="block text-500 font-medium mb-3">PLN Stat</h4>
+                        <div class="text-900 font-bold text-2xl">
+                            {{ formatFLowrate(totLast) }} m<sup>3</sup>
+                        </div>
+                    </div>
+                    <div
+                        class="flex align-items-center justify-content-center bg-yellow-100 border-round"
+                        style="width: 4rem; height: 4rem"
+                    >
+                        <i class="pi pi-database text-yellow-500 text-3xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div
             class="col-12 lg:col-12 xl:col-12"

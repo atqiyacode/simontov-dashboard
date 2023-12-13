@@ -26,7 +26,9 @@ const {
     currentDO,
     totalizer_1,
     totalizer_2,
-    totalizer_3
+    totalizer_3,
+    panel_stat,
+    pln_stat
 } = storeToRefs(chartStore);
 
 const { user } = storeToRefs(userStore);
@@ -110,7 +112,7 @@ const checkAccessChart = (code) => {
             <div class="grid">
                 <div class="col-12 lg:col-6 xl:col-4" v-if="checkAccessChart('radial-flowrate')">
                     <NewRadialChartPage
-                        tag="l/s"
+                        tag="m3/h"
                         title="FLOWRATE"
                         colors="#247BA0"
                         :series="[currentFlowrate?.y]"
@@ -183,7 +185,7 @@ const checkAccessChart = (code) => {
                                 class="flex align-items-center justify-content-center bg-red-100 border-round"
                                 style="width: 4rem; height: 4rem"
                             >
-                                <i class="pi pi-database text-red-500 text-3xl"></i>
+                                <i class="pi pi-chart-line text-red-500 text-3xl"></i>
                             </div>
                         </div>
                     </div>
@@ -201,7 +203,7 @@ const checkAccessChart = (code) => {
                                 class="flex align-items-center justify-content-center bg-orange-100 border-round"
                                 style="width: 4rem; height: 4rem"
                             >
-                                <i class="pi pi-database text-orange-500 text-3xl"></i>
+                                <i class="pi pi-chart-line text-orange-500 text-3xl"></i>
                             </div>
                         </div>
                     </div>
@@ -219,7 +221,49 @@ const checkAccessChart = (code) => {
                                 class="flex align-items-center justify-content-center bg-cyan-100 border-round"
                                 style="width: 4rem; height: 4rem"
                             >
-                                <i class="pi pi-database text-cyan-500 text-3xl"></i>
+                                <i class="pi pi-chart-line text-cyan-500 text-3xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 lg:col-6 xl:col-6">
+                    <div class="card shadow-5 mb-0">
+                        <div class="flex justify-content-between mb-3">
+                            <div>
+                                <h4 class="block text-500 font-medium mb-3">PLN STAT</h4>
+                                <div
+                                    class="text-900 font-bold text-2xl"
+                                    :class="pln_stat ? 'text-green-500' : 'text-red-500'"
+                                >
+                                    {{ pln_stat ? 'NORMAL' : 'DOWN' }}
+                                </div>
+                            </div>
+                            <div
+                                class="flex align-items-center justify-content-center bg-cyan-100 border-round"
+                                style="width: 4rem; height: 4rem"
+                            >
+                                <i class="pi pi-bolt text-cyan-500 text-3xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 lg:col-6 xl:col-6">
+                    <div class="card shadow-5 mb-0">
+                        <div class="flex justify-content-between mb-3">
+                            <div>
+                                <h4 class="block text-500 font-medium mb-3">PANEL STAT</h4>
+                                <div
+                                    class="text-900 font-bold text-2xl"
+                                    :class="panel_stat ? 'text-green-500' : 'text-red-500'"
+                                >
+                                    {{ panel_stat ? 'NORMAL' : 'DOWN' }}
+                                </div>
+                            </div>
+                            <div
+                                class="flex align-items-center justify-content-center bg-cyan-100 border-round"
+                                style="width: 4rem; height: 4rem"
+                            >
+                                <i class="pi pi-bolt text-cyan-500 text-3xl"></i>
                             </div>
                         </div>
                     </div>

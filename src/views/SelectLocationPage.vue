@@ -31,6 +31,22 @@ onMounted(async () => {
     listenFlowrate();
 });
 
+const isOutOfRangePH = (value) => {
+    return value < 6 || value > 9;
+};
+
+const isOutOfRangeCOD = (value) => {
+    return value > 900;
+};
+
+const electricityStatus = (value) => {
+    if (value) {
+        return 'text-green-500 font-bold';
+    } else {
+        return 'text-red-500 font-bold';
+    }
+};
+
 const onSelectMap = (location) => {
     mainStore.$patch({
         currentMap: location
@@ -54,15 +70,6 @@ const listenFlowrate = () => {
             }
         });
     });
-};
-
-const rowClass = (data) => {
-    return [{ 'font-bold bg-primary': data.id === active.value }];
-};
-const rowStyle = (data) => {
-    if (data.id === active.value) {
-        return { fontWeight: 'bold' };
-    }
 };
 </script>
 
@@ -140,26 +147,6 @@ const rowStyle = (data) => {
                                         </span>
                                     </div>
                                 </li>
-                                <!-- <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                                    <div>
-                                        <span class="font-bold mr-2 mb-1 md:mb-0 capitalize text-gray-500"> Longitude </span>
-                                    </div>
-                                    <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                                        <span class="font-medium text-black-alpha-90">
-                                            {{ location.lng }}
-                                        </span>
-                                    </div>
-                                </li>
-                                <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                                    <div>
-                                        <span class="font-bold mr-2 mb-1 md:mb-0 capitalize text-gray-500"> Lattitude </span>
-                                    </div>
-                                    <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                                        <span class="font-medium text-black-alpha-90">
-                                            {{ location.lat }}
-                                        </span>
-                                    </div>
-                                </li> -->
                                 <li
                                     class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4"
                                     v-if="location.description"
@@ -187,8 +174,6 @@ const rowStyle = (data) => {
                 <DataTable
                     :value="sessionLocation"
                     responsiveLayout="scroll"
-                    :rowClass="rowClass"
-                    :rowStyle="rowStyle"
                     paginator
                     :rows="5"
                     :rowsPerPageOptions="[5, 10, 20, 50]"
@@ -198,7 +183,7 @@ const rowStyle = (data) => {
                             <span class="flex-1 uppercase py-2 font-bold"> Code </span>
                         </template>
                         <template #body="slotProps">
-                            <span :class="{ 'text-red-500': slotProps.data.trashed }">
+                            <span>
                                 {{ slotProps.data.code }}
                             </span>
                         </template>
@@ -208,7 +193,7 @@ const rowStyle = (data) => {
                             <span class="flex-1 uppercase py-2 font-bold"> company name </span>
                         </template>
                         <template #body="slotProps">
-                            <span :class="{ 'text-red-500': slotProps.data.trashed }">
+                            <span>
                                 {{ slotProps.data.company_name }}
                             </span>
                         </template>
@@ -218,7 +203,7 @@ const rowStyle = (data) => {
                             <span class="flex-1 uppercase py-2 font-bold"> flowrate </span>
                         </template>
                         <template #body="slotProps">
-                            <span :class="{ 'text-red-500': slotProps.data.trashed }">
+                            <span>
                                 {{
                                     formatFLowrate(
                                         parseFloat(slotProps.data.flowrates?.flowrate || 0)
@@ -233,7 +218,7 @@ const rowStyle = (data) => {
                             <span class="flex-1 uppercase py-2 font-bold"> totalizer </span>
                         </template>
                         <template #body="slotProps">
-                            <span :class="{ 'text-red-500': slotProps.data.trashed }">
+                            <span>
                                 {{
                                     formatFLowrate(
                                         parseFloat(slotProps.data.flowrates?.totalizer_1 || 0)
@@ -249,9 +234,52 @@ const rowStyle = (data) => {
                             <span class="flex-1 uppercase py-2 font-bold"> ph </span>
                         </template>
                         <template #body="slotProps">
-                            <span :class="{ 'text-red-500': slotProps.data.trashed }">
+                            <span
+                                :class="{
+                                    'text-red-500 font-bold': isOutOfRangePH(
+                                        numberFloat(slotProps.data.flowrates?.ph || 0)
+                                    )
+                                }"
+                            >
                                 {{ numberFloat(slotProps.data.flowrates?.ph || 0) }}
                             </span>
+                        </template>
+                    </Column>
+                    <Column field="cod" :sortable="false" headerStyle="min-width:10rem;">
+                        <template #header>
+                            <span class="flex-1 uppercase py-2 font-bold"> cod </span>
+                        </template>
+                        <template #body="slotProps">
+                            <span
+                                :class="{
+                                    'text-red-500 font-bold': isOutOfRangeCOD(
+                                        numberFloat(slotProps.data.flowrates?.cod || 0)
+                                    )
+                                }"
+                            >
+                                {{ numberFloat(slotProps.data.flowrates?.cod || 0) }}
+                            </span>
+                        </template>
+                    </Column>
+                    <Column field="pln_stat" :sortable="false" headerStyle="min-width:10rem;">
+                        <template #header>
+                            <span class="flex-1 uppercase py-2 font-bold"> electricity </span>
+                        </template>
+                        <template #body="slotProps">
+                            <span :class="electricityStatus(slotProps.data.flowrates?.pln_stat)">
+                                {{ slotProps.data.flowrates?.pln_stat ? 'PLN' : 'UPS' }}
+                            </span>
+                        </template>
+                    </Column>
+
+                    <Column field="cod" :sortable="false" headerStyle="min-width:10rem;">
+                        <template #body="slotProps">
+                            <Button
+                                @click="onSelectMap(slotProps.data)"
+                                icon="pi pi-search"
+                                severity="warning"
+                                size="small"
+                            ></Button>
                         </template>
                     </Column>
                 </DataTable>

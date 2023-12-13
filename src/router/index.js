@@ -34,8 +34,7 @@ const router = createRouter({
                             name: 'dashboard',
                             component: () => import('@/views/Dashboard.vue'),
                             meta: {
-                                title: 'Dashbaord realtime',
-                                role: ['superman', 'superadmin']
+                                title: 'Dashbaord realtime'
                             }
                         },
                         {
@@ -43,8 +42,7 @@ const router = createRouter({
                             name: 'dashboard-static',
                             component: () => import('@/views/StaticChartPage.vue'),
                             meta: {
-                                title: 'Dashbaord Static',
-                                role: ['superman', 'superadmin']
+                                title: 'Dashbaord Static'
                             }
                         }
                     ]
@@ -58,8 +56,7 @@ const router = createRouter({
                             name: 'master-role',
                             component: () => import('@/views/master/RolePage.vue'),
                             meta: {
-                                title: 'Role Data',
-                                role: ['superman', 'superadmin']
+                                title: 'Role Data'
                             }
                         },
                         {
@@ -67,8 +64,7 @@ const router = createRouter({
                             name: 'master-permission',
                             component: () => import('@/views/master/PermissionPage.vue'),
                             meta: {
-                                title: 'Permission Data',
-                                role: ['superman', 'superadmin']
+                                title: 'Permission Data'
                             }
                         },
                         {
@@ -76,8 +72,7 @@ const router = createRouter({
                             name: 'master-user',
                             component: () => import('@/views/master/UserPage.vue'),
                             meta: {
-                                title: 'User Data',
-                                role: ['superman', 'superadmin']
+                                title: 'User Data'
                             }
                         },
                         {
@@ -85,8 +80,7 @@ const router = createRouter({
                             name: 'master-user-detail',
                             component: () => import('@/views/master/UserDetailPage.vue'),
                             meta: {
-                                title: 'User Data',
-                                role: ['superman', 'superadmin']
+                                title: 'User Data'
                             }
                         },
                         {
@@ -94,8 +88,7 @@ const router = createRouter({
                             name: 'master-location',
                             component: () => import('@/views/master/LocationPage.vue'),
                             meta: {
-                                title: 'Lokasi Data',
-                                role: ['superman', 'superadmin']
+                                title: 'Lokasi Data'
                             }
                         },
                         {
@@ -103,8 +96,7 @@ const router = createRouter({
                             name: 'master-dashboard-chart',
                             component: () => import('@/views/master/DashboardChartPage.vue'),
                             meta: {
-                                title: 'DashboardChartPage Data',
-                                role: ['superman', 'superadmin']
+                                title: 'DashboardChartPage Data'
                             }
                         },
 
@@ -113,8 +105,7 @@ const router = createRouter({
                             name: 'master-tax',
                             component: () => import('@/views/master/TaxPage.vue'),
                             meta: {
-                                title: 'Pajak Data',
-                                role: ['superman', 'superadmin']
+                                title: 'Pajak Data'
                             }
                         }
                     ]
@@ -127,8 +118,7 @@ const router = createRouter({
                             name: 'billing-range-type',
                             component: () => import('@/views/billing/RangeTypePage.vue'),
                             meta: {
-                                title: 'Range Type Data',
-                                role: ['superman', 'superadmin']
+                                title: 'Range Type Data'
                             }
                         },
                         {
@@ -136,8 +126,7 @@ const router = createRouter({
                             name: 'billing-range-cost',
                             component: () => import('@/views/billing/RangeCostPage.vue'),
                             meta: {
-                                title: 'Range Cost Data',
-                                role: ['superman', 'superadmin']
+                                title: 'Range Cost Data'
                             }
                         }
                     ]
@@ -150,8 +139,7 @@ const router = createRouter({
                             name: 'feature-topic',
                             component: () => import('@/views/features/TopicPage.vue'),
                             meta: {
-                                title: 'Topic Data',
-                                role: ['superman', 'superadmin']
+                                title: 'Topic Data'
                             }
                         },
                         {
@@ -159,8 +147,7 @@ const router = createRouter({
                             name: 'feature-status-alarm',
                             component: () => import('@/views/features/StatusAlarmPage.vue'),
                             meta: {
-                                title: 'Lokasi Data',
-                                role: ['superman', 'superadmin']
+                                title: 'Lokasi Data'
                             }
                         },
                         {
@@ -168,8 +155,7 @@ const router = createRouter({
                             name: 'feature-flowrate',
                             component: () => import('@/views/features/FlowratePage.vue'),
                             meta: {
-                                title: 'Flowrate Data',
-                                role: ['superman', 'superadmin']
+                                title: 'Flowrate Data'
                             }
                         }
                     ]
@@ -284,20 +270,8 @@ const router = createRouter({
     ]
 });
 
-function multipleInArray(arr, values) {
-    return values.some((value) => {
-        return arr.includes(value);
-    });
-}
-
 router.beforeEach((to, from, next) => {
-    const { isLoggedIn, user } = useUserStore();
-    // const nearestWithTitle = to.matched
-    //     .slice()
-    //     .reverse()
-    //     .find((r) => r.meta && r.meta.title);
-
-    // if (nearestWithTitle) document.title = nearestWithTitle.meta.title;
+    const { isLoggedIn } = useUserStore();
 
     if (to.name === 'login' && isLoggedIn) {
         next({ name: 'dashboard' });
@@ -305,15 +279,7 @@ router.beforeEach((to, from, next) => {
     }
 
     if (!to.matched.some((record) => record.meta.requiresAuth) || isLoggedIn) {
-        if (to.matched.some((record) => record.meta.role)) {
-            if (multipleInArray(user.roles, to.meta.role)) {
-                next();
-            } else {
-                next({ name: 'no-access-permission' });
-            }
-        } else {
-            next();
-        }
+        next();
         return;
     }
 

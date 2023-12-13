@@ -73,7 +73,7 @@ const chartOptions = ref({
                 }
             },
             title: {
-                text: 'l/s',
+                text: 'm3/h',
                 style: {
                     color: props.colors[0]
                 }

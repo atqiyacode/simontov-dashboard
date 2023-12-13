@@ -52,6 +52,9 @@ export const useChartStore = defineStore(
         const totalizer_2 = ref(0);
         const totalizer_3 = ref(0);
 
+        const pln_stat = ref(true);
+        const panel_stat = ref(true);
+
         const lastTimestamp = ref(
             new Date().toLocaleString('en-US', { timeZone: indonesiaTimeZone.value })
         );
@@ -123,8 +126,10 @@ export const useChartStore = defineStore(
                     })
                     .then(async (res) => {
                         const data = res.data.data;
+                        console.log(data);
                         const promises = data.reverse().map(async (element) => {
                             await Promise.all([
+                                loadStat(element),
                                 loadTotalizer(element),
                                 loadChart(element),
                                 loadPHChart(element),
@@ -263,6 +268,11 @@ export const useChartStore = defineStore(
             totalizer_3.value = parseFloat(data.totalizer_3).toFixed(2);
         };
 
+        const loadStat = (data) => {
+            panel_stat.value = data.panel_stat;
+            pln_stat.value = data.pln_stat;
+        };
+
         return {
             chartLength,
             chartSeries,
@@ -282,6 +292,8 @@ export const useChartStore = defineStore(
             totalizer_1,
             totalizer_2,
             totalizer_3,
+            pln_stat,
+            panel_stat,
             indonesiaTimeZone,
             // fucntion
             getLastFlowrate,
@@ -292,6 +304,7 @@ export const useChartStore = defineStore(
             loadLevelChart,
             loadDOChart,
             loadTotalizer,
+            loadStat,
             resetValue,
             getFlorateRange
         };
