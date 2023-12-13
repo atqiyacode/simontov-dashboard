@@ -4,5 +4,6 @@ services:
         build:
             context: .
             target: production-stage
+        restart: always
         ports:
             - "8080:80"
