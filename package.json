@@ -1,7 +1,7 @@
 {
-    "name": "admin-bapenda-2023",
+    "name": "simontov-flowmeter-app",
     "private": true,
-    "version": "1.4.0",
+    "version": "1.1.0",
     "scripts": {
         "dev": "vite",
         "build": "vite build",
