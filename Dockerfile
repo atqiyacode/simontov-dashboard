@@ -1,16 +1,17 @@
-# Use an official Node.js runtime as a base image
-FROM node:20-alpine 
-
-# Set the working directory
+# Dockerfile
+# Stage 1: Build the Vue.js app
+FROM node:20 as build-stage
 WORKDIR /app
-
-# Copy package.json and package-lock.json
-COPY package* .
-
-# Install app dependencies
+COPY package*.json ./
 RUN npm install
-
-# Copy the app source code
 COPY . .
+RUN npm run build
 
-CMD ["npm", "run", "dev"]
+# Stage 2: Serve the static files with a lightweight HTTP server
+FROM node:20 as production-stage
+WORKDIR /app
+COPY --from=build-stage /app/dist /app
+RUN npm install -g http-server
+
+EXPOSE 80
+CMD ["http-server", "-g", "daemon", "-p", "80"]

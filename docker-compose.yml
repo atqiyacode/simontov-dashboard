@@ -1,21 +1,9 @@
 version: '3'
 services:
-    app:
+    vue-app:
         build:
             context: .
-            dockerfile: Dockerfile
-        container_name: dashboard_simontov_app
-        volumes:
-            - .:/var/www/html
+            target: production-stage
+        restart: always
         ports:
-            - '80'
-
-    nginx:
-        image: nginx:alpine
-        container_name: nginx_simontov_app
-        volumes:
-            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-        ports:
-            - 80:80
-        depends_on:
-            - app
+            - "8080:80"
