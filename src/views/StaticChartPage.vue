@@ -171,7 +171,7 @@ const getBilling = () => {
                 <div class="flex justify-content-between mb-3">
                     <div>
                         <h4 class="block text-500 font-medium mb-3">
-                            {{ $t('totalizer.result') }} - {{ final_billing }}
+                            {{ $t('totalizer.result') }}
                         </h4>
                         <div class="text-900 font-bold text-2xl text-green-500">
                             {{ formatFLowrate(totFirst - totLast) }} m<sup>3</sup>
@@ -179,6 +179,13 @@ const getBilling = () => {
                                 ({{ formatCurrency(final_billing) }})
                             </span>
                         </div>
+                        <Button
+                            class="mt-3"
+                            label="Send Invoice"
+                            icon="pi pi-cloud-upload"
+                            iconPos="right"
+                            outlined
+                        />
                     </div>
                     <div
                         class="flex align-items-center justify-content-center bg-green-100 border-round"
@@ -264,7 +271,7 @@ const getBilling = () => {
 
         <div
             class="col-12 lg:col-12 xl:col-12"
-            v-if="checkAccessChart('realtime-flowrate-pressure')"
+            v-if="!loading && checkAccessChart('realtime-flowrate-pressure')"
         >
             <DualLineChartPage
                 title="Flowrate and Pressure"
@@ -273,7 +280,7 @@ const getBilling = () => {
                 :lastTimestamp="lastTimestamp"
             />
         </div>
-        <div class="col-12 lg:col-12 xl:col-12" v-if="checkAccessChart('realtime-cod')">
+        <div class="col-12 lg:col-12 xl:col-12" v-if="!loading && checkAccessChart('realtime-cod')">
             <LineChartPage
                 title="COD"
                 :colors="['#5B0888']"
@@ -281,7 +288,7 @@ const getBilling = () => {
                 :lastTimestamp="lastTimestamp"
             />
         </div>
-        <div class="col-12 lg:col-12 xl:col-12" v-if="checkAccessChart('realtime-ph')">
+        <div class="col-12 lg:col-12 xl:col-12" v-if="!loading && checkAccessChart('realtime-ph')">
             <LineChartPage
                 title="PH"
                 :colors="['#E55604']"
@@ -289,7 +296,10 @@ const getBilling = () => {
                 :lastTimestamp="lastTimestamp"
             />
         </div>
-        <div class="col-12 lg:col-12 xl:col-12" v-if="checkAccessChart('realtime-cond')">
+        <div
+            class="col-12 lg:col-12 xl:col-12"
+            v-if="!loading && checkAccessChart('realtime-cond')"
+        >
             <LineChartPage
                 title="COND"
                 :colors="['#E1AA74']"
@@ -297,7 +307,10 @@ const getBilling = () => {
                 :lastTimestamp="lastTimestamp"
             />
         </div>
-        <div class="col-12 lg:col-12 xl:col-12" v-if="checkAccessChart('realtime-level')">
+        <div
+            class="col-12 lg:col-12 xl:col-12"
+            v-if="!loading && checkAccessChart('realtime-level')"
+        >
             <LineChartPage
                 title="LEVEL"
                 :colors="['#B6339A']"
@@ -305,7 +318,7 @@ const getBilling = () => {
                 :lastTimestamp="lastTimestamp"
             />
         </div>
-        <div class="col-12 lg:col-12 xl:col-12" v-if="checkAccessChart('realtime-do')">
+        <div class="col-12 lg:col-12 xl:col-12" v-if="!loading && checkAccessChart('realtime-do')">
             <LineChartPage
                 title="DO"
                 :colors="['#A7D397']"

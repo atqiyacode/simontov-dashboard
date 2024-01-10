@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import { useUserStore } from './user.store';
 import { ref, watch } from 'vue';
-import axios from '@/plugins/axios';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from './auth.store';
 import { useToast } from 'vue-toastification';
@@ -22,7 +21,6 @@ export const useMainStore = defineStore(
         const dashboard = ref({});
         const registerVerification = ref(false);
         const authVerification = ref(false);
-        const server = import.meta.env.VITE_APP_SERVER;
         const isMaintenance = ref(false);
         const route = useRoute();
 
@@ -38,7 +36,9 @@ export const useMainStore = defineStore(
 
         const sanctumCsrf = async () => {
             if (!document.cookie) {
-                await axios.get(server + 'sanctum/csrf-cookie');
+                await fetch(`${import.meta.env.VITE_APP_SERVER}/sanctum/csrf-cookie`, {
+                    credentials: 'include'
+                });
             }
         };
 
@@ -101,7 +101,6 @@ export const useMainStore = defineStore(
             dashboard,
             registerVerification,
             authVerification,
-            server,
             isMaintenance,
             route,
             router,
