@@ -77,7 +77,7 @@
     "locations": "Locations",
     "chart-types": "Chart types",
     "status-alarm": "Status Alarm",
-    "flow-meter": "Flow Meter",
+    "flow-meter": "Data Report",
     "range-types": "Range Types",
     "range-costs": "Range Cost",
     "tax": "Tax",
@@ -116,7 +116,7 @@
       "mag-8000": {
         "index":"Data",
         "status-alarm":"Status alarm",
-        "flow-meter":"Flow Meter",
+        "flow-meter":"Data Report",
         "topics":"Topics"
       },
       "billing": {

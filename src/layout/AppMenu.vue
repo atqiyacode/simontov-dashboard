@@ -19,7 +19,12 @@ const supermanMenu = ref([
                 icon: 'pi pi-fw pi-chart-line',
                 to: '/app/dashboard/realtime'
             },
-            { label: 'Static', icon: 'pi pi-fw pi-chart-bar', to: '/app/dashboard/static' }
+            { label: 'Static', icon: 'pi pi-fw pi-chart-bar', to: '/app/dashboard/static' },
+            {
+                icon: 'pi pi-fw pi-bookmark',
+                label: 'menu.features.mag-8000.flow-meter',
+                to: '/app/feature/flowrate'
+            }
         ]
     },
 
@@ -33,10 +38,7 @@ const supermanMenu = ref([
                         label: 'menu.features.mag-8000.status-alarm',
                         to: '/app/feature/status-alarm'
                     },
-                    {
-                        label: 'menu.features.mag-8000.flow-meter',
-                        to: '/app/feature/flowrate'
-                    },
+
                     {
                         label: 'menu.features.mag-8000.topics',
                         to: '/app/feature/topic'
@@ -110,7 +112,12 @@ const superadminMenu = ref([
                 icon: 'pi pi-fw pi-chart-line',
                 to: '/app/dashboard/realtime'
             },
-            { label: 'Static', icon: 'pi pi-fw pi-chart-bar', to: '/app/dashboard/static' }
+            { label: 'Static', icon: 'pi pi-fw pi-chart-bar', to: '/app/dashboard/static' },
+            {
+                icon: 'pi pi-fw pi-bookmark',
+                label: 'menu.features.mag-8000.flow-meter',
+                to: '/app/feature/flowrate'
+            }
         ]
     },
 
@@ -123,10 +130,6 @@ const superadminMenu = ref([
                     {
                         label: 'menu.features.mag-8000.status-alarm',
                         to: '/app/feature/status-alarm'
-                    },
-                    {
-                        label: 'menu.features.mag-8000.flow-meter',
-                        to: '/app/feature/flowrate'
                     },
                     {
                         label: 'menu.features.mag-8000.topics',
@@ -186,7 +189,12 @@ const adminMenu = ref([
                 icon: 'pi pi-fw pi-chart-line',
                 to: '/app/dashboard/realtime'
             },
-            { label: 'Static', icon: 'pi pi-fw pi-chart-bar', to: '/app/dashboard/static' }
+            { label: 'Static', icon: 'pi pi-fw pi-chart-bar', to: '/app/dashboard/static' },
+            {
+                icon: 'pi pi-fw pi-bookmark',
+                label: 'menu.features.mag-8000.flow-meter',
+                to: '/app/feature/flowrate'
+            }
         ]
     }
 ]);

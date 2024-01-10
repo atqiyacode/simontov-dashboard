@@ -77,7 +77,7 @@
     "locations": "Lokasi",
     "chart-types": "Jenis Chart",
     "status-alarm": "Alarm Status",
-    "flow-meter": "Pengukur Aliran",
+    "flow-meter": "Data Laporan",
     "range-types": "Jenis Rentang",
     "range-costs": "Kisrab biaya",
     "tax": "Pajak",
@@ -116,7 +116,7 @@
       "mag-8000": {
         "index":"Mag 8000",
         "status-alarm":"Alarm Status",
-        "flow-meter":"Pengukur Aliran",
+        "flow-meter":"Data Laporan",
         "topics":"Topik"
       },
       "billing": {
