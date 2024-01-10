@@ -10,7 +10,8 @@ const chartStore = useChartStore();
 const userStore = useUserStore();
 const { currentMap } = storeToRefs(mainStore);
 const {
-    chartSeries,
+    // chartSeries,
+    chartFlowrateSeries,
     chartPHSeries,
     chartCODSeries,
     chartCondSeries,
@@ -53,7 +54,7 @@ const checkAccessChart = (code) => {
 <template>
     <div class="col-12">
         <div class="grid">
-            <div
+            <!-- <div
                 class="col-12 lg:col-12 xl:col-12"
                 v-if="checkAccessChart('realtime-flowrate-pressure')"
             >
@@ -61,6 +62,17 @@ const checkAccessChart = (code) => {
                     title="Flowrate and Pressure"
                     :colors="['#FFBB5C', '#247BA0']"
                     :chartSeries="chartSeries"
+                    :lastTimestamp="lastTimestamp"
+                />
+            </div> -->
+            <div
+                class="col-12 lg:col-12 xl:col-12"
+                v-if="checkAccessChart('realtime-flowrate-pressure')"
+            >
+                <RealtimeLineChartPage
+                    title="Flowrate"
+                    :colors="['#FFBB5C']"
+                    :chartSeries="chartFlowrateSeries"
                     :lastTimestamp="lastTimestamp"
                 />
             </div>

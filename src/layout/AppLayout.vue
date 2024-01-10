@@ -26,7 +26,8 @@ const {
     loadCondChart,
     loadLevelChart,
     loadDOChart,
-    loadTotalizer
+    loadTotalizer,
+    loadFlowrateChart
 } = chartStore;
 const { proxy } = getCurrentInstance();
 
@@ -103,6 +104,7 @@ proxy.$pusher
     .listen('.flowrate-event', async (res) => {
         const data = res.data.data;
         await Promise.all([
+            loadFlowrateChart(data),
             loadTotalizer(data),
             loadChart(data),
             loadPHChart(data),

@@ -17,6 +17,12 @@ export const useChartStore = defineStore(
                 yAxis: 1 // Assign this series to the second Y-axis
             }
         ]);
+        const chartFlowrateSeries = ref([
+            {
+                name: 'FLowrate',
+                data: []
+            }
+        ]);
         const chartPHSeries = ref([
             {
                 name: 'PH',
@@ -81,6 +87,12 @@ export const useChartStore = defineStore(
                     yAxis: 1 // Assign this series to the second Y-axis
                 }
             ];
+            chartFlowrateSeries.value = [
+                {
+                    name: 'PH',
+                    data: []
+                }
+            ];
             chartPHSeries.value = [
                 {
                     name: 'PH',
@@ -129,6 +141,7 @@ export const useChartStore = defineStore(
                         console.log(data);
                         const promises = data.reverse().map(async (element) => {
                             await Promise.all([
+                                loadFlowrateChart(element),
                                 loadStat(element),
                                 loadTotalizer(element),
                                 loadChart(element),
@@ -184,6 +197,21 @@ export const useChartStore = defineStore(
             if (chartSeries.value[0].data.length > chartLength.value) {
                 chartSeries.value[0].data.shift();
                 chartSeries.value[1].data.shift();
+            }
+        };
+
+        const loadFlowrateChart = (data) => {
+            const timestamp = data.created_at;
+
+            const newFlowrate = {
+                x: timestamp,
+                y: parseFloat(data.flowrate).toFixed(2)
+            };
+            chartFlowrateSeries.value[0].data.push(newFlowrate);
+            currentPH.value = newFlowrate;
+            // Remove older data points to limit the chart length
+            if (chartFlowrateSeries.value[0].data.length > chartLength.value) {
+                chartFlowrateSeries.value[0].data.shift();
             }
         };
 
@@ -276,6 +304,7 @@ export const useChartStore = defineStore(
         return {
             chartLength,
             chartSeries,
+            chartFlowrateSeries,
             chartPHSeries,
             chartCODSeries,
             chartCondSeries,
@@ -297,6 +326,7 @@ export const useChartStore = defineStore(
             indonesiaTimeZone,
             // fucntion
             getLastFlowrate,
+            loadFlowrateChart,
             loadChart,
             loadPHChart,
             loadCODChart,
