@@ -49,11 +49,7 @@ const goToMyNotification = () => {
 };
 
 const logoUrl = computed(() => {
-    return `${contextPath}logo/${
-        layoutConfig.darkTheme.value
-            ? 'simontov-logo-horizontal-white-text'
-            : 'simontov-logo-horizontal'
-    }.png`;
+    return `${contextPath}logo/${layoutConfig.darkTheme.value ? 'logo-kim' : 'logo-kim'}.png`;
 });
 
 const onTopBarMenuButton = () => {

@@ -29,11 +29,7 @@ const rules = {
 const v$ = useVuelidate(rules, form);
 
 const logoUrl = computed(() => {
-    return `${contextPath}logo/${
-        layoutConfig.darkTheme.value
-            ? 'simontov-logo-horizontal-white-text'
-            : 'simontov-logo-horizontal'
-    }.png`;
+    return `${contextPath}logo/${layoutConfig.darkTheme.value ? 'logo-kim' : 'logo-kim'}.png`;
 });
 
 onMounted(() => {
