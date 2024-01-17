@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import RealtimeChartPage from './chart/RealtimeChartPage.vue';
 import CurrentMapPage from '@/views/chart/CurrentMapPage.vue';
 import { useMainStore } from '@/services/main.store';
@@ -34,6 +34,9 @@ const chartLengthOptions = ref([
         id: 100
     }
 ]);
+onMounted(() => {
+    chartStore.getLastFlowrate(currentMap.value.id);
+});
 </script>
 
 <template>
@@ -42,10 +45,7 @@ const chartLengthOptions = ref([
             class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4"
         >
             <div>
-                <h5
-                    class="text-gray-500 font-bold mr-2 mb-1 md:mb-0 capitalize"
-                    :class="styleLabel"
-                >
+                <h5 class="text-gray-500 font-bold mr-2 mb-1 md:mb-0 capitalize">
                     {{ currentMap?.name }} - {{ currentMap?.company_name }}
                 </h5>
             </div>
@@ -78,13 +78,13 @@ const chartLengthOptions = ref([
         class="p-fluid"
     >
         <div class="field">
-            <label class="font-bold capitalize" for="value"> Panjang Chart </label>
+            <label class="font-bold capitalize" for="value"> Length Line Chart </label>
             <Dropdown
                 v-model="chartLength"
                 :options="chartLengthOptions"
                 optionLabel="id"
                 optionValue="id"
-                placeholder="Pilih Panjang Chart"
+                placeholder="Select Length Line Chart"
                 @change="chartStore.getLastFlowrate(currentMap.id)"
             />
         </div>
@@ -103,7 +103,6 @@ const chartLengthOptions = ref([
         v-model:visible="mapDialog"
         :style="{ width: '50vw' }"
         :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
-        header="Map Lokasi"
         :modal="true"
         :closable="false"
         :pt="{

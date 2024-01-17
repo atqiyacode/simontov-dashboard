@@ -42,6 +42,12 @@ const onLogout = () => {
     });
 };
 
+const goToMyNotification = () => {
+    router.push({
+        name: 'my-notification'
+    });
+};
+
 const logoUrl = computed(() => {
     return `${contextPath}logo/${
         layoutConfig.darkTheme.value
@@ -119,9 +125,8 @@ const isOutsideClicked = (event) => {
                 </b>
             </button>
 
-            <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
-                <i class="pi pi-bell"></i>
-                <span>Notification</span>
+            <button @click="goToMyNotification()" class="p-link topbar-notification">
+                <i v-badge.danger="2" class="pi pi-bell p-overlay-badge" style="font-size: 2rem" />
             </button>
 
             <button @click="logoutDialog = true" class="p-link layout-topbar-button text-red-500">
@@ -205,4 +210,18 @@ const isOutsideClicked = (event) => {
     </Dialog>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.topbar-notification {
+    margin-left: 1rem;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    color: var(--text-color-secondary);
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+</style>

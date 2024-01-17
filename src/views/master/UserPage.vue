@@ -227,7 +227,7 @@ const confirmDeletePermanentSelectedDialog = () => {
                                 <i class="pi pi-search" />
                                 <InputText
                                     v-model="keyword"
-                                    placeholder="Cari..."
+                                    :placeholder="$t('table.search')"
                                     autocomplete="false"
                                     id="search"
                                 />

@@ -136,20 +136,20 @@ const superadminMenu = ref([
                         to: '/app/feature/topic'
                     }
                 ]
-            },
-            {
-                label: 'menu.features.billing.index',
-                items: [
-                    {
-                        label: 'menu.features.billing.range-type',
-                        to: '/app/billing/range-type'
-                    },
-                    {
-                        label: 'menu.features.billing.range-cost',
-                        to: '/app/billing/range-cost'
-                    }
-                ]
             }
+            // {
+            //     label: 'menu.features.billing.index',
+            //     items: [
+            //         {
+            //             label: 'menu.features.billing.range-type',
+            //             to: '/app/billing/range-type'
+            //         },
+            //         {
+            //             label: 'menu.features.billing.range-cost',
+            //             to: '/app/billing/range-cost'
+            //         }
+            //     ]
+            // }
         ]
     },
 

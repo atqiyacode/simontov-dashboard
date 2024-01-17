@@ -48,10 +48,11 @@ const electricityStatus = (value) => {
 };
 
 const onSelectMap = (location) => {
+    chartStore.$reset();
     mainStore.$patch({
         currentMap: location
     });
-    chartStore.getLastFlowrate(location.id);
+    // chartStore.getLastFlowrate(location.id);
     router.push({
         name: 'dashboard'
     });
@@ -61,12 +62,12 @@ const active = ref(null);
 const listenFlowrate = () => {
     sessionLocation.value.forEach((element) => {
         proxy.$pusher.channel('flowrate-channel-' + element.id).listen('.flowrate-event', (res) => {
-            active.value = res.data.data.location_id;
+            active.value = res.data.location_id;
 
             const matchedLocation = sessionLocation.value.find((data) => data.id === active.value);
 
             if (matchedLocation) {
-                matchedLocation.flowrates = res.data.data;
+                matchedLocation.flowrates = res.data;
             }
         });
     });
@@ -205,7 +206,7 @@ const listenFlowrate = () => {
                         <template #body="slotProps">
                             <span>
                                 {{
-                                    formatFLowrate(
+                                    formatFlowrate(
                                         parseFloat(slotProps.data.flowrates?.flowrate || 0)
                                     )
                                 }}
@@ -220,7 +221,7 @@ const listenFlowrate = () => {
                         <template #body="slotProps">
                             <span>
                                 {{
-                                    formatFLowrate(
+                                    formatFlowrate(
                                         parseFloat(slotProps.data.flowrates?.totalizer_1 || 0)
                                     )
                                 }}

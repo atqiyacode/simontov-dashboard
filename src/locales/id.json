@@ -55,7 +55,10 @@
     "yes-destroy": "Ya, Hapus Permanen",
     "send-link-reset-password": "Kirim link reset password",
     "search": "Cari",
-    "filter": "Saring"
+    "filter": "Saring",
+    "restore-all": "Pulihkan Semua",
+    "delete-permanent": "Hapus Permanen",
+    "export": "Export"
   },
 
   "table":{

@@ -111,6 +111,26 @@ import ListDetailBreak from '@/components/ListDetailBreak.vue';
 import ListHeaderDetail from '@/components/ListHeaderDetail.vue';
 import DeleteDialog from '@/components/DeleteDialog.vue';
 import RestoreDialog from '@/components/RestoreDialog.vue';
+
+import DialogFormInput from '@/components/dialog/DialogFormInput.vue';
+import DialogDetail from '@/components/dialog/DialogDetail.vue';
+
+import DialogDestroy from '@/components/dialog/DialogDestroy.vue';
+import DialogDestroySelected from '@/components/dialog/DialogDestroySelected.vue';
+
+import DialogRestore from '@/components/dialog/DialogRestore.vue';
+import DialogRestoreSelected from '@/components/dialog/DialogRestoreSelected.vue';
+
+import DialogDelete from '@/components/dialog/DialogDelete.vue';
+import DialogDeleteSelected from '@/components/dialog/DialogDeleteSelected.vue';
+
+import DialogSelectField from '@/components/dialog/DialogSelectField.vue';
+import DialogUpload from '@/components/dialog/DialogUpload.vue';
+
+import DialogExport from '@/components/dialog/DialogExport.vue';
+
+import ToolbarTable from '@/components/table/ToolbarTable.vue';
+import ColumnActionButton from '@/components/table/ColumnActionButton.vue';
 // chart-types
 import RealtimeLineChartPage from '@/components/chart-types/RealtimeLineChartPage.vue';
 import RealtimeDualLineChartPage from '@/components/chart-types/RealtimeDualLineChartPage.vue';
@@ -256,6 +276,26 @@ pinia.use(resetStore);
     app.component('ListHeaderDetail', ListHeaderDetail);
     app.component('DeleteDialog', DeleteDialog);
     app.component('RestoreDialog', RestoreDialog);
+
+    app.component('DialogFormInput', DialogFormInput);
+    app.component('DialogDetail', DialogDetail);
+
+    app.component('DialogDestroy', DialogDestroy);
+    app.component('DialogDestroySelected', DialogDestroySelected);
+
+    app.component('DialogRestore', DialogRestore);
+    app.component('DialogRestoreSelected', DialogRestoreSelected);
+
+    app.component('DialogDelete', DialogDelete);
+    app.component('DialogDeleteSelected', DialogDeleteSelected);
+
+    app.component('DialogSelectField', DialogSelectField);
+    app.component('DialogUpload', DialogUpload);
+
+    app.component('DialogExport', DialogExport);
+
+    app.component('ToolbarTable', ToolbarTable);
+    app.component('ColumnActionButton', ColumnActionButton);
 
     app.component('DualLineChartPage', DualLineChartPage);
     app.component('LineChartPage', LineChartPage);

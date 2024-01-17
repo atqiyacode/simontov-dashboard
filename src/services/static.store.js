@@ -8,7 +8,9 @@ export const useStaticChartStore = defineStore(
         const indonesiaTimeZone = ref('Asia/Jakarta');
         const title = ref('');
         const intervals = ref([5, 10, 15, 20, 30, 60]);
-        const interval = ref(30);
+        const interval = ref(5);
+        const chartLength = ref(0);
+
         const form = ref({
             start: '',
             end: ''
@@ -16,13 +18,19 @@ export const useStaticChartStore = defineStore(
         // store
         const chartSeries = ref([
             {
-                name: 'Flowrate',
+                name: 'FLOWRATE',
                 data: []
             },
             {
-                name: 'Pressure',
+                name: 'PRESSURE',
                 data: [],
                 yAxis: 1 // Assign this series to the second Y-axis
+            }
+        ]);
+        const chartFlowrateSeries = ref([
+            {
+                name: 'FLOWRATE',
+                data: []
             }
         ]);
         const chartPHSeries = ref([
@@ -65,8 +73,6 @@ export const useStaticChartStore = defineStore(
             new Date().toLocaleString('en-US', { timeZone: indonesiaTimeZone.value })
         );
 
-        const chartLength = ref(15);
-
         const currentFlowrate = ref(0);
         const currentPressure = ref(0);
         const currentPH = ref(0);
@@ -78,13 +84,19 @@ export const useStaticChartStore = defineStore(
         const resetValue = () => {
             chartSeries.value = [
                 {
-                    name: 'Flowrate',
+                    name: 'FLOWRATE',
                     data: []
                 },
                 {
-                    name: 'Pressure',
+                    name: 'PRESSURE',
                     data: [],
                     yAxis: 1 // Assign this series to the second Y-axis
+                }
+            ];
+            chartFlowrateSeries.value = [
+                {
+                    name: 'FLOWRATE',
+                    data: []
                 }
             ];
             chartPHSeries.value = [
@@ -134,6 +146,7 @@ export const useStaticChartStore = defineStore(
                         const data = res.data.data;
                         const promises = data.reverse().map(async (element) => {
                             await Promise.all([
+                                loadFlowrateChart(element),
                                 loadTotalizer(element),
                                 loadChart(element),
                                 loadPHChart(element),
@@ -171,6 +184,21 @@ export const useStaticChartStore = defineStore(
             });
         };
 
+        const loadFlowrateChart = (data) => {
+            const timestamp = data.created_at;
+
+            const newFlowrate = {
+                x: timestamp,
+                y: parseFloat(data.flowrate).toFixed(2)
+            };
+            chartFlowrateSeries.value[0].data.push(newFlowrate);
+            currentFlowrate.value = newFlowrate;
+            // Remove older data points to limit the chart length
+            if (chartFlowrateSeries.value[0].data.length < chartLength.value) {
+                chartFlowrateSeries.value[0].data.shift();
+            }
+        };
+
         const loadChart = (data) => {
             const timestamp = data.mag_date;
 
@@ -187,7 +215,7 @@ export const useStaticChartStore = defineStore(
             currentFlowrate.value = newFlowrate;
             currentPressure.value = newPressure;
             // Remove older data points to limit the chart length
-            if (chartSeries.value[0].data.length > chartLength.value) {
+            if (chartSeries.value[0].data.length < chartLength.value) {
                 chartSeries.value[0].data.shift();
                 chartSeries.value[1].data.shift();
             }
@@ -203,7 +231,7 @@ export const useStaticChartStore = defineStore(
             chartPHSeries.value[0].data.push(newPH);
             currentPH.value = newPH;
             // Remove older data points to limit the chart length
-            if (chartPHSeries.value[0].data.length > chartLength.value) {
+            if (chartPHSeries.value[0].data.length < chartLength.value) {
                 chartPHSeries.value[0].data.shift();
             }
         };
@@ -218,7 +246,7 @@ export const useStaticChartStore = defineStore(
             chartCODSeries.value[0].data.push(newCOD);
             currentCOD.value = newCOD;
             // Remove older data points to limit the chart length
-            if (chartCODSeries.value[0].data.length > chartLength.value) {
+            if (chartCODSeries.value[0].data.length < chartLength.value) {
                 chartCODSeries.value[0].data.shift();
             }
         };
@@ -233,7 +261,7 @@ export const useStaticChartStore = defineStore(
             chartCondSeries.value[0].data.push(newCond);
             currentCond.value = newCond;
             // Remove older data points to limit the chart length
-            if (chartCondSeries.value[0].data.length > chartLength.value) {
+            if (chartCondSeries.value[0].data.length < chartLength.value) {
                 chartCondSeries.value[0].data.shift();
             }
         };
@@ -248,7 +276,7 @@ export const useStaticChartStore = defineStore(
             chartLevelSeries.value[0].data.push(newLevel);
             currentLevel.value = newLevel;
             // Remove older data points to limit the chart length
-            if (chartLevelSeries.value[0].data.length > chartLength.value) {
+            if (chartLevelSeries.value[0].data.length < chartLength.value) {
                 chartLevelSeries.value[0].data.shift();
             }
         };
@@ -263,7 +291,7 @@ export const useStaticChartStore = defineStore(
             chartDOSeries.value[0].data.push(newDO);
             currentDO.value = newDO;
             // Remove older data points to limit the chart length
-            if (chartDOSeries.value[0].data.length > chartLength.value) {
+            if (chartDOSeries.value[0].data.length < chartLength.value) {
                 chartDOSeries.value[0].data.shift();
             }
         };
@@ -283,7 +311,7 @@ export const useStaticChartStore = defineStore(
                         }
                     })
                     .then(async (res) => {
-                        final_billing.value = res.data.total;
+                        final_billing.value = res.data;
                         resolve(res);
                     })
                     .catch((err) => {
@@ -295,6 +323,7 @@ export const useStaticChartStore = defineStore(
         return {
             chartLength,
             chartSeries,
+            chartFlowrateSeries,
             chartPHSeries,
             chartCODSeries,
             chartCondSeries,
@@ -315,6 +344,7 @@ export const useStaticChartStore = defineStore(
             // fucntion
             getLastFlowrate,
             loadChart,
+            loadFlowrateChart,
             loadPHChart,
             loadCODChart,
             loadCondChart,

@@ -35,11 +35,11 @@ export const useMainStore = defineStore(
         });
 
         const sanctumCsrf = async () => {
-            if (!document.cookie) {
-                await fetch(`${import.meta.env.VITE_APP_SERVER}/sanctum/csrf-cookie`, {
-                    credentials: 'include'
-                });
-            }
+            // if (!document.cookie) {
+            await fetch(`${import.meta.env.VITE_APP_SERVER}/sanctum/csrf-cookie`, {
+                credentials: 'include'
+            });
+            // }
         };
 
         const handleErrors = async (err) => {

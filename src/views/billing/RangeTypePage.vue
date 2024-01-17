@@ -1,197 +1,152 @@
 <script setup>
-import { ref, onMounted, onBeforeMount, onUnmounted, getCurrentInstance } from 'vue';
-
+import { onMounted, onUnmounted, getCurrentInstance, ref } from 'vue';
 import { useMainStore } from '@/services/main.store';
-import { useRangeTypeStore } from '@/services/billing/RangeType.store';
+import { useGlobalStore } from '@/services/global.store';
 import { storeToRefs } from 'pinia';
-const mainStore = useMainStore();
-const RangeTypeStore = useRangeTypeStore();
+import { i18n } from '@/plugins/i18n';
+
 const { proxy } = getCurrentInstance();
-proxy.$pusher.channel('range-type-channel').listen('.range-type-event', () => {
-    //
-});
+const mainStore = useMainStore();
+const GlobalStore = useGlobalStore();
+
+const { loading, errors } = storeToRefs(mainStore);
+
+const { dt, apiUrl, title, isDownloading, keyword } = storeToRefs(GlobalStore);
+
 const {
-    title,
-    data,
-    meta,
-    keyword,
-    selectedData,
-    form,
-    item,
-    rowsPerPage,
+    canShow,
+    canCreate,
+    canUpload,
+    canEdit,
+    canRestore,
+    canDestroy,
+    canDelete,
+    canDestroyMultiple,
+    canRestoreMultiple,
+    canDeleteMultiple,
+    canExport,
+    canSearch,
+    canMultiSelectData,
+    canSelectField,
+    actionColumn
+} = storeToRefs(GlobalStore.permissions);
+
+const { data, meta, rowsPerPage, sortField } = storeToRefs(GlobalStore.tableData);
+
+const { form, item, selectedData, selectedFields } = storeToRefs(GlobalStore.formData);
+
+const {
     formDialog,
+    uploadDialog,
+    detailDialog,
     destroyDataDialog,
     destroySelectedDialog,
     restoreDataDialog,
     restoreSelectedDialog,
     destroyPermanentDialog,
-    destroyPermanentSelectedDialog
-} = storeToRefs(RangeTypeStore);
-const { loading, errors } = storeToRefs(mainStore);
+    destroyPermanentSelectedDialog,
+    selectFieldDialog,
+    exportDialog
+} = storeToRefs(GlobalStore.dialogs);
+
 const {
     onChangePage,
     onSortData,
+    reloadData,
+
     getData,
-    createData,
-    updateData,
     restoreData,
     destroyData,
     deleteData,
     destroyMultiple,
     restoreMultiple,
     deleteMultiple,
-    exportCSV,
-    exportExcel
-} = RangeTypeStore;
 
-const dt = ref(null);
+    resetDialog,
 
-onBeforeMount(() => {
-    getData({
-        per_page: meta.value.per_page
+    newData,
+    newUpload,
+    submitData,
+    showData,
+    editData,
+    confirmDestroyData,
+    confirmRestoreData,
+    confirmDeletePermanentData,
+    confirmDeleteSelected,
+    confirmRestoreSelected,
+    confirmDeletePermanentSelectedDialog,
+    confirmSelectField,
+    confirmExportData,
+    uploadFile
+} = GlobalStore;
+
+onMounted(async () => {
+    sortField.value = 'name';
+    title.value = i18n.t('page.range-types');
+    apiUrl.value = 'rangeTypes';
+    form.value = {
+        id: null,
+        name: ''
+    };
+
+    await getData({
+        per_page: meta?.value.per_page
     });
-});
-onMounted(() => {
-    //
 });
 
 onUnmounted(() => {
-    // RangeTypeStore.$reset();
+    GlobalStore.resetTable();
+    GlobalStore.$reset();
 });
-
-const openNew = () => {
-    selectedData.value = [];
-    form.value = {};
-    formDialog.value = true;
-};
-
-const hideDialog = () => {
-    errors.value = {};
-    formDialog.value = false;
-};
-
-const saveData = () => {
-    if (form.value.id) {
-        updateData();
-    } else {
-        createData();
-    }
-};
-
-const editData = (data) => {
-    form.value = { ...data };
-    formDialog.value = true;
-    selectedData.value = [];
-};
-
-// destroy
-const confirmDestroyData = (data) => {
-    item.value = data;
-    destroyDataDialog.value = true;
-    selectedData.value = [];
-};
-
-// restore
-const confirmRestoreData = (data) => {
-    item.value = data;
-    restoreDataDialog.value = true;
-};
-
-// delete permanently
-const confirmDeletePermanentData = (data) => {
-    item.value = data;
-    destroyPermanentDialog.value = true;
-};
-
-// delete selected
-const confirmDeleteSelected = () => {
-    destroySelectedDialog.value = true;
-};
-
-// restore selected
-const confirmRestoreSelected = () => {
-    restoreSelectedDialog.value = true;
-};
-
-// delete permanent selected
-const confirmDeletePermanentSelectedDialog = () => {
-    destroyPermanentSelectedDialog.value = true;
-};
+const channel = ref(0);
+proxy.$pusher.channel('range-type-channel').listen('.range-type-event', () => {
+    channel.value += 1;
+});
 </script>
 
 <template>
     <div class="grid">
         <div class="col-12">
             <div class="card">
-                <Toolbar class="mb-4">
-                    <template v-slot:start>
-                        <div class="my-2">
-                            <Button
-                                v-tooltip.top="$t('button.new-data')"
-                                icon="pi pi-plus"
-                                class="p-button-rounded p-button-sm p-button-success mr-2"
-                                @click="openNew"
-                            />
-                            <Button
-                                v-tooltip.top="$t('button.delete-data')"
-                                icon="pi pi-trash"
-                                class="p-button-rounded p-button-sm p-button-warning mr-2"
-                                @click="confirmDeleteSelected"
-                                :disabled="!selectedData || !selectedData.length"
-                            />
-                            <Button
-                                v-tooltip.top="$t('button.restore-data')"
-                                icon="pi pi-refresh"
-                                class="p-button-rounded p-button-sm p-button-info mr-2"
-                                @click="confirmRestoreSelected"
-                                :disabled="!selectedData || !selectedData.length"
-                            />
-                        </div>
-                    </template>
-
-                    <template v-slot:end>
-                        <Button
-                            label="CSV"
-                            icon="pi pi-file"
-                            class="p-button-info p-button-sm mr-2"
-                            @click="exportCSV($event)"
-                        />
-                        <Button
-                            label="Excel"
-                            icon="pi pi-file-excel"
-                            class="p-button-success p-button-sm mr-2"
-                            @click="exportExcel($event)"
-                        />
-                        <Button
-                            :label="$t('button.delete-data-Permanent')"
-                            v-tooltip.top="$t('button.delete-data-Permanent')"
-                            icon="pi pi-trash"
-                            class="p-button-sm p-button-danger"
-                            @click="confirmDeletePermanentSelectedDialog"
-                            :disabled="!selectedData || !selectedData.length"
-                        />
-                    </template>
-                </Toolbar>
+                <ToolbarTable
+                    :canCreate="canCreate"
+                    :canUpload="canUpload"
+                    :canMultiSelectData="canMultiSelectData"
+                    :canDestroyMultiple="canDestroyMultiple"
+                    :canRestoreMultiple="canRestoreMultiple"
+                    :canExport="canExport"
+                    :canDeleteMultiple="canDeleteMultiple"
+                    :canSelectField="canSelectField && selectedFields.length > 0"
+                    :selectedData="selectedData"
+                    :isDownloading="isDownloading"
+                    @newData="newData"
+                    @newUpload="newUpload"
+                    @confirmDeleteSelected="confirmDeleteSelected"
+                    @confirmRestoreSelected="confirmRestoreSelected"
+                    @confirmSelectField="confirmSelectField"
+                    @download="confirmExportData"
+                    @confirmDeletePermanentSelectedDialog="confirmDeletePermanentSelectedDialog"
+                />
 
                 <DataTable
-                    ref="dt"
-                    :row-hover="false"
+                    lazy
                     :loading="loading"
+                    ref="dt"
                     :value="data"
                     v-model:selection="selectedData"
                     dataKey="id"
                     responsiveLayout="scroll"
+                    :resizableColumns="true"
+                    scrollable
                     @page="onChangePage($event)"
                     @sort="onSortData"
-                    scrollable
-                    class="p-datatable-sm"
                 >
                     <template #empty>
                         <div
                             class="flex flex-column md:flex-row md:justify-content-center md:align-items-center my-3"
                         >
-                            <h5 class="m-0 text-red-600">
-                                {{ $t('alert.no-data-found') }}
+                            <h5 class="m-0" :class="loading ? 'text-blue-600' : 'text-red-600'">
+                                {{ loading ? 'Loading...' : 'Data Tidak Ditemukan' }}
                             </h5>
                         </div>
                     </template>
@@ -200,14 +155,21 @@ const confirmDeletePermanentSelectedDialog = () => {
                             class="flex flex-column md:flex-row md:justify-content-between md:align-items-center mb-2"
                         >
                             <h5 class="m-0 capitalize">{{ title }}</h5>
-                            <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <span class="block mt-2 md:mt-0 p-input-icon-left" v-if="canSearch">
                                 <i class="pi pi-search" />
                                 <InputText v-model="keyword" :placeholder="$t('table.search')" />
                             </span>
                         </div>
                     </template>
 
-                    <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+                    <Column
+                        selectionMode="multiple"
+                        headerStyle="width: 3rem"
+                        v-if="canMultiSelectData"
+                    ></Column>
+
+                    <!-- start table content -->
+
                     <Column field="label" :sortable="true" headerStyle="min-width:15rem;">
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold"> label </span>
@@ -222,7 +184,7 @@ const confirmDeletePermanentSelectedDialog = () => {
                     <Column field="lower_limit" :sortable="true" headerStyle="min-width:15rem;">
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold">
-                                Batas Bawah <small class="lowercase">(m<sup>3</sup>)</small>
+                                Lower Limit <small class="lowercase">(m<sup>3</sup>)</small>
                             </span>
                         </template>
                         <template #body="slotProps">
@@ -235,7 +197,7 @@ const confirmDeletePermanentSelectedDialog = () => {
                     <Column field="lower_limit" :sortable="true" headerStyle="min-width:15rem;">
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold">
-                                Batas Atas <small class="lowercase">(m<sup>3</sup>)</small>
+                                Upper Limit <small class="lowercase">(m<sup>3</sup>)</small>
                             </span>
                         </template>
                         <template #body="slotProps">
@@ -245,11 +207,14 @@ const confirmDeletePermanentSelectedDialog = () => {
                         </template>
                     </Column>
 
+                    <!-- end table content -->
+
                     <Column
                         class="text-center"
-                        headerStyle="min-width:7rem;"
-                        alignFrozen="right"
+                        headerStyle="min-width:10rem;"
                         :frozen="true"
+                        align-frozen="right"
+                        v-if="actionColumn"
                     >
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold">
@@ -257,40 +222,27 @@ const confirmDeletePermanentSelectedDialog = () => {
                             </span>
                         </template>
                         <template #body="slotProps">
-                            <Button
-                                v-if="slotProps.data.trashed"
-                                v-tooltip.top="$t('button.restore-data')"
-                                icon="pi pi-refresh"
-                                class="p-button-rounded p-button-sm p-button-secondary mr-2"
-                                @click="confirmRestoreData(slotProps.data)"
-                            />
-                            <Button
-                                v-if="slotProps.data.trashed"
-                                v-tooltip.top="$t('button.delete-data')"
-                                icon="pi pi-trash"
-                                class="p-button-rounded p-button-sm p-button-danger mr-2"
-                                @click="confirmDeletePermanentData(slotProps.data)"
-                            />
-                            <Button
-                                v-if="!slotProps.data.trashed"
-                                v-tooltip.top="$t('button.edit-data')"
-                                icon="pi pi-pencil"
-                                class="p-button-rounded p-button-sm p-button-success mr-2"
-                                @click="editData(slotProps.data)"
-                            />
-                            <Button
-                                v-if="!slotProps.data.trashed"
-                                v-tooltip.top="$t('button.delete-data')"
-                                icon="pi pi-trash"
-                                class="p-button-rounded p-button-sm p-button-warning mt-2"
-                                @click="confirmDestroyData(slotProps.data)"
+                            <ColumnActionButton
+                                :actionColumn="actionColumn"
+                                :data="slotProps.data"
+                                :canShow="canShow"
+                                :canEdit="canEdit"
+                                :canRestore="canRestore"
+                                :canDestroy="canDestroy"
+                                :canDelete="canDelete"
+                                @confirmRestoreData="confirmRestoreData(slotProps.data)"
+                                @confirmDeletePermanentData="
+                                    confirmDeletePermanentData(slotProps.data)
+                                "
+                                @showData="showData(slotProps.data)"
+                                @editData="editData(slotProps.data)"
+                                @confirmDestroyData="confirmDestroyData(slotProps.data)"
                             />
                         </template>
                     </Column>
                 </DataTable>
 
                 <Paginator
-                    v-if="meta.total > 0"
                     :template="{
                         '640px': 'PrevPageLink CurrentPageReport NextPageLink RowsPerPageDropdown',
                         '960px':
@@ -300,342 +252,187 @@ const confirmDeletePermanentSelectedDialog = () => {
                         default:
                             'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown CurrentPageReport'
                     }"
-                    :first="meta.to - 1"
-                    :rows="parseInt(meta.per_page)"
-                    :totalRecords="meta.total"
+                    :first="meta?.to - 1"
+                    :rows="parseInt(meta?.per_page)"
+                    :totalRecords="meta?.total"
                     :rowsPerPageOptions="rowsPerPage"
                     @page="onChangePage"
-                />
+                >
+                    <template #start>
+                        <Button
+                            type="button"
+                            icon="pi pi-refresh"
+                            text
+                            v-tooltip.top="`Reload`"
+                            @click="reloadData(), (channel = 0)"
+                            :label="channel > 0 ? 'New update' : ''"
+                        />
+                    </template>
+                    <template #end> </template>
+                </Paginator>
             </div>
         </div>
     </div>
 
     <!-- form dialog -->
-    <Dialog
-        v-model:visible="formDialog"
-        :style="{ width: '450px' }"
-        :header="form.id ? $t('button.edit-data') : $t('button.new-data')"
-        :modal="true"
-        :closable="false"
-        :pt="{
-            mask: {
-                style: 'backdrop-filter: blur(2px)'
-            }
-        }"
-        class="p-fluid"
+    <DialogFormInput
+        :loading="loading"
+        :show="formDialog"
+        :header="form.id ? $t('dialog.edit-form') : $t('dialog.create-form')"
+        :submitButton="form.id ? $t('button.update') : $t('button.save')"
+        @submit="submitData"
+        @close="resetDialog"
     >
-        <div class="field">
-            <label class="font-bold capitalize" for="label">label</label>
-            <InputText
-                id="label"
-                v-model.trim="form.label"
-                required="true"
-                :class="{ 'p-invalid': errors?.label }"
-            />
-            <small class="text-sm p-error" v-if="errors?.label">{{ errors?.label[0] }}</small>
-        </div>
+        <template #content>
+            <div class="field">
+                <label class="font-bold capitalize" for="label">label</label>
+                <InputText
+                    id="label"
+                    v-model.trim="form.label"
+                    required="true"
+                    :class="{ 'p-invalid': errors?.label }"
+                />
+                <small class="text-sm p-error" v-if="errors?.label">{{ errors?.label[0] }}</small>
+            </div>
 
-        <div class="field">
-            <label class="font-bold capitalize" for="lower_limit">
-                Batas Bawah <small class="lowercase">(m<sup>3</sup>)</small>
-            </label>
-            <InputNumber
-                id="lower_limit"
-                v-model.trim="form.lower_limit"
-                required="true"
-                :class="{ 'p-invalid': errors?.lower_limit }"
-                :minFractionDigits="0"
-                inputId="locale-id"
-                locale="id-ID"
-            />
+            <div class="field">
+                <label class="font-bold capitalize" for="lower_limit">
+                    Lower Limit <small class="lowercase">(m<sup>3</sup>)</small>
+                </label>
+                <InputNumber
+                    id="lower_limit"
+                    v-model.trim="form.lower_limit"
+                    required="true"
+                    :class="{ 'p-invalid': errors?.lower_limit }"
+                    :minFractionDigits="0"
+                    inputId="locale-id"
+                    locale="id-ID"
+                />
 
-            <small class="text-sm p-error" v-if="errors?.lower_limit">{{
-                errors?.lower_limit[0]
-            }}</small>
-        </div>
-        <div class="field">
-            <label class="font-bold capitalize" for="upper_limit">
-                Batas Atas <small class="lowercase">(m<sup>3</sup>)</small>
-            </label>
-            <InputNumber
-                id="upper_limit"
-                v-model.trim="form.upper_limit"
-                required="true"
-                :class="{ 'p-invalid': errors?.upper_limit }"
-                :minFractionDigits="0"
-                inputId="locale-id"
-                locale="id-ID"
-            />
-            <small class="text-sm p-error" v-if="errors?.upper_limit">{{
-                errors?.upper_limit[0]
-            }}</small>
-        </div>
-        <div class="field">
-            <label class="font-bold capitalize" for="description">description</label>
-            <Textarea
-                required
-                id="description"
-                v-model="form.description"
-                :class="{ 'p-invalid': errors.description }"
-                placeholder="description"
-                :rows="5"
-            />
-            <small class="text-sm p-error" v-if="errors?.description">{{
-                errors?.description[0]
-            }}</small>
-        </div>
-        <template #footer>
-            <Button
-                :disabled="loading"
-                :label="$t('button.cancel')"
-                icon="pi pi-times"
-                class="p-button-text"
-                @click="hideDialog"
-            />
-            <Button
-                :loading="loading"
-                :label="form.id ? $t('button.update') : $t('button.save')"
-                icon="pi pi-check"
-                class="p-button-success"
-                @click="saveData"
-            />
+                <small class="text-sm p-error" v-if="errors?.lower_limit">{{
+                    errors?.lower_limit[0]
+                }}</small>
+            </div>
+            <div class="field">
+                <label class="font-bold capitalize" for="upper_limit">
+                    Upper Limit <small class="lowercase">(m<sup>3</sup>)</small>
+                </label>
+                <InputNumber
+                    id="upper_limit"
+                    v-model.trim="form.upper_limit"
+                    required="true"
+                    :class="{ 'p-invalid': errors?.upper_limit }"
+                    :minFractionDigits="0"
+                    inputId="locale-id"
+                    locale="id-ID"
+                />
+                <small class="text-sm p-error" v-if="errors?.upper_limit">{{
+                    errors?.upper_limit[0]
+                }}</small>
+            </div>
+            <div class="field">
+                <label class="font-bold capitalize" for="description">description</label>
+                <Textarea
+                    required
+                    id="description"
+                    v-model="form.description"
+                    :class="{ 'p-invalid': errors.description }"
+                    placeholder="description"
+                    :rows="5"
+                />
+                <small class="text-sm p-error" v-if="errors?.description">{{
+                    errors?.description[0]
+                }}</small>
+            </div>
         </template>
-    </Dialog>
+    </DialogFormInput>
+
+    <!-- detail dialog -->
+    <DialogDetail :show="detailDialog" @close="resetDialog()">
+        <template #content>
+            <ul class="list-none p-0">
+                <ListDetailBreak label="label" :value="item.label" />
+                <ListDetailBreak label="lower_limit" :value="numberFormat(item.lower_limit)" />
+                <ListDetailBreak label="upper_limit" :value="numberFormat(item.upper_limit)" />
+                <ListDetailBreak label="description" :value="item.description" />
+            </ul>
+        </template>
+    </DialogDetail>
 
     <!-- restore single data dialog -->
-    <Dialog
-        v-model:visible="restoreDataDialog"
-        :style="{ width: '450px' }"
-        :header="$t('alert.confirmation')"
-        :modal="true"
-        :closable="false"
-        :pt="{
-            mask: {
-                style: 'backdrop-filter: blur(2px)'
-            }
-        }"
-    >
-        <div class="flex align-items-center justify-content-center">
-            <i class="pi pi-exclamation-triangle text-center mb-3" style="font-size: 3rem" />
-        </div>
-        <p v-if="item" class="text-center">
-            {{ $t('dialog.restore-text') }}
-        </p>
-        <p v-if="item" class="text-center">
-            <b>{{ item.name }}</b>
-        </p>
-        <template #footer>
-            <Button
-                :disabled="loading"
-                :label="$t('button.cancel')"
-                icon="pi pi-times"
-                class="p-button-text"
-                @click="restoreDataDialog = false"
-            />
-            <Button
-                :label="$t('button.yes-restore')"
-                icon="pi pi-check"
-                class="p-button-success"
-                @click="restoreData(item.id)"
-                :loading="loading"
-            />
-        </template>
-    </Dialog>
+    <DialogRestore
+        :show="restoreDataDialog"
+        :label="item?.name"
+        :loading="loading"
+        @submit="restoreData(item.id)"
+        @close="resetDialog()"
+    />
 
     <!-- delete single data dialog -->
-    <Dialog
-        v-model:visible="destroyDataDialog"
-        :style="{ width: '450px' }"
-        :header="$t('alert.confirmation')"
-        :modal="true"
-        :closable="false"
-        :pt="{
-            mask: {
-                style: 'backdrop-filter: blur(2px)'
-            }
-        }"
-    >
-        <div class="flex align-items-center justify-content-center">
-            <i class="pi pi-exclamation-triangle text-center mb-3" style="font-size: 3rem" />
-        </div>
-        <p v-if="item" class="text-center">
-            {{ $t('dialog.delete-text') }}
-        </p>
-        <p v-if="item" class="text-center">
-            <b>{{ item.name }}</b>
-        </p>
-        <template #footer>
-            <Button
-                :disabled="loading"
-                :label="$t('button.cancel')"
-                icon="pi pi-times"
-                class="p-button-text"
-                @click="destroyDataDialog = false"
-            />
-            <Button
-                :label="$t('button.yes-delete')"
-                icon="pi pi-check"
-                class="p-button-danger"
-                @click="destroyData(item.id)"
-                :loading="loading"
-            />
-        </template>
-    </Dialog>
+    <DialogDestroy
+        :show="destroyDataDialog"
+        :label="item?.name"
+        :loading="loading"
+        @submit="destroyData(item.id)"
+        @close="resetDialog()"
+    />
 
     <!-- delete permanen single data dialog -->
-
-    <Dialog
-        v-model:visible="destroyPermanentDialog"
-        :style="{ width: '450px' }"
-        :header="$t('alert.confirmation')"
-        :modal="true"
-        :closable="false"
-        :pt="{
-            mask: {
-                style: 'backdrop-filter: blur(2px)'
-            }
-        }"
-    >
-        <div class="flex align-items-center justify-content-center">
-            <i class="pi pi-exclamation-triangle text-center mb-3" style="font-size: 3rem" />
-        </div>
-        <p v-if="item" class="text-center">
-            {{ $t('dialog.delete-permanent-text') }}
-        </p>
-        <p v-if="item" class="text-center">
-            <b>{{ item.name }}</b>
-        </p>
-        <template #footer>
-            <Button
-                :disabled="loading"
-                :label="$t('button.cancel')"
-                icon="pi pi-times"
-                class="p-button-text"
-                @click="destroyPermanentDialog = false"
-            />
-            <Button
-                :label="$t('button.yes-destroy')"
-                icon="pi pi-check"
-                class="p-button-danger"
-                @click="deleteData(item.id)"
-                :loading="loading"
-            />
-        </template>
-    </Dialog>
+    <DialogDelete
+        :show="destroyPermanentDialog"
+        :label="item?.name"
+        :loading="loading"
+        @submit="deleteData(item.id)"
+        @close="resetDialog()"
+    />
 
     <!-- delete selected data dialog -->
-
-    <Dialog
-        v-model:visible="destroySelectedDialog"
-        :style="{ width: '450px' }"
-        :header="$t('alert.confirmation')"
-        :modal="true"
-        :closable="false"
-        :pt="{
-            mask: {
-                style: 'backdrop-filter: blur(2px)'
-            }
-        }"
-    >
-        <div class="flex align-items-center justify-content-center">
-            <i class="pi pi-exclamation-triangle text-center mb-3" style="font-size: 3rem" />
-        </div>
-        <p v-if="selectedData" class="text-center">
-            {{ $t('dialog.delete-multiple-text', { count: selectedData.length }) }}
-        </p>
-        <template #footer>
-            <Button
-                :disabled="loading"
-                :label="$t('button.cancel')"
-                icon="pi pi-times"
-                class="p-button-text"
-                @click="destroySelectedDialog = false"
-            />
-            <Button
-                :label="$t('button.yes-delete')"
-                icon="pi pi-check"
-                class="p-button-danger"
-                @click="destroyMultiple()"
-                :loading="loading"
-            />
-        </template>
-    </Dialog>
+    <DialogDestroySelected
+        :show="destroySelectedDialog"
+        :data="selectedData"
+        :loading="loading"
+        @submit="destroyMultiple()"
+        @close="resetDialog()"
+    />
 
     <!-- restore selected data dialog -->
-
-    <Dialog
-        v-model:visible="restoreSelectedDialog"
-        :style="{ width: '450px' }"
-        :header="$t('alert.confirmation')"
-        :modal="true"
-        :closable="false"
-        :pt="{
-            mask: {
-                style: 'backdrop-filter: blur(2px)'
-            }
-        }"
-    >
-        <div class="flex align-items-center justify-content-center">
-            <i class="pi pi-exclamation-triangle text-center mb-3" style="font-size: 3rem" />
-        </div>
-        <p v-if="selectedData" class="text-center">
-            {{ $t('dialog.restore-multiple-text', { count: selectedData.length }) }}
-        </p>
-        <template #footer>
-            <Button
-                :disabled="loading"
-                :label="$t('button.cancel')"
-                icon="pi pi-times"
-                class="p-button-text"
-                @click="restoreSelectedDialog = false"
-            />
-            <Button
-                :label="$t('button.yes-restore')"
-                icon="pi pi-check"
-                class="p-button-warning"
-                @click="restoreMultiple()"
-                :loading="loading"
-            />
-        </template>
-    </Dialog>
+    <DialogRestoreSelected
+        :show="restoreSelectedDialog"
+        :data="selectedData"
+        :loading="loading"
+        @submit="restoreMultiple()"
+        @close="resetDialog()"
+    />
 
     <!-- delete permanent selected data dialog -->
-    <Dialog
-        v-model:visible="destroyPermanentSelectedDialog"
-        :style="{ width: '450px' }"
-        :header="$t('alert.confirmation')"
-        :modal="true"
-        :closable="false"
-        :pt="{
-            mask: {
-                style: 'backdrop-filter: blur(2px)'
-            }
-        }"
-    >
-        <div class="flex align-items-center justify-content-center">
-            <i class="pi pi-exclamation-triangle text-center mb-3" style="font-size: 3rem" />
-        </div>
-        <p v-if="selectedData" class="text-center">
-            Apakah yakin akan mengapus permanen <b>{{ selectedData.length }}</b> data yang dipilih ?
-        </p>
-        <h4 class="font-bold text-center">{{ $t('dialog.delete-permanent-alert-text') }}</h4>
-        <template #footer>
-            <Button
-                :disabled="loading"
-                :label="$t('button.cancel')"
-                icon="pi pi-times"
-                class="p-button-text"
-                @click="destroyPermanentSelectedDialog = false"
-            />
-            <Button
-                :label="$t('button.yes-destroy')"
-                icon="pi pi-check"
-                class="p-button-danger"
-                @click="deleteMultiple()"
-                :loading="loading"
-            />
-        </template>
-    </Dialog>
+    <DialogDeleteSelected
+        :show="destroyPermanentSelectedDialog"
+        :data="selectedData"
+        :loading="loading"
+        @submit="deleteMultiple()"
+        @close="resetDialog()"
+    />
+
+    <DialogSelectField
+        :show="selectFieldDialog"
+        :selectedFields="selectedFields"
+        :loading="loading"
+        @close="resetDialog()"
+    />
+
+    <DialogUpload
+        :show="uploadDialog"
+        :loading="loading"
+        @submit="uploadFile()"
+        @close="resetDialog()"
+    />
+
+    <DialogExport
+        :header="title"
+        :show="exportDialog"
+        :loading="isDownloading"
+        @close="resetDialog()"
+    />
 </template>
 
 <style scoped lang="scss"></style>

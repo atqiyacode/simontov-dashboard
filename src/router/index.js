@@ -34,7 +34,7 @@ const router = createRouter({
                             name: 'dashboard',
                             component: () => import('@/views/Dashboard.vue'),
                             meta: {
-                                title: 'Dashbaord realtime'
+                                title: 'Dashboard realtime'
                             }
                         },
                         {
@@ -42,10 +42,18 @@ const router = createRouter({
                             name: 'dashboard-static',
                             component: () => import('@/views/StaticChartPage.vue'),
                             meta: {
-                                title: 'Dashbaord Static'
+                                title: 'Dashboard Static'
                             }
                         }
                     ]
+                },
+                {
+                    path: 'my-notification',
+                    name: 'my-notification',
+                    component: () => import('@/views/MyNotificationPage.vue'),
+                    meta: {
+                        title: 'My Notification'
+                    }
                 },
                 // master data auth
                 {

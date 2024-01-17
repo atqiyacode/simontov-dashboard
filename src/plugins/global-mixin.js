@@ -18,7 +18,7 @@ export default {
                 maximumFractionDigits: 2
             }).format(parseInt(value))}`;
         },
-        formatFLowrate(number) {
+        formatFlowrate(number) {
             return number.toLocaleString('id-ID', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2

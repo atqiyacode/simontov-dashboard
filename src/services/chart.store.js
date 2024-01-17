@@ -89,7 +89,7 @@ export const useChartStore = defineStore(
             ];
             chartFlowrateSeries.value = [
                 {
-                    name: 'PH',
+                    name: 'Flowrate',
                     data: []
                 }
             ];
@@ -138,7 +138,6 @@ export const useChartStore = defineStore(
                     })
                     .then(async (res) => {
                         const data = res.data.data;
-                        console.log(data);
                         const promises = data.reverse().map(async (element) => {
                             await Promise.all([
                                 loadFlowrateChart(element),
@@ -187,7 +186,7 @@ export const useChartStore = defineStore(
             };
             const newPressure = {
                 x: timestamp,
-                y: parseFloat(data.totalizer_3).toFixed(2)
+                y: parseFloat(data.pressure).toFixed(2)
             };
             chartSeries.value[0].data.push(newFlowrate);
             chartSeries.value[1].data.push(newPressure);

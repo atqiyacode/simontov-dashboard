@@ -55,7 +55,10 @@
     "yes-destroy": "Yes, Delete Permanent",
     "send-link-reset-password": "Send link reset password",
     "search": "Search",
-    "filter": "Filter"
+    "filter": "Filter",
+    "restore-all": "Restore All",
+    "delete-permanent": "Delete permanent",
+    "export": "Export"
   },
 
   "table":{

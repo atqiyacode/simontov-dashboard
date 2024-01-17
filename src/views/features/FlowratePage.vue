@@ -1,98 +1,251 @@
 <script setup>
-import { ref, onMounted, onBeforeMount, onUnmounted, getCurrentInstance } from 'vue';
-
+import { format, lastDayOfMonth } from 'date-fns';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import { useMainStore } from '@/services/main.store';
-import { useFlowrateStore } from '@/services/features/Flowrate.store';
+import { useGlobalStore } from '@/services/global.store';
 import { storeToRefs } from 'pinia';
+import { i18n } from '@/plugins/i18n';
+
 const mainStore = useMainStore();
-const FlowrateStore = useFlowrateStore();
-const { proxy } = getCurrentInstance();
+const GlobalStore = useGlobalStore();
 
-const { title, data, meta, keyword, selectedData, rowsPerPage } = storeToRefs(FlowrateStore);
-const { loading, currentMap } = storeToRefs(mainStore);
-const { onChangePage, onSortData, getData, exportCSV, exportExcel } = FlowrateStore;
+const { loading, errors, error } = storeToRefs(mainStore);
 
-const dt = ref(null);
-const detailDialog = ref(false);
-const selected = ref({});
-const newDataCount = ref(0);
-proxy.$pusher.channel('flowrate-channel-' + currentMap.value.id).listen('.flowrate-event', () => {
-    newDataCount.value++;
-});
-onBeforeMount(() => {
-    //
-});
+const { dt, apiUrl, title, isDownloading } = storeToRefs(GlobalStore);
+
+const {
+    canShow,
+    canCreate,
+    canEdit,
+    canRestore,
+    canDestroy,
+    canDelete,
+    canDestroyMultiple,
+    canRestoreMultiple,
+    canDeleteMultiple,
+    actionColumn
+} = storeToRefs(GlobalStore.permissions);
+
+const { allData, sortField } = storeToRefs(GlobalStore.tableData);
+
+const { form, item } = storeToRefs(GlobalStore.formData);
+
+const { formDialog, detailDialog, exportDialog } = storeToRefs(GlobalStore.dialogs);
+
+const {
+    getAll,
+
+    resetDialog,
+
+    submitData,
+    showData,
+    editData,
+    confirmDestroyData,
+    confirmRestoreData,
+    confirmDeletePermanentData,
+    confirmExportData,
+    exportData
+} = GlobalStore;
+
 onMounted(() => {
-    getData({
-        per_page: meta.value.per_page
-    });
+    actionColumn.value = false;
+    canCreate.value = false;
+    canEdit.value = false;
+
+    canDestroy.value = false;
+    canDestroyMultiple.value = false;
+
+    canRestore.value = false;
+    canRestoreMultiple.value = false;
+
+    canDelete.value = false;
+    canDeleteMultiple.value = false;
+
+    sortField.value = '-id';
+    title.value = i18n.t('page.flow-meter');
+    apiUrl.value = `flowrates/${mainStore.currentMap.id}/filterDate`;
 });
 
 onUnmounted(() => {
-    // FlowrateStore.$reset();
+    GlobalStore.resetTable();
+    GlobalStore.$reset();
 });
 
-const loadNewData = () => {
-    newDataCount.value = 0;
-    getData({
-        per_page: meta.value.per_page
-    });
+const filterDate = ref(null);
+const monthDate = ref(null);
+
+const startDate = ref(null);
+const endDate = ref(null);
+
+const startMonth = ref(null);
+const endMonth = ref(null);
+
+const disbaledButton = ref(true);
+
+const intervals = ref(['Hour', 'Day', 'Month']);
+const interval = ref('day');
+
+watch(filterDate, (value) => {
+    if (value[1]) {
+        [startDate.value, endDate.value] = value.map(formatDate);
+    }
+    disbaledButton.value = !(endMonth.value || endDate.value);
+});
+
+watch(monthDate, (value) => {
+    if (value[1]) {
+        startMonth.value = formatDate(value[0]);
+        endMonth.value = formatMonth(value[1]);
+    }
+    disbaledButton.value = !(endMonth.value || endDate.value);
+});
+
+watch(interval, () => {
+    disbaledButton.value = !(endMonth.value || endDate.value);
+});
+
+const formatMonth = (date) => {
+    const inputMonth = new Date(date);
+    const lastDay = lastDayOfMonth(inputMonth);
+    const formattedMonth = format(lastDay, 'yyyy-MM-dd');
+    return formattedMonth;
 };
 
-const showDetail = (data) => {
-    selected.value = { ...data };
-    detailDialog.value = true;
+const formatDate = (date) => {
+    const inputDate = new Date(date);
+    const formattedDate = format(inputDate, 'yyyy-MM-dd');
+    return formattedDate;
+};
+
+const createParams = (extraParams = {}) => ({
+    start: startDate.value,
+    end: endDate.value,
+    month_start: startMonth.value,
+    month_end: endMonth.value,
+    interval: interval.value.toLowerCase(),
+    ...extraParams
+});
+
+const filterData = () => {
+    const params = createParams();
+    getAll(params);
+};
+
+const optionValue = ref(null);
+
+const onSubmitExport = () => {
+    exportData(optionValue.value, {
+        start: startDate.value,
+        end: endDate.value,
+        month_start: startMonth.value,
+        month_end: endMonth.value,
+        interval: interval.value.toLowerCase()
+    });
 };
 </script>
 
 <template>
+    <ul class="list-none p-0 m-0">
+        <li
+            class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4"
+        >
+            <div>
+                <h5 class="text-gray-500 font-bold mr-2 mb-1 md:mb-0 capitalize">
+                    {{ mainStore.currentMap?.name }} - {{ mainStore.currentMap?.company_name }}
+                </h5>
+            </div>
+        </li>
+    </ul>
     <div class="grid">
         <div class="col-12">
             <div class="card">
                 <Toolbar class="mb-4">
                     <template v-slot:start>
-                        <Button
-                            type="button"
-                            icon="pi pi-refresh"
-                            text
-                            :label="`${newDataCount} Data Baru`"
-                            @click="loadNewData"
-                        />
+                        <div class="my-2">
+                            <div class="formgroup-inline">
+                                <Dropdown
+                                    :options="intervals"
+                                    v-model="interval"
+                                    :placeholder="$t('text.interval')"
+                                    class="w-full md:w-14rem"
+                                    :disabled="loading"
+                                >
+                                    <template #option="slotProps">
+                                        <span class="capitalize">
+                                            {{ slotProps.option }}
+                                        </span>
+                                    </template>
+                                </Dropdown>
+                                <Calendar
+                                    class="w-full md:w-14rem ml-2"
+                                    view="month"
+                                    dateFormat="mm/yy"
+                                    v-model="monthDate"
+                                    placeholder="Filter Month"
+                                    showIcon
+                                    iconDisplay="input"
+                                    selectionMode="range"
+                                    :disabled="loading"
+                                    :maxDate="new Date()"
+                                    v-if="interval === 'Month'"
+                                />
+                                <Calendar
+                                    v-else
+                                    class="w-full md:w-14rem ml-2"
+                                    dateFormat="dd/mm/yy"
+                                    v-model="filterDate"
+                                    placeholder="Filter Date"
+                                    showIcon
+                                    iconDisplay="input"
+                                    selectionMode="range"
+                                    :manualInput="true"
+                                    :disabled="loading"
+                                    :maxDate="new Date()"
+                                />
+                                <Button
+                                    :disabled="disbaledButton"
+                                    class="ml-2"
+                                    :loading="loading"
+                                    :label="$t('button.filter')"
+                                    icon="pi pi-search"
+                                    @click="filterData()"
+                                />
+                            </div>
+                        </div>
                     </template>
+
                     <template v-slot:end>
                         <Button
-                            label="CSV"
-                            icon="pi pi-file"
-                            class="p-button-info p-button-sm mr-2"
-                            @click="exportCSV($event)"
-                        />
-                        <Button
-                            label="Excel"
-                            icon="pi pi-file-excel"
-                            class="p-button-success p-button-sm mr-2"
-                            @click="exportExcel($event)"
+                            :loading="isDownloading"
+                            v-tooltip.top="$t('button.download')"
+                            icon="pi pi-download"
+                            class="p-button-sm mr-1"
+                            severity="success"
+                            rounded
+                            label="Download"
+                            @click="confirmExportData()"
+                            v-if="allData.length > 0"
                         />
                     </template>
                 </Toolbar>
 
                 <DataTable
-                    ref="dt"
-                    :row-hover="false"
+                    v-if="allData.length > 0"
+                    lazy
                     :loading="loading"
-                    :value="data"
-                    v-model:selection="selectedData"
+                    ref="dt"
+                    :value="allData"
                     dataKey="id"
                     responsiveLayout="scroll"
-                    @page="onChangePage($event)"
-                    @sort="onSortData"
+                    :resizableColumns="true"
                     scrollable
                 >
                     <template #empty>
                         <div
                             class="flex flex-column md:flex-row md:justify-content-center md:align-items-center my-3"
                         >
-                            <h5 class="m-0 text-red-600">
-                                {{ $t('alert.no-data-found') }}
+                            <h5 class="m-0" :class="loading ? 'text-blue-600' : 'text-red-600'">
+                                {{ loading ? 'Loading...' : 'Data Tidak Ditemukan' }}
                             </h5>
                         </div>
                     </template>
@@ -100,16 +253,13 @@ const showDetail = (data) => {
                         <div
                             class="flex flex-column md:flex-row md:justify-content-between md:align-items-center mb-2"
                         >
-                            <h5 class="m-0 capitalize">{{ title }} - {{ currentMap.name }}</h5>
-                            <span class="block mt-2 md:mt-0 p-input-icon-left">
-                                <i class="pi pi-search" />
-                                <InputText v-model="keyword" :placeholder="$t('table.search')" />
-                            </span>
+                            <h5 class="m-0 capitalize">{{ title }}</h5>
                         </div>
                     </template>
 
-                    <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-                    <Column field="mag_date" :sortable="true" headerStyle="min-width:20rem;">
+                    <!-- start table content -->
+
+                    <Column field="mag_date" :sortable="false" headerStyle="min-width:20rem;">
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold"> mag date </span>
                         </template>
@@ -119,7 +269,7 @@ const showDetail = (data) => {
                             </span>
                         </template>
                     </Column>
-                    <Column field="ph" :sortable="true" headerStyle="min-width:10rem;">
+                    <Column field="ph" :sortable="false" headerStyle="min-width:10rem;">
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold"> PH </span>
                         </template>
@@ -129,7 +279,7 @@ const showDetail = (data) => {
                             </span>
                         </template>
                     </Column>
-                    <Column field="cod" :sortable="true" headerStyle="min-width:10rem;">
+                    <Column field="cod" :sortable="false" headerStyle="min-width:10rem;">
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold"> COD </span>
                         </template>
@@ -139,7 +289,7 @@ const showDetail = (data) => {
                             </span>
                         </template>
                     </Column>
-                    <Column field="flowrate" :sortable="true" headerStyle="min-width:15rem;">
+                    <Column field="flowrate" :sortable="false" headerStyle="min-width:15rem;">
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold"> flowrate </span>
                         </template>
@@ -149,7 +299,7 @@ const showDetail = (data) => {
                             </span>
                         </template>
                     </Column>
-                    <Column field="totalizer_1" :sortable="true" headerStyle="min-width:15rem;">
+                    <Column field="totalizer_1" :sortable="false" headerStyle="min-width:15rem;">
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold"> totalizer 1 </span>
                         </template>
@@ -159,7 +309,7 @@ const showDetail = (data) => {
                             </span>
                         </template>
                     </Column>
-                    <Column field="totalizer_2" :sortable="true" headerStyle="min-width:15rem;">
+                    <Column field="totalizer_2" :sortable="false" headerStyle="min-width:15rem;">
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold"> totalizer 2 </span>
                         </template>
@@ -169,7 +319,7 @@ const showDetail = (data) => {
                             </span>
                         </template>
                     </Column>
-                    <Column field="totalizer_3" :sortable="true" headerStyle="min-width:15rem;">
+                    <Column field="totalizer_3" :sortable="false" headerStyle="min-width:15rem;">
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold"> totalizer 3 </span>
                         </template>
@@ -179,7 +329,7 @@ const showDetail = (data) => {
                             </span>
                         </template>
                     </Column>
-                    <Column field="analog_1" :sortable="true" headerStyle="min-width:15rem;">
+                    <Column field="analog_1" :sortable="false" headerStyle="min-width:15rem;">
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold"> analog 1 </span>
                         </template>
@@ -189,7 +339,7 @@ const showDetail = (data) => {
                             </span>
                         </template>
                     </Column>
-                    <Column field="pressure" :sortable="true" headerStyle="min-width:15rem;">
+                    <Column field="pressure" :sortable="false" headerStyle="min-width:15rem;">
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold"> Pressure </span>
                         </template>
@@ -199,7 +349,7 @@ const showDetail = (data) => {
                             </span>
                         </template>
                     </Column>
-                    <Column field="status_battery" :sortable="true" headerStyle="min-width:15rem;">
+                    <Column field="status_battery" :sortable="false" headerStyle="min-width:15rem;">
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold"> Status Battery </span>
                         </template>
@@ -210,7 +360,7 @@ const showDetail = (data) => {
                         </template>
                     </Column>
 
-                    <Column field="bin_alarm" :sortable="true" headerStyle="min-width:15rem;">
+                    <Column field="bin_alarm" :sortable="false" headerStyle="min-width:15rem;">
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold"> Bin Alarm </span>
                         </template>
@@ -220,7 +370,7 @@ const showDetail = (data) => {
                             </span>
                         </template>
                     </Column>
-                    <Column field="file_name" :sortable="true" headerStyle="min-width:15rem;">
+                    <Column field="file_name" :sortable="false" headerStyle="min-width:15rem;">
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold"> File Name </span>
                         </template>
@@ -230,11 +380,15 @@ const showDetail = (data) => {
                             </span>
                         </template>
                     </Column>
+
+                    <!-- end table content -->
+
                     <Column
                         class="text-center"
-                        headerStyle="min-width:15rem;"
+                        headerStyle="min-width:10rem;"
                         :frozen="true"
                         align-frozen="right"
+                        v-if="actionColumn"
                     >
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold">
@@ -242,44 +396,136 @@ const showDetail = (data) => {
                             </span>
                         </template>
                         <template #body="slotProps">
-                            <Button
-                                v-if="!slotProps.data.trashed"
-                                v-tooltip.top="`Detail`"
-                                icon="pi pi-search"
-                                class="p-button-rounded p-button-sm p-button-info mt-2"
-                                @click="showDetail(slotProps.data)"
+                            <ColumnActionButton
+                                :actionColumn="actionColumn"
+                                :data="slotProps.data"
+                                :canShow="canShow"
+                                :canEdit="canEdit"
+                                :canRestore="canRestore"
+                                :canDestroy="canDestroy"
+                                :canDelete="canDelete"
+                                @confirmRestoreData="confirmRestoreData(slotProps.data)"
+                                @confirmDeletePermanentData="
+                                    confirmDeletePermanentData(slotProps.data)
+                                "
+                                @showData="showData(slotProps.data)"
+                                @editData="editData(slotProps.data)"
+                                @confirmDestroyData="confirmDestroyData(slotProps.data)"
                             />
                         </template>
                     </Column>
                 </DataTable>
-
-                <Paginator
-                    class="mt-3"
-                    v-if="meta.total > 0"
-                    :template="{
-                        '640px': 'PrevPageLink CurrentPageReport NextPageLink RowsPerPageDropdown',
-                        '960px':
-                            'FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink RowsPerPageDropdown',
-                        '1300px':
-                            'FirstPageLink PrevPageLink CurrentPageReport PageLink NextPageLink LastPageLink RowsPerPageDropdown',
-                        default:
-                            'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown CurrentPageReport'
-                    }"
-                    :first="meta.to - 1"
-                    :rows="parseInt(meta.per_page)"
-                    :totalRecords="meta.total"
-                    :rowsPerPageOptions="rowsPerPage"
-                    @page="onChangePage"
-                >
-                </Paginator>
             </div>
         </div>
     </div>
+
+    <!-- form dialog -->
+    <DialogFormInput
+        :loading="loading"
+        :show="formDialog"
+        :header="form.id ? $t('dialog.edit-form') : $t('dialog.create-form')"
+        :submitButton="form.id ? $t('button.update') : $t('button.save')"
+        @submit="submitData"
+        @close="resetDialog"
+    >
+        <template #content>
+            <div class="field">
+                <label class="font-bold capitalize" for="label">label</label>
+                <InputText
+                    id="label"
+                    v-model.trim="form.label"
+                    required="true"
+                    :class="{ 'p-invalid': errors?.label }"
+                />
+                <small class="text-sm p-error" v-if="errors?.label">{{ errors?.label[0] }}</small>
+            </div>
+
+            <div class="field">
+                <label class="font-bold capitalize" for="lower_limit">
+                    Lower Limit <small class="lowercase">(m<sup>3</sup>)</small>
+                </label>
+                <InputNumber
+                    id="lower_limit"
+                    v-model.trim="form.lower_limit"
+                    required="true"
+                    :class="{ 'p-invalid': errors?.lower_limit }"
+                    :minFractionDigits="0"
+                    inputId="locale-id"
+                    locale="id-ID"
+                />
+
+                <small class="text-sm p-error" v-if="errors?.lower_limit">{{
+                    errors?.lower_limit[0]
+                }}</small>
+            </div>
+            <div class="field">
+                <label class="font-bold capitalize" for="upper_limit">
+                    Upper Limit <small class="lowercase">(m<sup>3</sup>)</small>
+                </label>
+                <InputNumber
+                    id="upper_limit"
+                    v-model.trim="form.upper_limit"
+                    required="true"
+                    :class="{ 'p-invalid': errors?.upper_limit }"
+                    :minFractionDigits="0"
+                    inputId="locale-id"
+                    locale="id-ID"
+                />
+                <small class="text-sm p-error" v-if="errors?.upper_limit">{{
+                    errors?.upper_limit[0]
+                }}</small>
+            </div>
+            <div class="field">
+                <label class="font-bold capitalize" for="description">description</label>
+                <Textarea
+                    required
+                    id="description"
+                    v-model="form.description"
+                    :class="{ 'p-invalid': errors.description }"
+                    placeholder="description"
+                    :rows="5"
+                />
+                <small class="text-sm p-error" v-if="errors?.description">{{
+                    errors?.description[0]
+                }}</small>
+            </div>
+        </template>
+    </DialogFormInput>
+
+    <!-- detail dialog -->
+    <DialogDetail :show="detailDialog" @close="resetDialog()">
+        <template #content>
+            <ul class="list-none p-0 m-0">
+                <ListDetail label="Lokasi" :value="item.location.name" />
+                <ListDetail label="mag date" :value="item.mag_date" />
+                <ListDetail label="flowrate" :value="item.flowrate" />
+                <ListDetail label="totalizer 1" :value="item.totalizer_1" />
+                <ListDetail label="totalizer 2" :value="item.totalizer_2" />
+                <ListDetail label="totalizer 3" :value="item.totalizer_3" />
+                <ListDetail label="analog 1" :value="item.analog_1" />
+                <ListDetail label="pressure" :value="item.pressure" />
+                <ListDetail label="status battery" :value="item.status_battery" />
+                <ListDetail label="bin alarm" :value="item.bin_alarm" />
+                <ListDetail label="file" :value="item.file_name" />
+                <ListDetail label="PH" :value="item.ph" />
+                <ListDetail label="COD" :value="item.cod" />
+                <ListDetail label="Cond" :value="item.cond" />
+                <ListDetail label="Level" :value="item.level" />
+            </ul>
+        </template>
+    </DialogDetail>
+
+    <DialogExport
+        :header="title"
+        :show="exportDialog"
+        :loading="isDownloading"
+        @close="resetDialog()"
+    />
+
     <Dialog
-        v-model:visible="detailDialog"
-        :style="{ width: '50vw' }"
-        :breakpoints="{ '960px': '75vw', '641px': '100vw' }"
-        header="Detail"
+        :visible="exportDialog"
+        :style="{ width: '450px' }"
+        :header="$t('header.export')"
         :modal="true"
         :closable="false"
         :pt="{
@@ -288,32 +534,33 @@ const showDetail = (data) => {
             }
         }"
     >
-        <div class="card" v-if="selected">
-            <ul class="list-none p-0 m-0">
-                <ListDetail label="Lokasi" :value="selected.location.name" />
-                <ListDetail label="mag date" :value="selected.mag_date" />
-                <ListDetail label="flowrate" :value="selected.flowrate" />
-                <ListDetail label="totalizer 1" :value="selected.totalizer_1" />
-                <ListDetail label="totalizer 2" :value="selected.totalizer_2" />
-                <ListDetail label="totalizer 3" :value="selected.totalizer_3" />
-                <ListDetail label="analog 1" :value="selected.analog_1" />
-                <ListDetail label="pressure" :value="selected.pressure" />
-                <ListDetail label="status battery" :value="selected.status_battery" />
-                <ListDetail label="bin alarm" :value="selected.bin_alarm" />
-                <ListDetail label="file" :value="selected.file_name" />
-                <ListDetail label="PH" :value="selected.ph" />
-                <ListDetail label="COD" :value="selected.cod" />
-                <ListDetail label="Cond" :value="selected.cond" />
-                <ListDetail label="Level" :value="selected.level" />
-            </ul>
+        <div v-for="option in ['csv', 'json', 'xls', 'xlsx']" :key="option" style="cursor: pointer">
+            <div class="card flex align-items-center mb-3" @click="optionValue = option">
+                <RadioButton v-model="optionValue" :inputId="option" :value="option" />
+                <label :for="option" class="ml-2">
+                    <b class="uppercase">{{ option }}</b>
+                    <p v-if="error && option === optionValue" class="text-red-500">
+                        {{ error }}
+                    </p>
+                </label>
+            </div>
         </div>
 
         <template #footer>
             <Button
+                :disabled="isDownloading"
                 :label="$t('button.close')"
                 icon="pi pi-times"
-                class="p-button-rounded p-button-text"
-                @click="detailDialog = false"
+                text
+                @click="resetDialog()"
+            />
+            <Button
+                :disabled="isDownloading || optionValue == null"
+                :loading="isDownloading"
+                :label="$t('button.export')"
+                icon="pi pi-download"
+                severity="success"
+                @click="onSubmitExport()"
             />
         </template>
     </Dialog>
