@@ -74,7 +74,7 @@ export const useAuthStore = defineStore('auth', () => {
             });
             mainStore.clearGuestSession();
             router.push({
-                name: 'dashboard'
+                name: 'select-location'
             });
         } else {
             userStore.$patch({
