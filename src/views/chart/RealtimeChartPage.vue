@@ -190,7 +190,7 @@ const checkAccessChart = (code) => {
                             <div>
                                 <h4 class="block text-500 font-medium mb-3">Totalizer 1</h4>
                                 <div class="text-900 font-medium text-2xl">
-                                    {{ totalizer_1 }} m<sup>3</sup>
+                                    {{ formatFlowrate(totalizer_1) }} m<sup>3</sup>
                                 </div>
                             </div>
                             <div
@@ -208,7 +208,7 @@ const checkAccessChart = (code) => {
                             <div>
                                 <h4 class="block text-500 font-medium mb-3">Totalizer 2</h4>
                                 <div class="text-900 font-medium text-2xl">
-                                    {{ totalizer_2 }} m<sup>3</sup>
+                                    {{ formatFlowrate(totalizer_2) }} m<sup>3</sup>
                                 </div>
                             </div>
                             <div
@@ -226,7 +226,7 @@ const checkAccessChart = (code) => {
                             <div>
                                 <h4 class="block text-500 font-medium mb-3">Totalizer 3</h4>
                                 <div class="text-900 font-medium text-2xl">
-                                    {{ totalizer_3 }} m<sup>3</sup>
+                                    {{ formatFlowrate(totalizer_3) }} m<sup>3</sup>
                                 </div>
                             </div>
                             <div
