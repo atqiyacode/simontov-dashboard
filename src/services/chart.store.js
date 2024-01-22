@@ -290,9 +290,9 @@ export const useChartStore = defineStore(
         };
 
         const loadTotalizer = (data) => {
-            totalizer_1.value = parseFloat(data.totalizer_1).toFixed(2);
-            totalizer_2.value = parseFloat(data.totalizer_2).toFixed(2);
-            totalizer_3.value = parseFloat(data.totalizer_3).toFixed(2);
+            totalizer_1.value = data.totalizer_1;
+            totalizer_2.value = data.totalizer_2;
+            totalizer_3.value = data.totalizer_3;
         };
 
         const loadStat = (data) => {
