@@ -188,7 +188,7 @@ const getBilling = () => {
                                         {{ $t('totalizer.first') }}
                                     </h4>
                                     <div class="text-900 font-bold text-2xl">
-                                        {{ formatFlowrate(totLast) }} m<sup>3</sup>
+                                        {{ formatFlowrate(totFirst) }} m<sup>3</sup>
                                     </div>
                                 </div>
                                 <div
@@ -209,7 +209,7 @@ const getBilling = () => {
                                         {{ $t('totalizer.last') }}
                                     </h4>
                                     <div class="text-900 font-bold text-2xl">
-                                        {{ formatFlowrate(totFirst) }} m<sup>3</sup>
+                                        {{ formatFlowrate(totLast) }} m<sup>3</sup>
                                     </div>
                                 </div>
                                 <div
@@ -230,7 +230,7 @@ const getBilling = () => {
                                         {{ $t('totalizer.result') }}
                                     </h4>
                                     <div class="text-900 font-bold text-2xl text-green-500">
-                                        {{ formatFlowrate(totFirst - totLast) }} m<sup>3</sup>
+                                        {{ formatFlowrate(totLast - totFirst) }} m<sup>3</sup>
                                         <span class="text-blue-500 text-xl">
                                             ({{ formatCurrency(final_billing) }})
                                         </span>
