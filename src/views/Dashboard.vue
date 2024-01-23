@@ -35,7 +35,9 @@ const chartLengthOptions = ref([
     }
 ]);
 onMounted(() => {
-    chartStore.getLastFlowrate(currentMap.value.id);
+    if (currentMap.value) {
+        chartStore.getLastFlowrate(currentMap.value.id);
+    }
 });
 </script>
 

@@ -102,17 +102,20 @@ const checkAccessLocation = () => {
 proxy.$pusher
     .channel('flowrate-channel-' + currentMap.value?.id)
     .listen('.flowrate-event', async (res) => {
-        const data = res.data;
-        await Promise.all([
-            loadFlowrateChart(data),
-            loadTotalizer(data),
-            loadChart(data),
-            loadPHChart(data),
-            loadCODChart(data),
-            loadCondChart(data),
-            loadLevelChart(data),
-            loadDOChart(data)
-        ]);
+        if (currentMap.value?.id === res.data.location_id) {
+            console.log(res.data.location_id);
+            const data = res.data;
+            await Promise.all([
+                loadFlowrateChart(data),
+                loadTotalizer(data),
+                loadChart(data),
+                loadPHChart(data),
+                loadCODChart(data),
+                loadCondChart(data),
+                loadLevelChart(data),
+                loadDOChart(data)
+            ]);
+        }
     });
 
 proxy.$pusher
