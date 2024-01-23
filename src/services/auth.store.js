@@ -24,17 +24,10 @@ export const useAuthStore = defineStore('auth', () => {
             axios
                 .post(`auth/login`, form.value)
                 .then((res) => {
-                    mainStore.$patch({
-                        authVerification: true
+                    mainStore.clearGuestSession();
+                    router.push({
+                        name: 'select-location'
                     });
-
-                    hasEmail.value = res.data.hasEmail;
-                    hasPhone.value = res.data.hasPhone;
-                    if (res.data.token) {
-                        directLogin(res.data);
-                    } else {
-                        router.push({ name: 'auth-verification' });
-                    }
                     resolve(res);
                 })
                 .catch((err) => {
