@@ -58,7 +58,7 @@ const onSelectMap = async (location) => {
     chartStore.$reset();
     mainStore.$patch({
         currentMap: location,
-        oldMapId: currentMap.value.id,
+        oldMapId: currentMap.value ? currentMap.value.id : null,
         notifications: []
     });
     router.push({
