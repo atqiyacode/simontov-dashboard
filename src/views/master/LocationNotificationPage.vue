@@ -9,7 +9,7 @@ const { proxy } = getCurrentInstance();
 const mainStore = useMainStore();
 const GlobalStore = useGlobalStore();
 
-const { loading, errors } = storeToRefs(mainStore);
+const { loading, errors, currentMap } = storeToRefs(mainStore);
 
 const { dt, apiUrl, title, isDownloading, keyword } = storeToRefs(GlobalStore);
 
@@ -52,7 +52,6 @@ const {
 const {
     onChangePage,
     onSortData,
-    reloadData,
 
     getData,
     restoreData,
@@ -81,27 +80,39 @@ const {
 } = GlobalStore;
 
 onMounted(async () => {
-    sortField.value = 'name';
-    title.value = i18n.t('page.permissions');
-    apiUrl.value = 'permissions';
+    sortField.value = '-id';
+    title.value = i18n.t('Location Notification');
+    apiUrl.value = 'locationNotifications';
     form.value = {
         id: null,
-        name: ''
+        name: '',
+        description: ''
     };
 
     await getData({
-        per_page: meta?.value.per_page
+        per_page: meta?.value.per_page,
+        location_id: currentMap.value.id
     });
 });
+
+const reloadData = () => {
+    getData({
+        per_page: meta?.value.per_page,
+        location_id: currentMap.value.id
+    });
+};
 
 onUnmounted(() => {
     GlobalStore.resetTable();
     GlobalStore.$reset();
 });
 const channel = ref(0);
-proxy.$pusher.subscribe('permission-channel').bind('.permission-event', () => {
-    channel.value += 1;
-});
+proxy.$pusher
+    .subscribe('location-notification-channel-' + currentMap.value.id)
+    .bind('.location-notification-event', (res) => {
+        reloadData();
+        console.log(res);
+    });
 </script>
 
 <template>
@@ -170,28 +181,50 @@ proxy.$pusher.subscribe('permission-channel').bind('.permission-event', () => {
 
                     <!-- start table content -->
 
-                    <Column field="name" :sortable="true" headerStyle="min-width:10rem;">
+                    <Column field="created_at" :sortable="true" headerStyle="min-width:15rem;">
                         <template #header>
-                            <span class="flex-1 uppercase py-2 font-bold">
-                                {{ $t('text.name') }}
-                            </span>
+                            <span class="flex-1 uppercase py-2 font-bold"> Craeted Date </span>
                         </template>
                         <template #body="slotProps">
                             <span :class="{ 'text-red-500': slotProps.data.trashed }">
-                                {{ slotProps.data.name }}
+                                {{ slotProps.data.created_at }}
                             </span>
                         </template>
                     </Column>
 
-                    <Column field="guard_name" :sortable="true" headerStyle="min-width:10rem;">
+                    <Column field="updated_at" :sortable="true" headerStyle="min-width:15rem;">
                         <template #header>
-                            <span class="flex-1 uppercase py-2 font-bold">
-                                {{ $t('text.guard-name') }}
-                            </span>
+                            <span class="flex-1 uppercase py-2 font-bold"> updated Date </span>
                         </template>
                         <template #body="slotProps">
                             <span :class="{ 'text-red-500': slotProps.data.trashed }">
-                                {{ slotProps.data.guard_name }}
+                                {{ slotProps.data.updated_at }}
+                            </span>
+                        </template>
+                    </Column>
+
+                    <Column field="location_id" :sortable="true" headerStyle="min-width:15rem;">
+                        <template #header>
+                            <span class="flex-1 uppercase py-2 font-bold"> Location </span>
+                        </template>
+                        <template #body="slotProps">
+                            <span :class="{ 'text-red-500': slotProps.data.trashed }">
+                                {{ slotProps.data.location?.name }}
+                            </span>
+                        </template>
+                    </Column>
+
+                    <Column
+                        field="alert_notification_type_id"
+                        :sortable="true"
+                        headerStyle="min-width:15rem;"
+                    >
+                        <template #header>
+                            <span class="flex-1 uppercase py-2 font-bold"> Alert type </span>
+                        </template>
+                        <template #body="slotProps">
+                            <span :class="{ 'text-red-500': slotProps.data.trashed }">
+                                {{ slotProps.data.alertNotificationType?.name }}
                             </span>
                         </template>
                     </Column>
@@ -274,17 +307,35 @@ proxy.$pusher.subscribe('permission-channel').bind('.permission-event', () => {
     >
         <template #content>
             <div class="card">
-                <div class="field">
-                    <label class="font-bold" for="name">Nama</label>
-                    <InputText
-                        id="name"
-                        v-model="form.name"
-                        required="true"
-                        :class="{ 'p-invalid': errors?.name }"
-                        placeholder="Name"
-                        @input="mainStore.removeError"
-                    />
-                    <InputError :message="errors?.name" />
+                <div class="p-fluid formgrid grid">
+                    <div class="mb-4 field col-12">
+                        <span class="p-float-label">
+                            <InputText
+                                required
+                                id="location_id"
+                                type="text"
+                                v-model="form.location_id"
+                                :class="{ 'p-invalid': errors.location_id }"
+                                @input="mainStore.removeError"
+                            />
+                            <InputLabel :value="$t('text.location_id')" />
+                        </span>
+                        <InputError :message="errors.location_id" />
+                    </div>
+                    <div class="mb-4 field col-12">
+                        <span class="p-float-label">
+                            <InputText
+                                required
+                                id="alert_notification_type_id"
+                                type="text"
+                                v-model="form.alert_notification_type_id"
+                                :class="{ 'p-invalid': errors.alert_notification_type_id }"
+                                @input="mainStore.removeError"
+                            />
+                            <InputLabel :value="$t('text.alert_notification_type_id')" />
+                        </span>
+                        <InputError :message="errors.alert_notification_type_id" />
+                    </div>
                 </div>
             </div>
         </template>
@@ -294,8 +345,20 @@ proxy.$pusher.subscribe('permission-channel').bind('.permission-event', () => {
     <DialogDetail :show="detailDialog" @close="resetDialog()">
         <template #content>
             <ul class="list-none p-0">
-                <ListDetailBreak :label="$t('text.name')" :value="item.name" />
-                <ListDetailBreak :label="$t('text.guard-name')" :value="item.guard_name" />
+                <ListDetailBreak label="code" :value="item.location?.code" />
+                <ListDetailBreak label="Name" :value="item.location?.name" />
+            </ul>
+            <Divider />
+            <ul class="list-none p-0">
+                <ListDetailBreak label="Alert name" :value="item.alertNotificationType?.name" />
+                <ListDetailBreak
+                    label="Alert Job Event"
+                    :value="item.alertNotificationType?.job_event"
+                />
+                <ListDetailBreak
+                    label="Description"
+                    :value="item.alertNotificationType?.description"
+                />
             </ul>
         </template>
     </DialogDetail>

@@ -81,12 +81,13 @@ const {
 } = GlobalStore;
 
 onMounted(async () => {
-    sortField.value = 'name';
-    title.value = i18n.t('page.permissions');
-    apiUrl.value = 'permissions';
+    sortField.value = '-id';
+    title.value = i18n.t('Alert Type');
+    apiUrl.value = 'alertNotificationTypes';
     form.value = {
         id: null,
-        name: ''
+        name: '',
+        description: ''
     };
 
     await getData({
@@ -99,9 +100,11 @@ onUnmounted(() => {
     GlobalStore.$reset();
 });
 const channel = ref(0);
-proxy.$pusher.subscribe('permission-channel').bind('.permission-event', () => {
-    channel.value += 1;
-});
+proxy.$pusher
+    .subscribe('alert-notification-type-channel')
+    .bind('.alert-notification-type-event', () => {
+        channel.value += 1;
+    });
 </script>
 
 <template>
@@ -170,7 +173,7 @@ proxy.$pusher.subscribe('permission-channel').bind('.permission-event', () => {
 
                     <!-- start table content -->
 
-                    <Column field="name" :sortable="true" headerStyle="min-width:10rem;">
+                    <Column field="name" :sortable="true" headerStyle="min-width:15rem;">
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold">
                                 {{ $t('text.name') }}
@@ -183,15 +186,13 @@ proxy.$pusher.subscribe('permission-channel').bind('.permission-event', () => {
                         </template>
                     </Column>
 
-                    <Column field="guard_name" :sortable="true" headerStyle="min-width:10rem;">
+                    <Column field="job_event" :sortable="true" headerStyle="min-width:15rem;">
                         <template #header>
-                            <span class="flex-1 uppercase py-2 font-bold">
-                                {{ $t('text.guard-name') }}
-                            </span>
+                            <span class="flex-1 uppercase py-2 font-bold"> Job Event </span>
                         </template>
                         <template #body="slotProps">
                             <span :class="{ 'text-red-500': slotProps.data.trashed }">
-                                {{ slotProps.data.guard_name }}
+                                {{ slotProps.data.job_event }}
                             </span>
                         </template>
                     </Column>
@@ -224,7 +225,7 @@ proxy.$pusher.subscribe('permission-channel').bind('.permission-event', () => {
                                     confirmDeletePermanentData(slotProps.data)
                                 "
                                 @showData="showData(slotProps.data)"
-                                @editData="editData(slotProps.data)"
+                                @editData="editData(slotProps.data), setCenterData(slotProps.data)"
                                 @confirmDestroyData="confirmDestroyData(slotProps.data)"
                             />
                         </template>
@@ -274,17 +275,49 @@ proxy.$pusher.subscribe('permission-channel').bind('.permission-event', () => {
     >
         <template #content>
             <div class="card">
-                <div class="field">
-                    <label class="font-bold" for="name">Nama</label>
-                    <InputText
-                        id="name"
-                        v-model="form.name"
-                        required="true"
-                        :class="{ 'p-invalid': errors?.name }"
-                        placeholder="Name"
-                        @input="mainStore.removeError"
-                    />
-                    <InputError :message="errors?.name" />
+                <div class="p-fluid formgrid grid">
+                    <div class="mb-4 field col-12">
+                        <span class="p-float-label">
+                            <InputText
+                                required
+                                id="name"
+                                type="text"
+                                v-model="form.name"
+                                :class="{ 'p-invalid': errors.name }"
+                                @input="mainStore.removeError"
+                            />
+                            <InputLabel :value="$t('text.company-name')" />
+                        </span>
+                        <InputError :message="errors.name" />
+                    </div>
+                    <div class="mb-4 field col-12">
+                        <span class="p-float-label">
+                            <InputText
+                                required
+                                id="job_event"
+                                type="text"
+                                v-model="form.job_event"
+                                :class="{ 'p-invalid': errors.job_event }"
+                                @input="mainStore.removeError"
+                            />
+                            <InputLabel :value="$t('text.job_event')" />
+                        </span>
+                        <InputError :message="errors.name" />
+                    </div>
+                    <div class="mb-4 field col-12">
+                        <span class="p-float-label">
+                            <Textarea
+                                required
+                                id="description"
+                                :rows="5"
+                                v-model="form.description"
+                                :class="{ 'p-invalid': errors.description }"
+                                @input="mainStore.removeError"
+                            />
+                            <InputLabel :value="$t('text.description')" />
+                        </span>
+                        <InputError :message="errors.description" />
+                    </div>
                 </div>
             </div>
         </template>
@@ -294,8 +327,9 @@ proxy.$pusher.subscribe('permission-channel').bind('.permission-event', () => {
     <DialogDetail :show="detailDialog" @close="resetDialog()">
         <template #content>
             <ul class="list-none p-0">
-                <ListDetailBreak :label="$t('text.name')" :value="item.name" />
-                <ListDetailBreak :label="$t('text.guard-name')" :value="item.guard_name" />
+                <ListDetailBreak label="Name" :value="item.name" />
+                <ListDetailBreak label="job event" :value="item.job_event" />
+                <ListDetailBreak label="Description" :value="item.description" />
             </ul>
         </template>
     </DialogDetail>

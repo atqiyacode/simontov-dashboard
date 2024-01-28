@@ -19,7 +19,7 @@ const RoleStore = useRoleStore();
 const PermissionStore = usePermissionStore();
 const DashboardChart = useDashboardChart();
 
-proxy.$pusher.channel('user-channel').listen('.user-event', () => {
+proxy.$pusher.subscribe('user-channel').bind('.user-event', () => {
     //
 });
 const {

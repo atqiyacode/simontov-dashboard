@@ -62,6 +62,7 @@ onMounted(() => {
             </div>
         </li>
     </ul>
+
     <div class="grid">
         <RealtimeChartPage />
     </div>

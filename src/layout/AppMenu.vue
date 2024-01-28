@@ -91,6 +91,16 @@ const supermanMenu = ref([
                 to: '/app/master/dashboard-chart'
             },
             {
+                label: 'Alert Type',
+                icon: 'pi pi-fw pi-bell',
+                to: '/app/master/alert-notification-type'
+            },
+            {
+                label: 'Location Notification',
+                icon: 'pi pi-fw pi-bell',
+                to: '/app/master/location-notification'
+            },
+            {
                 label: 'menu.master-data.tax',
                 icon: 'pi pi-fw pi-cog',
                 to: '/app/master/tax'

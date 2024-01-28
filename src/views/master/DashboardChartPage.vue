@@ -99,7 +99,7 @@ onUnmounted(() => {
     GlobalStore.$reset();
 });
 const channel = ref(0);
-proxy.$pusher.channel('permission-channel').listen('.permission-event', () => {
+proxy.$pusher.subscribe('permission-channel').bind('.permission-event', () => {
     channel.value += 1;
 });
 </script>
@@ -130,7 +130,7 @@ proxy.$pusher.channel('permission-channel').listen('.permission-event', () => {
 
                 <DataTable
                     lazy
-                    :loading="loading"
+                    :loading="false"
                     ref="dt"
                     :value="data"
                     v-model:selection="selectedData"

@@ -102,7 +102,7 @@ onUnmounted(() => {
     GlobalStore.$reset();
 });
 const channel = ref(0);
-proxy.$pusher.channel('range-cost-channel').listen('.range-cost-event', () => {
+proxy.$pusher.subscribe('range-cost-channel').bind('.range-cost-event', () => {
     channel.value += 1;
 });
 import { useFetchStore } from '@/services/fetch.store';
@@ -145,7 +145,7 @@ const loadRangeTypes = (params) => {
 
                 <DataTable
                     lazy
-                    :loading="loading"
+                    :loading="false"
                     ref="dt"
                     :value="data"
                     v-model:selection="selectedData"
@@ -202,9 +202,7 @@ const loadRangeTypes = (params) => {
                                         numberFormat(slotProps.data.range_type?.lower_limit)
                                     }}
                                     m<sup>3</sup> -
-                                    {{
-                                        numberFormat(slotProps.data.range_type?.upper_limit)
-                                    }}
+                                    {{ numberFormat(slotProps.data.range_type?.upper_limit) }}
                                     m<sup>3</sup>)
                                 </small>
                             </span>

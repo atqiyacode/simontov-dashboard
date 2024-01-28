@@ -1,5 +1,5 @@
 <script setup>
-import { getCurrentInstance, onMounted, ref } from 'vue';
+import { getCurrentInstance, onMounted, onUnmounted, ref } from 'vue';
 import { GoogleMap, Marker, InfoWindow, MarkerCluster } from 'vue3-google-map';
 import { useMainStore } from '@/services/main.store';
 import { useChartStore } from '@/services/chart.store';
@@ -13,6 +13,7 @@ const chartStore = useChartStore();
 const LocationStore = useLocationStore();
 const router = useRouter();
 
+const { currentMap } = storeToRefs(mainStore);
 const { sessionLocation } = storeToRefs(LocationStore);
 const { getBySession } = LocationStore;
 
@@ -31,6 +32,12 @@ onMounted(async () => {
     listenFlowrate();
 });
 
+onUnmounted(() => {
+    if (currentMap.value.id) {
+        stoplistenFlowrate(currentMap.value.id);
+    }
+});
+
 const isOutOfRangePH = (value) => {
     return value < 6 || value > 9;
 };
@@ -47,12 +54,13 @@ const electricityStatus = (value) => {
     }
 };
 
-const onSelectMap = (location) => {
+const onSelectMap = async (location) => {
     chartStore.$reset();
     mainStore.$patch({
-        currentMap: location
+        currentMap: location,
+        oldMapId: currentMap.value.id,
+        notifications: []
     });
-    // chartStore.getLastFlowrate(location.id);
     router.push({
         name: 'dashboard'
     });
@@ -61,7 +69,7 @@ const active = ref(null);
 
 const listenFlowrate = () => {
     sessionLocation.value.forEach((element) => {
-        proxy.$pusher.channel('flowrate-channel-' + element.id).listen('.flowrate-event', (res) => {
+        proxy.$pusher.subscribe('flowrate-channel-' + element.id).bind('.flowrate-event', (res) => {
             active.value = res.data.location_id;
 
             const matchedLocation = sessionLocation.value.find((data) => data.id === active.value);
@@ -70,6 +78,13 @@ const listenFlowrate = () => {
                 matchedLocation.flowrates = res.data;
             }
         });
+    });
+};
+const stoplistenFlowrate = (location) => {
+    sessionLocation.value.forEach((element) => {
+        if (element.id !== location.id) {
+            proxy.$pusher.subscribe('flowrate-channel-' + element.id).unbind('.flowrate-event');
+        }
     });
 };
 </script>

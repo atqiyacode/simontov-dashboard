@@ -99,7 +99,7 @@ onUnmounted(() => {
     GlobalStore.$reset();
 });
 const channel = ref(0);
-proxy.$pusher.channel('range-type-channel').listen('.range-type-event', () => {
+proxy.$pusher.subscribe('range-type-channel').bind('.range-type-event', () => {
     channel.value += 1;
 });
 </script>
@@ -130,7 +130,7 @@ proxy.$pusher.channel('range-type-channel').listen('.range-type-event', () => {
 
                 <DataTable
                     lazy
-                    :loading="loading"
+                    :loading="false"
                     ref="dt"
                     :value="data"
                     v-model:selection="selectedData"

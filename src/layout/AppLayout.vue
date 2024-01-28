@@ -27,7 +27,9 @@ const {
     loadLevelChart,
     loadDOChart,
     loadTotalizer,
-    loadFlowrateChart
+    loadFlowrateChart,
+    loadStat,
+    checkCod
 } = chartStore;
 const { proxy } = getCurrentInstance();
 
@@ -100,10 +102,9 @@ const checkAccessLocation = () => {
 };
 
 proxy.$pusher
-    .channel('flowrate-channel-' + currentMap.value?.id)
-    .listen('.flowrate-event', async (res) => {
+    .subscribe('flowrate-channel-' + currentMap.value?.id)
+    .bind('.flowrate-event', async (res) => {
         if (currentMap.value?.id === res.data.location_id) {
-            console.log(res.data.location_id);
             const data = res.data;
             await Promise.all([
                 loadFlowrateChart(data),
@@ -113,14 +114,16 @@ proxy.$pusher
                 loadCODChart(data),
                 loadCondChart(data),
                 loadLevelChart(data),
-                loadDOChart(data)
+                loadDOChart(data),
+                loadStat(data),
+                checkCod(data)
             ]);
         }
     });
 
 proxy.$pusher
-    .channel('user-location-channel-' + user.value.id)
-    .listen('.user-location-event', async () => {
+    .subscribe('user-location-channel-' + user.value.id)
+    .bind('.user-location-event', async () => {
         await userStore.session();
         checkAccessLocation();
     });

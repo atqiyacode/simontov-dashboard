@@ -24,10 +24,7 @@ export const useAuthStore = defineStore('auth', () => {
             axios
                 .post(`auth/login`, form.value)
                 .then((res) => {
-                    mainStore.clearGuestSession();
-                    router.push({
-                        name: 'select-location'
-                    });
+                    directLogin(res.data);
                     resolve(res);
                 })
                 .catch((err) => {

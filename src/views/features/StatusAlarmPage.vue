@@ -100,7 +100,7 @@ onUnmounted(() => {
     GlobalStore.$reset();
 });
 const channel = ref(0);
-proxy.$pusher.channel('status-alarm-channel').listen('.status-alarm-event', () => {
+proxy.$pusher.subscribe('status-alarm-channel').bind('.status-alarm-event', () => {
     channel.value += 1;
 });
 </script>
@@ -131,7 +131,7 @@ proxy.$pusher.channel('status-alarm-channel').listen('.status-alarm-event', () =
 
                 <DataTable
                     lazy
-                    :loading="loading"
+                    :loading="false"
                     ref="dt"
                     :value="data"
                     v-model:selection="selectedData"

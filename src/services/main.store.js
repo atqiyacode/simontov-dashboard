@@ -1,3 +1,4 @@
+import axios from '@/plugins/axios';
 import { defineStore } from 'pinia';
 import { useUserStore } from './user.store';
 import { ref, watch } from 'vue';
@@ -30,16 +31,50 @@ export const useMainStore = defineStore(
         const message = ref('');
         const currentMap = ref(null);
 
+        const notifications = ref([]);
+        const oldMapId = ref(null);
+
         watch(language, (value) => {
             i18n.locale.value = value;
         });
 
         const sanctumCsrf = async () => {
-            // if (!document.cookie) {
-            await fetch(`${import.meta.env.VITE_APP_SERVER}/sanctum/csrf-cookie`, {
-                credentials: 'include'
+            if (!document.cookie) {
+                await fetch(`${import.meta.env.VITE_APP_SERVER}/sanctum/csrf-cookie`, {
+                    credentials: 'include'
+                });
+            }
+        };
+
+        const loadNotifications = () => {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(`locationNotifications`, {
+                        params: {
+                            location_id: currentMap.value.id
+                        }
+                    })
+                    .then((res) => {
+                        notifications.value = res.data.data;
+                        resolve(res);
+                    })
+                    .catch((err) => {
+                        reject(err);
+                    });
             });
-            // }
+        };
+
+        const countNotification = () => {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(`locationNotifications/count/${currentMap.value.id}`)
+                    .then((res) => {
+                        resolve(res);
+                    })
+                    .catch((err) => {
+                        reject(err);
+                    });
+            });
         };
 
         const handleErrors = async (err) => {
@@ -81,6 +116,7 @@ export const useMainStore = defineStore(
                 isLoggedIn: false
             });
             router.push({ name: 'login' });
+            sessionStorage.removeItem(['LocationStore', 'ChartStore']);
         };
 
         const clearGuestSession = () => {
@@ -108,13 +144,17 @@ export const useMainStore = defineStore(
             socketId,
             message,
             currentMap,
+            notifications,
+            oldMapId,
             // function
             sanctumCsrf,
             handleErrors,
             clearCurrentSession,
             clearGuestSession,
             removeError,
-            notify
+            notify,
+            countNotification,
+            loadNotifications
         };
     },
     {
@@ -122,7 +162,7 @@ export const useMainStore = defineStore(
         persist: {
             storage: sessionStorage,
             key: 'Main',
-            paths: ['language', 'socketId', 'currentMap']
+            paths: ['language', 'socketId', 'currentMap', 'oldMapId']
         }
     }
 );

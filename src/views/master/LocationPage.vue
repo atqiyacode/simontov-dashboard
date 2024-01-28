@@ -101,7 +101,7 @@ onUnmounted(() => {
     GlobalStore.$reset();
 });
 const channel = ref(0);
-proxy.$pusher.channel('location-channel').listen('.location-event', () => {
+proxy.$pusher.subscribe('location-channel').bind('.location-event', () => {
     channel.value += 1;
 });
 
@@ -173,7 +173,7 @@ const getStreetAddressFrom = async (lat, long) => {
 
                 <DataTable
                     lazy
-                    :loading="loading"
+                    :loading="false"
                     ref="dt"
                     :value="data"
                     v-model:selection="selectedData"

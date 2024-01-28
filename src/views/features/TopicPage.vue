@@ -100,7 +100,7 @@ onUnmounted(() => {
     GlobalStore.$reset();
 });
 const channel = ref(0);
-proxy.$pusher.channel('topic-channel').listen('.topic-event', () => {
+proxy.$pusher.subscribe('topic-channel').bind('.topic-event', () => {
     channel.value += 1;
 });
 </script>
@@ -131,7 +131,7 @@ proxy.$pusher.channel('topic-channel').listen('.topic-event', () => {
 
                 <DataTable
                     lazy
-                    :loading="loading"
+                    :loading="false"
                     ref="dt"
                     :value="data"
                     v-model:selection="selectedData"

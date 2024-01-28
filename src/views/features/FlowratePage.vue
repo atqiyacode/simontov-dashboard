@@ -232,7 +232,7 @@ const onSubmitExport = () => {
                 <DataTable
                     v-if="allData.length > 0"
                     lazy
-                    :loading="loading"
+                    :loading="false"
                     ref="dt"
                     :value="allData"
                     dataKey="id"

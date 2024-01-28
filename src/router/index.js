@@ -100,6 +100,22 @@ const router = createRouter({
                             }
                         },
                         {
+                            path: 'alert-notification-type',
+                            name: 'master-alert-notification-type',
+                            component: () => import('@/views/master/AlertNotificationTypePage.vue'),
+                            meta: {
+                                title: 'Notification Type'
+                            }
+                        },
+                        {
+                            path: 'location-notification',
+                            name: 'master-location-notification-type',
+                            component: () => import('@/views/master/LocationNotificationPage.vue'),
+                            meta: {
+                                title: 'Location Notification'
+                            }
+                        },
+                        {
                             path: 'dashboard-chart',
                             name: 'master-dashboard-chart',
                             component: () => import('@/views/master/DashboardChartPage.vue'),

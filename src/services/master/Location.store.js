@@ -467,7 +467,7 @@ export const useLocationStore = defineStore(
     {
         persist: {
             storage: sessionStorage,
-            paths: ['data', 'meta', 'links']
+            paths: ['data', 'meta', 'links', 'sessionLocation']
         }
     }
 );

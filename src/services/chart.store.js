@@ -60,6 +60,8 @@ export const useChartStore = defineStore(
 
         const pln_stat = ref(true);
         const panel_stat = ref(true);
+        const codAlert = ref(false);
+        const phAlert = ref('NORMAL');
 
         const lastTimestamp = ref(
             new Date().toLocaleString('en-US', { timeZone: indonesiaTimeZone.value })
@@ -148,7 +150,10 @@ export const useChartStore = defineStore(
                                 loadCODChart(element),
                                 loadCondChart(element),
                                 loadLevelChart(element),
-                                loadDOChart(element)
+                                loadDOChart(element),
+                                loadStat(element),
+                                checkCod(element),
+                                checkPh(element)
                             ]);
                         });
                         await Promise.all(promises);
@@ -300,6 +305,26 @@ export const useChartStore = defineStore(
             pln_stat.value = data.pln_stat;
         };
 
+        const checkCod = (data) => {
+            if (data.cod > 90) {
+                codAlert.value = true;
+            } else {
+                codAlert.value = false;
+            }
+        };
+
+        const checkPh = (data) => {
+            if (parseFloat(data.cod) > 9) {
+                phAlert.value = 'HIGH';
+            }
+            if (parseFloat(data.cod) < 6) {
+                phAlert.value = 'LOW';
+            }
+            if (parseFloat(data.cod) >= 6 && parseFloat(data.cod) <= 9) {
+                phAlert.value = 'NORMAL';
+            }
+        };
+
         return {
             chartLength,
             chartSeries,
@@ -323,6 +348,8 @@ export const useChartStore = defineStore(
             pln_stat,
             panel_stat,
             indonesiaTimeZone,
+            codAlert,
+            phAlert,
             // fucntion
             getLastFlowrate,
             loadFlowrateChart,
@@ -335,7 +362,9 @@ export const useChartStore = defineStore(
             loadTotalizer,
             loadStat,
             resetValue,
-            getFlorateRange
+            getFlorateRange,
+            checkCod,
+            checkPh
         };
     },
     {

@@ -13,7 +13,7 @@ const { onChangePage, onSortData, getData, createData, updateData } = TaxStore;
 const dt = ref(null);
 
 const { proxy } = getCurrentInstance();
-proxy.$pusher.channel('tax-channel').listen('.tax-event', () => {
+proxy.$pusher.subscribe('tax-channel').bind('.tax-event', () => {
     //
 });
 

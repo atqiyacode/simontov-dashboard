@@ -1,19 +1,21 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, getCurrentInstance } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/services/auth.store';
 import { useMainStore } from '@/services/main.store';
 import { storeToRefs } from 'pinia';
-
+const mainStore = useMainStore();
 const { layoutConfig, onMenuToggle, contextPath } = useLayout();
 const { logout } = useAuthStore();
-const { language } = storeToRefs(useMainStore());
+const { language, currentMap, oldMapId } = storeToRefs(mainStore);
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
 const router = useRouter();
 const logoutDialog = ref(false);
 const changeLanguageDialog = ref(false);
+
+const { proxy } = getCurrentInstance();
 
 const languages = [
     {
@@ -28,6 +30,7 @@ const languages = [
 
 onMounted(() => {
     bindOutsideClickListener();
+    mainStore.loadNotifications();
 });
 
 onBeforeUnmount(() => {
@@ -91,6 +94,16 @@ const isOutsideClicked = (event) => {
         topbarEl.contains(event.target)
     );
 };
+
+proxy.$pusher
+    .subscribe('location-notification-channel-' + currentMap.value?.id)
+    .bind('.location-notification-event', () => {
+        mainStore.loadNotifications();
+    });
+
+proxy.$pusher
+    .subscribe('location-notification-channel-' + oldMapId.value)
+    .unbind('.location-notification-event');
 </script>
 
 <template>
@@ -122,7 +135,13 @@ const isOutsideClicked = (event) => {
             </button>
 
             <button @click="goToMyNotification()" class="p-link topbar-notification">
-                <i v-badge.danger="2" class="pi pi-bell p-overlay-badge" style="font-size: 2rem" />
+                <i
+                    v-if="mainStore.notifications.length"
+                    v-badge.danger="mainStore.notifications.length"
+                    class="pi pi-bell p-overlay-badge"
+                    style="font-size: 2rem"
+                />
+                <i v-else class="pi pi-bell" style="font-size: 2rem" />
             </button>
 
             <button @click="logoutDialog = true" class="p-link layout-topbar-button text-red-500">
