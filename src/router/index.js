@@ -64,7 +64,9 @@ const router = createRouter({
                             name: 'master-role',
                             component: () => import('@/views/master/RolePage.vue'),
                             meta: {
-                                title: 'Role Data'
+                                title: 'Role Data',
+                                roles: ['superman', 'superadmin'],
+                                requiresAuth: true
                             }
                         },
                         {
@@ -72,7 +74,9 @@ const router = createRouter({
                             name: 'master-permission',
                             component: () => import('@/views/master/PermissionPage.vue'),
                             meta: {
-                                title: 'Permission Data'
+                                title: 'Permission Data',
+                                roles: ['superman', 'superadmin'],
+                                requiresAuth: true
                             }
                         },
                         {
@@ -80,7 +84,9 @@ const router = createRouter({
                             name: 'master-user',
                             component: () => import('@/views/master/UserPage.vue'),
                             meta: {
-                                title: 'User Data'
+                                title: 'User Data',
+                                roles: ['superman', 'superadmin'],
+                                requiresAuth: true
                             }
                         },
                         {
@@ -97,6 +103,14 @@ const router = createRouter({
                             component: () => import('@/views/master/LocationPage.vue'),
                             meta: {
                                 title: 'Lokasi Data'
+                            }
+                        },
+                        {
+                            path: 'invoice-template',
+                            name: 'master-invoice-template',
+                            component: () => import('@/views/master/InvoiceTemplatePage.vue'),
+                            meta: {
+                                title: 'invoice-template'
                             }
                         },
                         {
@@ -294,20 +308,41 @@ const router = createRouter({
     ]
 });
 
+function multipleInArray(arr, values) {
+    return values.some((value) => {
+        return arr.includes(value);
+    });
+}
+
 router.beforeEach((to, from, next) => {
-    const { isLoggedIn } = useUserStore();
+    const userStore = useUserStore();
+    const nearestWithTitle = to.matched
+        .slice()
+        .reverse()
+        .find((r) => r.meta && r.meta.title);
 
-    if (to.name === 'login' && isLoggedIn) {
-        next({ name: 'dashboard' });
-        return;
-    }
+    if (nearestWithTitle) document.title = nearestWithTitle.meta.title;
 
-    if (!to.matched.some((record) => record.meta.requiresAuth) || isLoggedIn) {
+    if (to.matched.some((record) => record.meta.requiresAuth)) {
+        if (!userStore.isLoggedIn) {
+            // User is not logged in, redirect to the login page
+            next({ name: 'login' });
+        } else {
+            // User is logged in, proceed with the navigation
+            if (to.matched.some((record) => record.meta.roles)) {
+                if (multipleInArray(userStore.user.roles, to.meta.roles)) {
+                    next();
+                } else {
+                    next({ name: 'no-access-permission' });
+                }
+            } else {
+                next();
+            }
+        }
+    } else {
+        // The route doesn't require authentication, proceed with the navigation
         next();
-        return;
     }
-
-    next({ name: 'login' });
 });
 
 export default router;

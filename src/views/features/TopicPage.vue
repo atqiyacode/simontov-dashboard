@@ -100,7 +100,7 @@ onUnmounted(() => {
     GlobalStore.$reset();
 });
 const channel = ref(0);
-proxy.$pusher.subscribe('topic-channel').bind('.topic-event', () => {
+proxy.$pusher.channel('topic-channel').listen('.topic-event', () => {
     channel.value += 1;
 });
 </script>

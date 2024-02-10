@@ -102,7 +102,7 @@ onUnmounted(() => {
     GlobalStore.$reset();
 });
 const channel = ref(0);
-proxy.$pusher.subscribe('range-cost-channel').bind('.range-cost-event', () => {
+proxy.$pusher.channel('range-cost-channel').listen('.range-cost-event', () => {
     channel.value += 1;
 });
 import { useFetchStore } from '@/services/fetch.store';

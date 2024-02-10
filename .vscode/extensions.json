@@ -1,3 +1,29 @@
 {
-  "recommendations": ["Vue.volar", "Vue.vscode-typescript-vue-plugin"]
+  "recommendations": [
+    "Vue.volar",
+    "Vue.vscode-typescript-vue-plugin",
+    "ChakrounAnas.turbo-console-log",
+    "antfu.vite",
+    "hollowtree.vue-snippets",
+    "esbenp.prettier-vscode",
+    "johnpapa.vscode-peacock",
+    "wix.vscode-import-cost",
+    "usernamehw.errorlens",
+    "mikestead.dotenv",
+    "aaron-bond.better-comments",
+    "steoates.autoimport",
+    "formulahendry.auto-close-tag",
+    "formulahendry.auto-rename-tag",
+    "christian-kohler.path-intellisense",
+    "WallabyJs.quokka-vscode",
+    "xabikos.javascriptsnippets",
+    "MisterJ.vue-volar-extention-pack",
+    "anseki.vscode-color",
+    "naumovs.color-highlight",
+    "zignd.html-css-class-completion",
+    "dbaeumer.vscode-eslint",
+    "oderwat.indent-rainbow",
+    "ricardo-emerson.base-development-extensions-pack",
+    "sdras.vue-vscode-snippets"
+  ]
 }

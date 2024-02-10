@@ -100,7 +100,7 @@ onUnmounted(() => {
     GlobalStore.$reset();
 });
 const channel = ref(0);
-proxy.$pusher.subscribe('status-alarm-channel').bind('.status-alarm-event', () => {
+proxy.$pusher.channel('status-alarm-channel').listen('.status-alarm-event', () => {
     channel.value += 1;
 });
 </script>

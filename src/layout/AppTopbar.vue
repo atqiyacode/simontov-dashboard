@@ -8,7 +8,7 @@ import { storeToRefs } from 'pinia';
 const mainStore = useMainStore();
 const { layoutConfig, onMenuToggle, contextPath } = useLayout();
 const { logout } = useAuthStore();
-const { language, currentMap, oldMapId } = storeToRefs(mainStore);
+const { language, currentMap } = storeToRefs(mainStore);
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
 const router = useRouter();
@@ -96,14 +96,10 @@ const isOutsideClicked = (event) => {
 };
 
 proxy.$pusher
-    .subscribe('location-notification-channel-' + currentMap.value?.id)
-    .bind('.location-notification-event', () => {
-        mainStore.loadNotifications();
+    .channel('location-notification-channel-' + currentMap.value?.id)
+    .listen('.location-notification-event', (res) => {
+        mainStore.updateNotifications(res.data);
     });
-
-proxy.$pusher
-    .subscribe('location-notification-channel-' + oldMapId.value)
-    .unbind('.location-notification-event');
 </script>
 
 <template>

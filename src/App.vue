@@ -7,7 +7,7 @@ const mainStore = useMainStore();
 onMounted(() => {
     mainStore.sanctumCsrf();
     mainStore.$patch({
-        socketId: proxy.$pusher.connection.socket_id
+        socketId: proxy.$pusher.socketId()
     });
 });
 </script>

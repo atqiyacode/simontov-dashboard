@@ -1,12 +1,10 @@
 <script setup>
 import { format } from 'date-fns';
 import { onUnmounted, ref, watch } from 'vue';
-import { useMainStore } from '../services/main.store';
-import { useStaticChartStore } from '../services/static.store';
-import { useUserStore } from '@/services/user.store';
+import { useMainStore } from '@/services/main.store';
+import { useStaticChartStore } from '@/services/static.store';
 
 import { storeToRefs } from 'pinia';
-const userStore = useUserStore();
 
 const dates = ref();
 const mainStore = useMainStore();
@@ -23,9 +21,9 @@ const {
     chartLevelSeries,
     chartDOSeries,
     title,
-    final_billing
+    final_billing,
+    isDownloading
 } = storeToRefs(staticChartStore);
-const { user } = storeToRefs(userStore);
 
 const lastTimestamp = ref();
 
@@ -79,14 +77,7 @@ const loadChart = () => {
 
 const chartFilterData = (res) => {
     const list = res.data.result;
-    // let count = 0;
-    // const start = moment(res.data.start_date);
-    // const end = moment(res.data.end_date);
-    // const minutes = end.diff(start, 'minutes');
-    // for (let i = 0; i < minutes; i++) {
-    //     count += parseInt(interval.value);
-    //     check(count, res, list);
-    // }
+
     for (let index = 0; index < list.length; index++) {
         const element = list[index];
         staticChartStore.loadFlowrateChart(element);
@@ -100,31 +91,20 @@ const chartFilterData = (res) => {
     }
 };
 
-// const check = (count, res, list) => {
-//     const date = moment(res.data.start_date).add(count, 'minutes');
-//     const getDate = date.format('YYYY-MM-DD HH:mm:ss');
-//     for (let i = 0; i < list.length; i++) {
-//         const val = list[i];
-//         if (val.mag_date_chart === getDate) {
-//             staticChartStore.loadFlowrateChart(val);
-//             staticChartStore.loadTotalizer(val);
-//             staticChartStore.loadChart(val);
-//             staticChartStore.loadPHChart(val);
-//             staticChartStore.loadCODChart(val);
-//             staticChartStore.loadCondChart(val);
-//             staticChartStore.loadLevelChart(val);
-//             staticChartStore.loadDOChart(val);
-//         }
-//     }
-// };
-
 const checkAccessChart = (code) => {
-    return chartSeries.value[0].data.length > 0 && user.value.dashboardCharts.includes(code);
+    return chartSeries.value[0].data.length > 0 && mainStore.currentMap.charts.includes(code);
 };
 
 const getBilling = () => {
     const final = Number.parseFloat(totFirst.value - totLast.value).toFixed(2);
     staticChartStore.getBilling(mainStore.currentMap.id, final);
+};
+
+const downloadInvoice = () => {
+    mainStore.$patch({
+        loading: false
+    });
+    staticChartStore.downloadInvoice(mainStore.currentMap.id, form.value);
 };
 </script>
 
@@ -143,7 +123,7 @@ const getBilling = () => {
     <div class="grid">
         <div class="col-12 lg:col-12 xl:col-12">
             <div class="card shadow-5">
-                <h5 v-if="title && !loading">
+                <h5 v-if="title">
                     {{ $t('text.report-static', { date: title }) }}
                 </h5>
                 <div class="formgroup-inline mt-5">
@@ -165,22 +145,19 @@ const getBilling = () => {
                     </div>
 
                     <Button
-                        :loading="loading"
+                        :loading="loading && !isDownloading"
                         :label="$t('button.search')"
                         icon="pi pi-search"
                         @click="loadChart()"
                     />
                 </div>
-                <!-- <Message v-if="!totFirst && !loading" severity="error">
-                    {{ $t('alert.no-data-found') }}
-                </Message> -->
             </div>
         </div>
-        <div class="col-12 lg:col-12 xl:col-12" v-if="totFirst && !loading">
+        <div class="col-12 lg:col-12 xl:col-12" v-if="totFirst">
             <div class="card">
                 <div class="grid">
                     <!-- start -->
-                    <div class="col-12 lg:col-4 xl:col-4" v-if="totFirst && !loading">
+                    <div class="col-12 lg:col-4 xl:col-4" v-if="totFirst">
                         <div class="card mb-0 h-full m-0">
                             <div class="flex justify-content-between mb-3">
                                 <div>
@@ -201,7 +178,7 @@ const getBilling = () => {
                         </div>
                     </div>
                     <!-- last -->
-                    <div class="col-12 lg:col-4 xl:col-4" v-if="totFirst && !loading">
+                    <div class="col-12 lg:col-4 xl:col-4" v-if="totFirst">
                         <div class="card mb-0 h-full m-0">
                             <div class="flex justify-content-between mb-3">
                                 <div>
@@ -222,7 +199,7 @@ const getBilling = () => {
                         </div>
                     </div>
                     <!-- final -->
-                    <div class="col-12 lg:col-4 xl:col-4" v-if="totFirst && !loading">
+                    <div class="col-12 lg:col-4 xl:col-4" v-if="totFirst">
                         <div class="card mb-0 h-full m-0">
                             <div class="flex justify-content-between mb-3">
                                 <div>
@@ -237,10 +214,13 @@ const getBilling = () => {
                                     </div>
                                     <Button
                                         class="mt-3"
-                                        label="Send Invoice"
-                                        icon="pi pi-cloud-upload"
+                                        label="Invoice"
+                                        icon="pi pi-file-pdf"
                                         iconPos="right"
                                         outlined
+                                        severity="danger"
+                                        :loading="isDownloading"
+                                        @click="downloadInvoice()"
                                     />
                                 </div>
                                 <div
@@ -256,7 +236,7 @@ const getBilling = () => {
             </div>
         </div>
 
-        <div class="col-12 lg:col-6 xl:col-6" v-if="totFirst && !loading">
+        <div class="col-12 lg:col-6 xl:col-6" v-if="totFirst">
             <div class="card shadow-5 mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
@@ -274,7 +254,7 @@ const getBilling = () => {
                 </div>
             </div>
         </div>
-        <div class="col-12 lg:col-6 xl:col-6" v-if="totFirst && !loading">
+        <div class="col-12 lg:col-6 xl:col-6" v-if="totFirst">
             <div class="card shadow-5 mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
@@ -293,17 +273,6 @@ const getBilling = () => {
             </div>
         </div>
 
-        <!-- <div
-            class="col-12 lg:col-12 xl:col-12"
-            v-if="!loading && checkAccessChart('realtime-flowrate-pressure')"
-        >
-            <DualLineChartPage
-                title="Flowrate and Pressure"
-                :colors="['#FFBB5C', '#247BA0']"
-                :chartSeries="chartSeries"
-                :lastTimestamp="lastTimestamp"
-            />
-        </div> -->
         <div
             class="col-12 lg:col-12 xl:col-12"
             v-if="checkAccessChart('realtime-flowrate-pressure')"
@@ -315,7 +284,7 @@ const getBilling = () => {
                 :lastTimestamp="lastTimestamp"
             />
         </div>
-        <div class="col-12 lg:col-12 xl:col-12" v-if="!loading && checkAccessChart('realtime-cod')">
+        <div class="col-12 lg:col-12 xl:col-12" v-if="checkAccessChart('realtime-cod')">
             <LineChartPage
                 title="COD"
                 :colors="['#5B0888']"
@@ -323,7 +292,7 @@ const getBilling = () => {
                 :lastTimestamp="lastTimestamp"
             />
         </div>
-        <div class="col-12 lg:col-12 xl:col-12" v-if="!loading && checkAccessChart('realtime-ph')">
+        <div class="col-12 lg:col-12 xl:col-12" v-if="checkAccessChart('realtime-ph')">
             <LineChartPage
                 title="PH"
                 :colors="['#E55604']"
@@ -331,10 +300,7 @@ const getBilling = () => {
                 :lastTimestamp="lastTimestamp"
             />
         </div>
-        <div
-            class="col-12 lg:col-12 xl:col-12"
-            v-if="!loading && checkAccessChart('realtime-cond')"
-        >
+        <div class="col-12 lg:col-12 xl:col-12" v-if="checkAccessChart('realtime-cond')">
             <LineChartPage
                 title="COND"
                 :colors="['#E1AA74']"
@@ -342,10 +308,7 @@ const getBilling = () => {
                 :lastTimestamp="lastTimestamp"
             />
         </div>
-        <div
-            class="col-12 lg:col-12 xl:col-12"
-            v-if="!loading && checkAccessChart('realtime-level')"
-        >
+        <div class="col-12 lg:col-12 xl:col-12" v-if="checkAccessChart('realtime-level')">
             <LineChartPage
                 title="LEVEL"
                 :colors="['#B6339A']"
@@ -353,7 +316,7 @@ const getBilling = () => {
                 :lastTimestamp="lastTimestamp"
             />
         </div>
-        <div class="col-12 lg:col-12 xl:col-12" v-if="!loading && checkAccessChart('realtime-do')">
+        <div class="col-12 lg:col-12 xl:col-12" v-if="checkAccessChart('realtime-do')">
             <LineChartPage
                 title="DO"
                 :colors="['#A7D397']"

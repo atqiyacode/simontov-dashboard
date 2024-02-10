@@ -7,6 +7,10 @@ import { useGlobalStore } from '@/services/global.store';
 import { storeToRefs } from 'pinia';
 import { i18n } from '@/plugins/i18n';
 
+import { useDashboardChart } from '@/services/master/DashboardChart.store';
+
+const DashboardChart = useDashboardChart();
+
 const { proxy } = getCurrentInstance();
 const mainStore = useMainStore();
 const GlobalStore = useGlobalStore();
@@ -83,7 +87,7 @@ const {
 } = GlobalStore;
 
 onMounted(async () => {
-    sortField.value = '-id';
+    sortField.value = 'id';
     title.value = i18n.t('page.locations');
     apiUrl.value = 'locations';
     form.value = {
@@ -94,14 +98,26 @@ onMounted(async () => {
     await getData({
         per_page: meta?.value.per_page
     });
+    DashboardChart.getAll();
 });
 
 onUnmounted(() => {
     GlobalStore.resetTable();
     GlobalStore.$reset();
 });
+const formDialogChart = ref(false);
+const setChart = (item) => {
+    formDialogChart.value = true;
+    form.value = item;
+};
+
+const updateChart = async () => {
+    await submitData();
+    formDialogChart.value = false;
+};
+
 const channel = ref(0);
-proxy.$pusher.subscribe('location-channel').bind('.location-event', () => {
+proxy.$pusher.channel('location-channel').listen('.location-event', () => {
     channel.value += 1;
 });
 
@@ -239,15 +255,26 @@ const getStreetAddressFrom = async (lat, long) => {
                         </template>
                     </Column>
 
-                    <Column field="name" :sortable="true" headerStyle="min-width:15rem;">
+                    <Column field="pic" :sortable="true" headerStyle="min-width:15rem;">
                         <template #header>
                             <span class="flex-1 uppercase py-2 font-bold">
-                                {{ $t('text.name') }}
+                                {{ $t('text.pic') }}
                             </span>
                         </template>
                         <template #body="slotProps">
                             <span :class="{ 'text-red-500': slotProps.data.trashed }">
-                                {{ slotProps.data.name }}
+                                {{ slotProps.data.pic }}
+                            </span>
+                        </template>
+                    </Column>
+
+                    <Column field="id" :sortable="false" headerStyle="min-width:15rem;">
+                        <template #header>
+                            <span class="flex-1 uppercase py-2 font-bold"> charts </span>
+                        </template>
+                        <template #body="slotProps">
+                            <span :class="{ 'text-red-500': slotProps.data.trashed }">
+                                {{ slotProps.data.charts.length || '-' }}
                             </span>
                         </template>
                     </Column>
@@ -267,6 +294,12 @@ const getStreetAddressFrom = async (lat, long) => {
                             </span>
                         </template>
                         <template #body="slotProps">
+                            <Button
+                                icon="pi pi-chart-bar"
+                                class="p-button-rounded p-button-secondary mr-2"
+                                outlined
+                                @click="setChart(slotProps.data)"
+                            />
                             <ColumnActionButton
                                 :actionColumn="actionColumn"
                                 :data="slotProps.data"
@@ -331,7 +364,7 @@ const getStreetAddressFrom = async (lat, long) => {
         <template #content>
             <div class="card">
                 <div class="p-fluid formgrid grid">
-                    <div class="mb-4 field col-12">
+                    <div class="mb-5 field col-12">
                         <span class="p-float-label">
                             <InputText
                                 required
@@ -345,7 +378,7 @@ const getStreetAddressFrom = async (lat, long) => {
                         </span>
                         <InputError :message="errors.code" />
                     </div>
-                    <div class="mb-4 field col-12">
+                    <div class="mb-5 field col-12">
                         <span class="p-float-label">
                             <InputText
                                 required
@@ -359,7 +392,7 @@ const getStreetAddressFrom = async (lat, long) => {
                         </span>
                         <InputError :message="errors.company_name" />
                     </div>
-                    <div class="mb-4 field col-12">
+                    <div class="mb-5 field col-12">
                         <span class="p-float-label">
                             <InputText
                                 required
@@ -373,12 +406,69 @@ const getStreetAddressFrom = async (lat, long) => {
                         </span>
                         <InputError :message="errors.name" />
                     </div>
-                    <div class="mb-4 field col-12">
+                    <div class="mb-5 field col-12">
+                        <span class="p-float-label">
+                            <InputText
+                                required
+                                id="pic"
+                                type="text"
+                                v-model="form.pic"
+                                :class="{ 'p-invalid': errors.pic }"
+                                @input="mainStore.removeError"
+                            />
+                            <InputLabel :value="$t('text.pic')" />
+                        </span>
+                        <InputError :message="errors.pic" />
+                    </div>
+                    <div class="mb-5 field col-12">
+                        <span class="p-float-label">
+                            <InputText
+                                required
+                                id="npwp"
+                                type="text"
+                                v-model="form.npwp"
+                                :class="{ 'p-invalid': errors.npwp }"
+                                @input="mainStore.removeError"
+                            />
+                            <InputLabel :value="$t('text.npwp')" />
+                        </span>
+                        <InputError :message="errors.npwp" />
+                    </div>
+                    <div class="mb-5 field col-12">
+                        <span class="p-float-label">
+                            <Textarea
+                                :auto-resize="true"
+                                required
+                                id="address"
+                                type="text"
+                                v-model="form.address"
+                                :class="{ 'p-invalid': errors.address }"
+                                @input="mainStore.removeError"
+                            />
+                            <InputLabel :value="$t('text.address')" />
+                        </span>
+                        <InputError :message="errors.address" />
+                    </div>
+                    <div class="mb-5 field col-12">
+                        <span class="p-float-label">
+                            <InputText
+                                required
+                                id="email"
+                                type="text"
+                                v-model="form.email"
+                                :class="{ 'p-invalid': errors.email }"
+                                @input="mainStore.removeError"
+                            />
+                            <InputLabel :value="$t('text.email')" />
+                        </span>
+                        <InputError :message="errors.email" />
+                    </div>
+                    <div class="mb-5 field col-12">
                         <span class="p-float-label">
                             <Textarea
                                 required
                                 id="description"
-                                :rows="5"
+                                :auto-resize="true"
                                 v-model="form.description"
                                 :class="{ 'p-invalid': errors.description }"
                                 @input="mainStore.removeError"
@@ -388,7 +478,7 @@ const getStreetAddressFrom = async (lat, long) => {
                         <InputError :message="errors.description" />
                     </div>
 
-                    <div class="mb-4 field col-12">
+                    <div class="mb-5 field col-12">
                         <span class="p-float-label">
                             <InputText
                                 required
@@ -402,7 +492,7 @@ const getStreetAddressFrom = async (lat, long) => {
                             <InputLabel :value="$t('text.lattitude')" />
                         </span>
                     </div>
-                    <div class="mb-4 field col-12">
+                    <div class="mb-5 field col-12">
                         <span class="p-float-label">
                             <InputText
                                 required
@@ -416,21 +506,8 @@ const getStreetAddressFrom = async (lat, long) => {
                             <InputLabel :value="$t('text.longitude')" />
                         </span>
                     </div>
-                    <div class="mb-4 field col-12">
-                        <span class="p-float-label">
-                            <Textarea
-                                required
-                                id="location"
-                                :auto-resize="true"
-                                v-model="location"
-                                :class="{ 'p-invalid': errors.lattitude || errors.longitude }"
-                                @input="mainStore.removeError"
-                                readonly
-                            />
-                            <InputLabel :value="$t('text.location')" />
-                        </span>
-                    </div>
-                    <div class="mb-4 field col-12">
+
+                    <div class="mb-5 field col-12">
                         <GoogleMap
                             :api-key="gmapApiKey"
                             style="width: 100%; height: 300px"
@@ -446,12 +523,48 @@ const getStreetAddressFrom = async (lat, long) => {
         </template>
     </DialogFormInput>
 
+    <!-- form dialog chart-->
+    <DialogFormInput
+        :loading="loading"
+        :show="formDialogChart"
+        header="Chart"
+        :submitButton="form.id ? $t('button.update') : $t('button.save')"
+        @submit="updateChart()"
+        @close="formDialogChart = !formDialogChart"
+    >
+        <template #content>
+            <div class="card">
+                <div class="grid">
+                    <div
+                        class="col-12 md:col-4"
+                        v-for="item of DashboardChart.allData"
+                        :key="item.id"
+                    >
+                        <div class="field-checkbox mb-0">
+                            <Checkbox
+                                v-model="form.charts"
+                                :inputId="item.code"
+                                name="item"
+                                :value="item.id"
+                            />
+                            <label :for="item.code" class="font-bold">{{ item.name }}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </DialogFormInput>
+
     <!-- detail dialog -->
     <DialogDetail :show="detailDialog" @close="resetDialog()">
         <template #content>
             <ul class="list-none p-0">
                 <ListDetailBreak :label="$t('text.code')" :value="item.code" />
                 <ListDetailBreak label="Tenant Name" :value="item.company_name" />
+                <ListDetailBreak label="Tenant Email" :value="item.email" />
+                <ListDetailBreak label="Tenant PIC" :value="item.pic" />
+                <ListDetailBreak label="Tenant NPWP" :value="item.npwp" />
+                <ListDetailBreak label="Tenant Address" :value="item.address" />
                 <ListDetailBreak label="Description" :value="item.description" />
                 <ListDetailBreak label="longitude" :value="item.longitude" />
                 <ListDetailBreak label="lattitude" :value="item.lattitude" />

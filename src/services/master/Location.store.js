@@ -161,6 +161,19 @@ export const useLocationStore = defineStore(
             });
         };
 
+        const getById = (id) => {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(`${apiUrl}/${id}`)
+                    .then((res) => {
+                        resolve(res);
+                    })
+                    .catch((err) => {
+                        reject(err);
+                    });
+            });
+        };
+
         const createData = () => {
             return new Promise((resolve, reject) => {
                 axios
@@ -455,6 +468,7 @@ export const useLocationStore = defineStore(
             exportExcel,
             // dialog
             resetDialog,
+            getById,
             formDialog,
             destroyDataDialog,
             destroySelectedDialog,

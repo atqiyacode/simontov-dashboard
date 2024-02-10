@@ -101,8 +101,8 @@ onUnmounted(() => {
 });
 const channel = ref(0);
 proxy.$pusher
-    .subscribe('alert-notification-type-channel')
-    .bind('.alert-notification-type-event', () => {
+    .channel('alert-notification-type-channel')
+    .listen('.alert-notification-type-event', () => {
         channel.value += 1;
     });
 </script>

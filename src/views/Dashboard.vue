@@ -4,9 +4,11 @@ import RealtimeChartPage from './chart/RealtimeChartPage.vue';
 import CurrentMapPage from '@/views/chart/CurrentMapPage.vue';
 import { useMainStore } from '@/services/main.store';
 import { useChartStore } from '@/services/chart.store';
+import { useLocationStore } from '@/services/master/Location.store';
 import { storeToRefs } from 'pinia';
 const mainStore = useMainStore();
 const chartStore = useChartStore();
+const LocationStore = useLocationStore();
 const { currentMap } = storeToRefs(mainStore);
 const { chartLength } = storeToRefs(chartStore);
 const formDialog = ref(false);
@@ -37,6 +39,11 @@ const chartLengthOptions = ref([
 onMounted(() => {
     if (currentMap.value) {
         chartStore.getLastFlowrate(currentMap.value.id);
+        LocationStore.getById(currentMap.value.id).then((res) => {
+            mainStore.$patch({
+                currentMap: res.data.data
+            });
+        });
     }
 });
 </script>

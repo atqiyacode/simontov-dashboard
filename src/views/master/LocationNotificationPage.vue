@@ -108,8 +108,8 @@ onUnmounted(() => {
 });
 const channel = ref(0);
 proxy.$pusher
-    .subscribe('location-notification-channel-' + currentMap.value.id)
-    .bind('.location-notification-event', (res) => {
+    .channel('location-notification-channel-' + currentMap.value.id)
+    .listen('.location-notification-event', (res) => {
         reloadData();
         console.log(res);
     });

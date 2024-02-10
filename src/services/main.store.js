@@ -64,6 +64,22 @@ export const useMainStore = defineStore(
             });
         };
 
+        const updateNotifications = (item) => {
+            const index = notifications.value.findIndex(
+                (notification) =>
+                    notification.alert_notification_type_id === item.alert_notification_type_id
+            );
+
+            if (index !== -1) {
+                // Item with the same id found, remove it from notifications
+                notifications.value.splice(index, 1);
+            } else {
+                // Item not found, add it to notifications
+                notify(item.message, 'warning');
+                notifications.value.push(item);
+            }
+        };
+
         const countNotification = () => {
             return new Promise((resolve, reject) => {
                 axios
@@ -154,7 +170,8 @@ export const useMainStore = defineStore(
             removeError,
             notify,
             countNotification,
-            loadNotifications
+            loadNotifications,
+            updateNotifications
         };
     },
     {

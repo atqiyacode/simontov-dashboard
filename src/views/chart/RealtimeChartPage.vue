@@ -48,23 +48,15 @@ const checkAccessLocation = () => {
 };
 
 const checkAccessChart = (code) => {
-    return user.value.dashboardCharts.includes(code);
+    return currentMap.value?.charts.includes(code);
 };
+// const checkAccessChart = (code) => {
+//     return user.value.dashboardCharts.includes(code);
+// };
 </script>
 <template>
     <div class="col-12">
         <div class="grid">
-            <!-- <div
-                class="col-12 lg:col-12 xl:col-12"
-                v-if="checkAccessChart('realtime-flowrate-pressure')"
-            >
-                <RealtimeDualLineChartPage
-                    title="Flowrate and Pressure"
-                    :colors="['#FFBB5C', '#247BA0']"
-                    :chartSeries="chartSeries"
-                    :lastTimestamp="lastTimestamp"
-                />
-            </div> -->
             <div
                 class="col-12 lg:col-12 xl:col-12"
                 v-if="checkAccessChart('realtime-flowrate-pressure')"

@@ -99,7 +99,7 @@ onUnmounted(() => {
     GlobalStore.$reset();
 });
 const channel = ref(0);
-proxy.$pusher.subscribe('role-channel').bind('.role-event', () => {
+proxy.$pusher.channel('role-channel').listen('.role-event', () => {
     channel.value += 1;
 });
 </script>

@@ -19,7 +19,7 @@ const RoleStore = useRoleStore();
 const PermissionStore = usePermissionStore();
 const DashboardChart = useDashboardChart();
 
-proxy.$pusher.subscribe('user-channel').bind('.user-event', () => {
+proxy.$pusher.channel('user-channel').listen('.user-event', () => {
     //
 });
 const {
@@ -371,23 +371,7 @@ const confirmDeletePermanentSelectedDialog = () => {
                                     <Tag class="mr-2 mb-2" severity="info" :value="`${item}`"></Tag>
                                 </template>
                             </div>
-                            <!-- <div>
-                                <p class="text-gray-500 font-bold mr-2 mb-1 md:mb-0 capitalize">
-                                    Permissions
-                                </p>
-                            </div>
-                            <div class="mt-2" v-if="form.permissions_name">
-                                <template
-                                    v-for="(item, index) in form.permissions_name"
-                                    :key="index"
-                                >
-                                    <Tag
-                                        class="mr-2 mb-2"
-                                        severity="secondary"
-                                        :value="`${item}`"
-                                    ></Tag>
-                                </template>
-                            </div> -->
+
                             <div>
                                 <p class="text-gray-500 font-bold mr-2 mb-1 md:mb-0 capitalize">
                                     Locations

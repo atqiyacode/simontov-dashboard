@@ -2,6 +2,7 @@
 import { ref, onBeforeMount, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useLayout } from '@/layout/composables/layout';
+import { useUserStore } from '@/services/user.store';
 
 const route = useRoute();
 
@@ -76,6 +77,31 @@ const itemClick = (event, item) => {
 const checkActiveRoute = (item) => {
     return route.path === item.to;
 };
+
+const userStore = useUserStore();
+
+const shouldRenderItemLink = (item) => {
+    return (
+        (!item.to || item.items) &&
+        item.visible !== false &&
+        (!item.roles || userStore.hasAnyRole(item.roles))
+    );
+};
+
+const shouldRenderRouterLink = (item) => {
+    return (
+        item.to &&
+        !item.items &&
+        item.visible !== false &&
+        (!item.roles || userStore.hasAnyRole(item.roles))
+    );
+};
+
+const shouldRenderSubmenu = (item) => {
+    return (
+        item.items && item.visible !== false && (!item.roles || userStore.hasAnyRole(item.roles))
+    );
+};
 </script>
 
 <template>
@@ -84,7 +110,7 @@ const checkActiveRoute = (item) => {
             {{ $t(item.label) }}
         </div>
         <a
-            v-if="(!item.to || item.items) && item.visible !== false"
+            v-if="shouldRenderItemLink(item)"
             :href="item.url"
             @click="itemClick($event, item, index)"
             :class="item.class"
@@ -96,7 +122,7 @@ const checkActiveRoute = (item) => {
             <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
         </a>
         <router-link
-            v-if="item.to && !item.items && item.visible !== false"
+            v-if="shouldRenderRouterLink(item)"
             @click="itemClick($event, item, index)"
             :class="[item.class, { 'active-route': checkActiveRoute(item) }]"
             tabindex="0"
@@ -106,7 +132,7 @@ const checkActiveRoute = (item) => {
             <span class="layout-menuitem-text capitalize">{{ $t(item.label) }}</span>
             <i class="pi pi-fw pi-angle-down layout-submenu-toggler" v-if="item.items"></i>
         </router-link>
-        <Transition v-if="item.items && item.visible !== false" name="layout-submenu">
+        <Transition v-if="shouldRenderSubmenu(item)" name="layout-submenu">
             <ul v-show="root ? true : isActiveMenu" class="layout-submenu">
                 <app-menu-item
                     v-for="(child, i) in item.items"

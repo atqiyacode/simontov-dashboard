@@ -14,6 +14,10 @@ export const useUserStore = defineStore(
         const form = ref({});
         const isLoading = ref(false);
 
+        const hasAnyRole = (roles) => {
+            return roles.some((role) => user.value && user.value.roles.includes(role));
+        };
+
         const setFirebaseToken = (token) => {
             return new Promise((resolve, reject) => {
                 axios
@@ -111,6 +115,7 @@ export const useUserStore = defineStore(
         };
 
         return {
+            hasAnyRole,
             setFirebaseToken,
             session,
             updateEmail,

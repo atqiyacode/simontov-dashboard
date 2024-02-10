@@ -99,7 +99,7 @@ onUnmounted(() => {
     GlobalStore.$reset();
 });
 const channel = ref(0);
-proxy.$pusher.subscribe('permission-channel').bind('.permission-event', () => {
+proxy.$pusher.channel('permission-channel').listen('.permission-event', () => {
     channel.value += 1;
 });
 </script>

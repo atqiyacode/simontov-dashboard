@@ -1,5 +1,5 @@
 <script setup>
-import { getCurrentInstance, onMounted, onUnmounted, ref } from 'vue';
+import { getCurrentInstance, onMounted, ref } from 'vue';
 import { GoogleMap, Marker, InfoWindow, MarkerCluster } from 'vue3-google-map';
 import { useMainStore } from '@/services/main.store';
 import { useChartStore } from '@/services/chart.store';
@@ -30,12 +30,6 @@ onMounted(async () => {
         lng: LocationStore.sessionLocation[0].longitude
     };
     listenFlowrate();
-});
-
-onUnmounted(() => {
-    if (currentMap.value.id) {
-        stoplistenFlowrate(currentMap.value.id);
-    }
 });
 
 const isOutOfRangePH = (value) => {
@@ -69,7 +63,7 @@ const active = ref(null);
 
 const listenFlowrate = () => {
     sessionLocation.value.forEach((element) => {
-        proxy.$pusher.subscribe('flowrate-channel-' + element.id).bind('.flowrate-event', (res) => {
+        proxy.$pusher.channel('flowrate-channel-' + element.id).listen('.flowrate-event', (res) => {
             active.value = res.data.location_id;
 
             const matchedLocation = sessionLocation.value.find((data) => data.id === active.value);
@@ -78,13 +72,6 @@ const listenFlowrate = () => {
                 matchedLocation.flowrates = res.data;
             }
         });
-    });
-};
-const stoplistenFlowrate = (location) => {
-    sessionLocation.value.forEach((element) => {
-        if (element.id !== location.id) {
-            proxy.$pusher.subscribe('flowrate-channel-' + element.id).unbind('.flowrate-event');
-        }
     });
 };
 </script>
@@ -257,7 +244,7 @@ const stoplistenFlowrate = (location) => {
                                     )
                                 }"
                             >
-                                {{ numberFloat(slotProps.data.flowrates?.ph || 0) }}
+                                {{ slotProps.data.flowrates?.main_ph }}
                             </span>
                         </template>
                     </Column>
@@ -273,7 +260,7 @@ const stoplistenFlowrate = (location) => {
                                     )
                                 }"
                             >
-                                {{ numberFloat(slotProps.data.flowrates?.cod || 0) }}
+                                {{ slotProps.data.flowrates?.main_cod }}
                             </span>
                         </template>
                     </Column>

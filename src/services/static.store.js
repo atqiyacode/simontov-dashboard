@@ -10,6 +10,7 @@ export const useStaticChartStore = defineStore(
         const intervals = ref([5, 10, 15, 20, 30, 60]);
         const interval = ref(5);
         const chartLength = ref(0);
+        const isDownloading = ref(false);
 
         const form = ref({
             start: '',
@@ -320,6 +321,40 @@ export const useStaticChartStore = defineStore(
             });
         };
 
+        const handleLoadingAndErrorDownload = (promise) => {
+            isDownloading.value = true;
+            return promise.finally(() => {
+                isDownloading.value = false;
+            });
+        };
+
+        const makeApiExportRequest = (url, responseType, params) => {
+            return axios.get(url, { responseType, params });
+        };
+
+        const downloadInvoice = (id, params) => {
+            return handleLoadingAndErrorDownload(
+                makeApiExportRequest(`invoice/${id}/range`, 'blob', params)
+                    .then((res) => {
+                        const blob = new Blob([res.data]);
+                        downloadBlobFile(blob, 'pdf');
+                        return res;
+                    })
+                    .catch((err) => {
+                        throw err;
+                    })
+            );
+        };
+
+        const downloadBlobFile = (blob, ext) => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Invoice.${ext}`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        };
+
         return {
             chartLength,
             chartSeries,
@@ -354,6 +389,9 @@ export const useStaticChartStore = defineStore(
             resetValue,
             getFlorateRange,
             getBilling,
+            downloadInvoice,
+
+            isDownloading,
 
             form,
             title,

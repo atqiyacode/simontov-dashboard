@@ -99,7 +99,7 @@ onUnmounted(() => {
     GlobalStore.$reset();
 });
 const channel = ref(0);
-proxy.$pusher.subscribe('range-type-channel').bind('.range-type-event', () => {
+proxy.$pusher.channel('range-type-channel').listen('.range-type-event', () => {
     channel.value += 1;
 });
 </script>
