@@ -243,7 +243,15 @@ const loadRangeTypes = (params) => {
                             </span>
                         </template>
                         <template #body="slotProps">
+                            <Button
+                                v-if="slotProps.data.id == 1"
+                                v-tooltip.top="$t('button.edit-data')"
+                                icon="pi pi-pencil"
+                                class="p-button-rounded p-button-success mr-2"
+                                @click="editData(slotProps.data)"
+                            />
                             <ColumnActionButton
+                                v-else
                                 :actionColumn="actionColumn"
                                 :data="slotProps.data"
                                 :canShow="canShow"
@@ -326,7 +334,7 @@ const loadRangeTypes = (params) => {
                             {{ numberFormat(slotProps.option.lower_limit) }}
                             m<sup>3</sup>
                             -
-                            {{ numberFormat(slotProps.option.lower_limit) }}
+                            {{ numberFormat(slotProps.option.upper_limit) }}
                             m<sup>3</sup>
                             )
                         </template>

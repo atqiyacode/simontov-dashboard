@@ -2,13 +2,17 @@
 import { format } from 'date-fns';
 import { onUnmounted, ref, watch } from 'vue';
 import { useMainStore } from '@/services/main.store';
+import { useUserStore } from '@/services/user.store';
 import { useStaticChartStore } from '@/services/static.store';
 
 import { storeToRefs } from 'pinia';
 
 const dates = ref();
+
 const mainStore = useMainStore();
+const userStore = useUserStore();
 const staticChartStore = useStaticChartStore();
+const { user } = storeToRefs(userStore);
 
 const { loading } = storeToRefs(mainStore);
 const {
@@ -92,7 +96,7 @@ const chartFilterData = (res) => {
 };
 
 const checkAccessChart = (code) => {
-    return chartSeries.value[0].data.length > 0 && mainStore.currentMap.charts.includes(code);
+    return chartSeries.value[0].data.length > 0 && user.value.dashboardCharts.includes(code);
 };
 
 const getBilling = () => {

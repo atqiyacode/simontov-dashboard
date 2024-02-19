@@ -48,7 +48,7 @@ const checkAccessLocation = () => {
 };
 
 const checkAccessChart = (code) => {
-    return currentMap.value?.charts.includes(code);
+    return user.value.dashboardCharts.includes(code);
 };
 // const checkAccessChart = (code) => {
 //     return user.value.dashboardCharts.includes(code);

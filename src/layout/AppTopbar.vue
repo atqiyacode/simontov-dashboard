@@ -52,7 +52,9 @@ const goToMyNotification = () => {
 };
 
 const logoUrl = computed(() => {
-    return `${contextPath}logo/${layoutConfig.darkTheme.value ? 'logo-kim' : 'logo-kim'}.png`;
+    return `${contextPath}logo/${
+        layoutConfig.darkTheme.value ? 'logo-kim-side' : 'logo-kim-side'
+    }.png`;
 });
 
 const onTopBarMenuButton = () => {

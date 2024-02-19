@@ -106,10 +106,10 @@ onUnmounted(() => {
     GlobalStore.$reset();
 });
 const formDialogChart = ref(false);
-const setChart = (item) => {
-    formDialogChart.value = true;
-    form.value = item;
-};
+// const setChart = (item) => {
+//     formDialogChart.value = true;
+//     form.value = item;
+// };
 
 const updateChart = async () => {
     await submitData();
@@ -294,12 +294,12 @@ const getStreetAddressFrom = async (lat, long) => {
                             </span>
                         </template>
                         <template #body="slotProps">
-                            <Button
+                            <!-- <Button
                                 icon="pi pi-chart-bar"
                                 class="p-button-rounded p-button-secondary mr-2"
                                 outlined
                                 @click="setChart(slotProps.data)"
-                            />
+                            /> -->
                             <ColumnActionButton
                                 :actionColumn="actionColumn"
                                 :data="slotProps.data"
