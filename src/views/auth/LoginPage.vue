@@ -25,7 +25,6 @@ const v$ = useVuelidate(rules, form);
 
 onMounted(() => {
     mainStore.removeError();
-    mainStore.clearCurrentSession();
 });
 
 onUnmounted(() => {
